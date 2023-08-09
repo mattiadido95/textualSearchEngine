@@ -66,7 +66,7 @@ public class Preprocessing {
     private List<String> getStopwords() {
         List<String> stopwords = new ArrayList<>();
         try {
-            BufferedReader file = new BufferedReader(new FileReader("../../data/stop_words_english.txt"));
+            BufferedReader file = new BufferedReader(new FileReader("data/stop_words_english.txt"));
             String line;
             while ((line = file.readLine()) != null) {
                 stopwords.add(line);
