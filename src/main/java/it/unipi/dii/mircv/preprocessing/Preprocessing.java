@@ -3,6 +3,8 @@ package it.unipi.dii.mircv.preprocessing;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import ca.rmen.porterstemmer.PorterStemmer;
+
 
 public class Preprocessing {
     private Map<String, Map<String, Integer>> index;
@@ -21,12 +23,14 @@ public class Preprocessing {
                 // Stopword
                 words = removeWordstop(words);
                 // Stemming
-                // convert words to string array
-                String[] wordsArray = new String[words.size()];
-                wordsArray = words.toArray(wordsArray);
-                PorterStemming.main(wordsArray);
+                PorterStemmer porterStemmer = new PorterStemmer();
+                List<String> stemWords = new ArrayList<>();
+                for (String word : words) {
+                    String stem = porterStemmer.stemWord(word);
+                    stemWords.add(stem);
+                }
                 // Index
-                buildIndex(id, words);
+                buildIndex(id, stemWords);
 
                 c++;
                 if (c == 200) {
@@ -82,16 +86,8 @@ public class Preprocessing {
         List<String> stopwords = getStopwords();
         List<Integer> indexList = new ArrayList<>();
         Collections.sort(words);
-        for (String stopword : stopwords) {
-            int res = Collections.binarySearch(words, stopword);
-            if (res >= 0) {
-                indexList.add(res);
-            }
-        }
-        Collections.reverse(indexList);
-        for (int index : indexList) {
-            words.remove(index);
-        }
+        // remove stopwords from words list
+        words.removeAll(stopwords);
         return words;
     }
 
