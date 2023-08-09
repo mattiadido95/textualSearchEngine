@@ -17,7 +17,6 @@ public class Preprocessing {
             int c = 0;
             while ((line = reader.readLine()) != null) {
                 List<String> words = tokenization(line);
-
                 String id = words.get(0);
                 words.remove(0);
                 // Stopword
@@ -32,8 +31,8 @@ public class Preprocessing {
                 // Index
                 buildIndex(id, stemWords);
 
-                c++;
-                if (c == 200) {
+//                c++;
+//                if (c == 200000) {
                     for (Map.Entry<String, Map<String, Integer>> entry : index.entrySet()) {
                         System.out.print(entry.getKey() + ": ");
                         Map<String, Integer> inMap = entry.getValue();
@@ -42,8 +41,8 @@ public class Preprocessing {
                         }
                         System.out.println();
                     }
-                    break;
-                }
+//                    break;
+//                }
             }
             reader.close();
         } catch (IOException e) {
