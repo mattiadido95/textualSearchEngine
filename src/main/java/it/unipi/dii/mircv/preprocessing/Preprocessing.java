@@ -20,7 +20,11 @@ public class Preprocessing {
                 words.remove(0);
                 // Stopword
                 words = removeWordstop(words);
-                // Stemming (not provided in your code)
+                // Stemming
+                // convert words to string array
+                String[] wordsArray = new String[words.size()];
+                wordsArray = words.toArray(wordsArray);
+                PorterStemming.main(wordsArray);
                 // Index
                 buildIndex(id, words);
 
@@ -111,7 +115,5 @@ public class Preprocessing {
         }
     }
 
-    public static void main(String[] args) {
-        Preprocessing preprocessing = new Preprocessing("path/to/your/input/file.txt");
-    }
+
 }
