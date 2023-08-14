@@ -36,7 +36,7 @@ public class Main {
             // start reading document by document
             while ((line = br.readLine()) != null) {
 
-                // TODO manage memory occupation of the inverted index
+                // TODO manage memory occupation of the inverted index with Runtime library
 
                 // for each document, start preprocessing and return a list of tokens
                 Preprocessing preprocessing = new Preprocessing(line);
