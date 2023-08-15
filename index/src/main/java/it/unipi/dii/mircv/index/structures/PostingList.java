@@ -1,16 +1,18 @@
 package it.unipi.dii.mircv.index.structures;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostingList {
-
-
     private String term;
-    private ArrayList<Posting> postings = new ArrayList<>();
+
+    // TODO evaluate to change this to ArrayList<Posting>
+    private HashMap<Integer, Posting> postings = new HashMap<>();
 
     public PostingList(String term, Document document) {
         this.term = term;
-        this.postings.add(new Posting(document.getDocID(), 1));
+        this.postings.put(Integer.valueOf(document.getDocID()), new Posting(document.getDocID(), 1));
     }
 
 
@@ -19,13 +21,17 @@ public class PostingList {
         output.append("Posting List for Term: ").append(this.term).append("\n");
         output.append("[");
 
-        for (int i = 0; i < this.postings.size(); i++) {
-            Posting posting = this.postings.get(i);
-            output.append("(").append(posting.getDocID()).append(", ").append(posting.getFreq()).append(")");
+        int count = 0;
+        for (Map.Entry<Integer, Posting> entry : postings.entrySet()) {
+            int docID = Integer.parseInt(entry.getValue().getDocID());
+            int freq = entry.getValue().getFreq();
 
-            if (i < this.postings.size() - 1) {
+            output.append("(").append(docID).append(", ").append(freq).append(")");
+
+            if (count < postings.size() - 1) {
                 output.append(" -> ");
             }
+            count++;
         }
         output.append("]\n");
         System.out.println(output);
@@ -33,12 +39,16 @@ public class PostingList {
     }
 
 
-
-    // TODO manage updating of frequency for the same document
     public void updatePostingList(String token, Document doc) {
-        // TODO Implemented only adding in the posting list, not updating frequency
-        Posting newPosting = new Posting(doc.getDocID(), 1);
-        this.postings.add(newPosting);
+        // check if posting list already contains the document
+        if (this.postings.containsKey(Integer.valueOf(doc.getDocID()))) {
+            Posting posting = this.postings.get(Integer.valueOf(doc.getDocID())); // get existing posting from posting list
+            posting.updateFreq(); // update frequency of the posting, increment by 1
+        } else {
+            // posting list doesn't contain the document, create new posting
+            Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
+            this.postings.put(Integer.valueOf(doc.getDocID()), newPosting); // add posting to posting list
+        }
     }
 
     public int getPostingListSize() {

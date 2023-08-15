@@ -17,4 +17,8 @@ public class Posting {
     public int getFreq() {
         return freq;
     }
+
+    public void updateFreq() {
+        this.freq++;
+    }
 }

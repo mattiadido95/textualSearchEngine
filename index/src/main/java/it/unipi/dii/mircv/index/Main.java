@@ -22,7 +22,6 @@ public class Main {
         // log.getLog("Start indexing ...");
 
         try {
-
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
 
             BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
