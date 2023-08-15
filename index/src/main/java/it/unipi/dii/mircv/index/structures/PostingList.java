@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class PostingList {
 
-    // TODO implement method to add posting to existing posting list
 
     private String term;
     private ArrayList<Posting> postings = new ArrayList<>();
@@ -14,11 +13,35 @@ public class PostingList {
         this.postings.add(new Posting(document.getDocID(), 1));
     }
 
+
     public void printPostingList() {
-        System.out.println("Term: " + this.term);
-        for (Posting posting : this.postings) {
-            System.out.println("DocID: " + posting.getDocID() + " Freq: " + posting.getFreq());
+        StringBuilder output = new StringBuilder();
+        output.append("Posting List for Term: ").append(this.term).append("\n");
+        output.append("[");
+
+        for (int i = 0; i < this.postings.size(); i++) {
+            Posting posting = this.postings.get(i);
+            output.append("(").append(posting.getDocID()).append(", ").append(posting.getFreq()).append(")");
+
+            if (i < this.postings.size() - 1) {
+                output.append(" -> ");
+            }
         }
+        output.append("]\n");
+        System.out.println(output);
+        System.out.println("**************************************");
     }
 
+
+
+    // TODO manage updating of frequency for the same document
+    public void updatePostingList(String token, Document doc) {
+        // TODO Implemented only adding in the posting list, not updating frequency
+        Posting newPosting = new Posting(doc.getDocID(), 1);
+        this.postings.add(newPosting);
+    }
+
+    public int getPostingListSize() {
+        return this.postings.size();
+    }
 }
