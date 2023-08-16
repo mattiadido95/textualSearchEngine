@@ -44,5 +44,42 @@ public class MemoryManager {
 
     public void saveInvertedIndexToDisk() {
         // TODO implement method to save inverted index to disk
+/*
+            // write object to file
+            try (FileOutputStream fileOut = new FileOutputStream(filePath, true);
+                 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+                objectOut.writeObject(invertedIndex);
+                objectOut.writeObject(null); // Segnalatore di fine HashMap
+
+                System.out.println("Inverted index saved to: " + filePath);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // read object from file
+            try (FileInputStream fileIn = new FileInputStream(filePath);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+
+                while (true) {
+                    try {
+                        HashMap<String, PostingList> invertedIndexBlock = (HashMap<String, PostingList>) objectIn.readObject();
+                        if (invertedIndexBlock == null) {
+                            break; // Fine del file
+                        }
+
+                        // Processa il blocco di dati letto
+                        processInvertedIndexBlock(invertedIndexBlock);
+                    } catch (EOFException | ClassNotFoundException e) {
+                        // Fine del file o errore di deserializzazione
+                        break;
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+*/
     }
 }

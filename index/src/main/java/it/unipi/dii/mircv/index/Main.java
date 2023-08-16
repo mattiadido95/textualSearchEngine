@@ -19,7 +19,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // log.getLog("Start indexing ...");
+        //log.getLog("Start indexing ...");
 
         try {
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
@@ -30,7 +30,7 @@ public class Main {
             while ((line = br.readLine()) != null) {
 
                 MemoryManager manageMemory = new MemoryManager();
-                // log.getLog(manageMemory);
+                //log.getLog(manageMemory);
                 if (manageMemory.checkFreeMemory()) {
                     log.getLog("Memory is full, suspend indexing and save invertedIndex to disk");
                     // TODO save inverted index to disk, call to memoryManager method
@@ -45,7 +45,7 @@ public class Main {
                     addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
                 }
 
-                // log.getLog(invertedIndex);
+                //log.getLog(invertedIndex);
 
             }
         } catch (IOException e) {
@@ -59,7 +59,7 @@ public class Main {
             // update posting list for existing token
             PostingList postingList = (PostingList) invertedIndex.get(token); // get the posting list of the existing token
             postingList.updatePostingList(token, document); // update the posting list
-            log.getLog(postingList);
+            //log.getLog(postingList);
         } else {
             // create new posting list for new token
             PostingList postingList = new PostingList(token, document); // create a new posting list for new token
