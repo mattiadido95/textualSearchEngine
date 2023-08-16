@@ -1,6 +1,8 @@
 package it.unipi.dii.mircv.index.structures;
 
-public class Posting {
+import java.io.Serializable;
+
+public class Posting implements Serializable {
 
     private String docID;
     private int freq;

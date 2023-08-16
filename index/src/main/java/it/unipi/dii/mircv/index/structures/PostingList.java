@@ -1,10 +1,11 @@
 package it.unipi.dii.mircv.index.structures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostingList {
+public class PostingList implements Serializable {
     private String term;
 
     // TODO evaluate to change this to ArrayList<Posting>
