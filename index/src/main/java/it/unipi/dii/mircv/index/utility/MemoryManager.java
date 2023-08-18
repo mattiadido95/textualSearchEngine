@@ -56,8 +56,6 @@ public class MemoryManager {
     }
 
     public void saveInvertedIndexToDisk(HashMap<String, PostingList> invertedIndex) {
-        // TODO implement method to save inverted index to disk
-
         // write object to file
         try (FileOutputStream fileOut = new FileOutputStream(filePath, true);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
@@ -70,6 +68,8 @@ public class MemoryManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // TODO implement reading from file
 /*
             // read object from file
             try (FileInputStream fileIn = new FileInputStream(filePath);

@@ -14,7 +14,7 @@ public class Document {
     private void parseDocument() {
         // parse the raw document and set id and body
         String split[] = rawDocument.split("\t");
-        this.id = split[0]; // TODO CONTROLLARE SE è VERAMENTE L'ID
+        this.id = split[0]; // TODO CONTROLLARE SE è VERAMENTE L'ID, docno != da pid
         this.body = split[1];
     }
 

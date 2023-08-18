@@ -8,7 +8,7 @@ import java.util.Map;
 public class PostingList implements Serializable {
     private String term;
 
-    // TODO evaluate to change this to ArrayList<Posting>
+    // TODO VA MESSO ARRAYLIST
     private HashMap<Integer, Posting> postings = new HashMap<>();
 
     public PostingList(String term, Document document) {
