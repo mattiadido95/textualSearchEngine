@@ -15,8 +15,8 @@ import java.util.List;
 
 public class Main {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
-
     private static Logs log = new Logs(); // create a log object to print log messages
+    private static int indexCounter = 0;
 
     public static void main(String[] args) {
 
@@ -25,6 +25,7 @@ public class Main {
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
+            indexCounter += 1;
 
             BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
             String line; // start reading document by document
@@ -35,14 +36,15 @@ public class Main {
 
                 MemoryManager manageMemory = new MemoryManager();
                 if (manageMemory.checkFreeMemory()) {
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+                    //log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                    // TODO creare controllo per verificare se la scrittura su disco è andata a buon fine o no e in caso gestire l'errore.
                     // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
-                    //manageMemory.saveInvertedIndexToDisk(invertedIndex); // save inverted index to disk
-                    //manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
-                    //invertedIndex = new HashMap<>(); // create a new inverted index
-//                    log.getLog(manageMemory); // print memory status after clearing memory
+
+                    manageMemory.saveInvertedIndexToDisk(invertedIndex, indexCounter); // save inverted index to disk
+                    manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
+                    invertedIndex = new HashMap<>(); // create a new inverted index
+
+                    //log.getLog(manageMemory); // print memory status after clearing memory
                 }
 
                 Preprocessing preprocessing = new Preprocessing(line);
@@ -50,14 +52,14 @@ public class Main {
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 for (String token : tokens) {
+                    lexicon.addLexiconElem(token); // add token to the lexicon
                     //addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
-                    lexicon.addLexiconElem(token);
                 }
 
                 count++;
                 if (count % 500000 == 0) {
-//                    log.getLog(invertedIndex);
-                    log.getLog(lexicon);
+                    //log.getLog(invertedIndex);
+                    //log.getLog(lexicon);
                     log.getLog("Processed: " + count + " documents");
                 }
 
