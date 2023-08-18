@@ -1,3 +1,6 @@
 /.idea
 /data/collection
 /data/index
+.DS_Store
+index/.DS_Store
+prompt/.DS_Store
