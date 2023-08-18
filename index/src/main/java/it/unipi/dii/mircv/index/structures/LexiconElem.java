@@ -38,4 +38,14 @@ public class LexiconElem {
     public void incrementCf() {
         this.cf += 1;
     }
+
+    @Override
+    public String toString() {
+        return "LexiconElem{" +
+                "term='" + term + '\'' +
+                ", df=" + df +
+                ", cf=" + cf +
+                ", offset=" + offset +
+                '}';
+    }
 }

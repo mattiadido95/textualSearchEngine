@@ -18,9 +18,9 @@ public class Preprocessing {
 
     public List<String> tokens = new ArrayList<>();
 
-    public Preprocessing(String document){
+    public Preprocessing(String document,int docCounter){
         // create new document
-        this.doc = new Document(document);
+        this.doc = new Document(document,docCounter);
         List<String> words = tokenization(doc.getBody());
         words = removeWordstop(words); // Remove stopwords
         PorterStemmer porterStemmer = new PorterStemmer(); // Stemming

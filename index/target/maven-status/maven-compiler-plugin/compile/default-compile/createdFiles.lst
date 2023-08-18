@@ -1,0 +1,9 @@
+it/unipi/dii/mircv/index/utility/Logs.class
+it/unipi/dii/mircv/index/structures/Document.class
+it/unipi/dii/mircv/index/structures/LexiconElem.class
+it/unipi/dii/mircv/index/structures/PostingList.class
+it/unipi/dii/mircv/index/preprocessing/Preprocessing.class
+it/unipi/dii/mircv/index/structures/Posting.class
+it/unipi/dii/mircv/index/Main.class
+it/unipi/dii/mircv/index/structures/Lexicon.class
+it/unipi/dii/mircv/index/utility/MemoryManager.class

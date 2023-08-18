@@ -55,9 +55,9 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
-    public void saveInvertedIndexToDisk(HashMap<String, PostingList> invertedIndex) {
+    public void saveInvertedIndexToDisk(HashMap<String, PostingList> invertedIndex, int indexCounter) {
         // write object to file
-        try (FileOutputStream fileOut = new FileOutputStream(filePath, true);
+        try (FileOutputStream fileOut = new FileOutputStream(filePath+"_"+indexCounter, true);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
             objectOut.writeObject(invertedIndex);

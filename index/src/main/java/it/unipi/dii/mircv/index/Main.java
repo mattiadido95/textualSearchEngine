@@ -15,8 +15,8 @@ import java.util.List;
 
 public class Main {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
-
     private static Logs log = new Logs(); // create a log object to print log messages
+    private static int indexCounter = 0;
 
     public static void main(String[] args) {
 
@@ -29,36 +29,38 @@ public class Main {
             BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
             String line; // start reading document by document
 
-            int count = 0;
+            int documentCounter = 0;
 
             while ((line = br.readLine()) != null) {
 
                 MemoryManager manageMemory = new MemoryManager();
                 if (manageMemory.checkFreeMemory()) {
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+                    //log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                    // TODO creare controllo per verificare se la scrittura su disco è andata a buon fine o no e in caso gestire l'errore.
                     // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
-                    //manageMemory.saveInvertedIndexToDisk(invertedIndex); // save inverted index to disk
-                    //manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
-                    //invertedIndex = new HashMap<>(); // create a new inverted index
-//                    log.getLog(manageMemory); // print memory status after clearing memory
+                    indexCounter += 1;
+                    manageMemory.saveInvertedIndexToDisk(invertedIndex, indexCounter); // save inverted index to disk
+                    manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
+                    invertedIndex = new HashMap<>(); // create a new inverted index
+
+                    //log.getLog(manageMemory); // print memory status after clearing memory
                 }
 
-                Preprocessing preprocessing = new Preprocessing(line);
+                Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 for (String token : tokens) {
-                    //addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
-                    lexicon.addLexiconElem(token);
+                    lexicon.addLexiconElem(token); // add token to the lexicon
+                    addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
                 }
 
-                count++;
-                if (count % 500000 == 0) {
-//                    log.getLog(invertedIndex);
+                documentCounter++;
+                System.out.println(documentCounter);
+                if (documentCounter % 500000 == 0) {
+                    log.getLog(invertedIndex);
                     log.getLog(lexicon);
-                    log.getLog("Processed: " + count + " documents");
+                    log.getLog("Processed: " + documentCounter + " documents");
                 }
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO
@@ -73,11 +75,11 @@ public class Main {
         if (invertedIndex.containsKey(token)) {
             // update posting list for existing token
             PostingList postingList = (PostingList) invertedIndex.get(token); // get the posting list of the existing token
-            postingList.updatePostingList(token, document); // update the posting list
+            postingList.updatePostingList(document); // update the posting list
             //log.getLog(postingList);
         } else {
             // create new posting list for new token
-            PostingList postingList = new PostingList(token, document); // create a new posting list for new token
+            PostingList postingList = new PostingList(document); // create a new posting list for new token
             invertedIndex.put(token, postingList); // add the posting list to the inverted index
         }
     }
