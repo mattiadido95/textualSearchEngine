@@ -4,10 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.example</groupId>
+        <groupId>it.unipi.dii.mircv</groupId>
         <artifactId>textualSearchEngine</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>it.unipi.dii.mircv.prompt.MainClass</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
 
     <artifactId>prompt</artifactId>
 
@@ -18,7 +33,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.example</groupId>
+            <groupId>it.unipi.dii.mircv</groupId>
             <artifactId>index</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
