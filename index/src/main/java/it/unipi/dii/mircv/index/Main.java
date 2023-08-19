@@ -42,7 +42,6 @@ public class Main {
                     manageMemory.saveInvertedIndexToDisk(invertedIndex, indexCounter); // save inverted index to disk
                     manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
-
                     //log.getLog(manageMemory); // print memory status after clearing memory
                 }
 
@@ -56,7 +55,6 @@ public class Main {
                 }
 
                 documentCounter++;
-                System.out.println(documentCounter);
                 if (documentCounter % 500000 == 0) {
                     log.getLog(invertedIndex);
                     log.getLog(lexicon);
@@ -76,7 +74,6 @@ public class Main {
             // update posting list for existing token
             PostingList postingList = (PostingList) invertedIndex.get(token); // get the posting list of the existing token
             postingList.updatePostingList(document); // update the posting list
-            //log.getLog(postingList);
         } else {
             // create new posting list for new token
             PostingList postingList = new PostingList(document); // create a new posting list for new token

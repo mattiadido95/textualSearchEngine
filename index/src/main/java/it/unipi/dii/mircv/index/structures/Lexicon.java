@@ -1,9 +1,13 @@
 package it.unipi.dii.mircv.index.structures;
 
+import it.unipi.dii.mircv.index.utility.Logs;
+
 import java.util.HashMap;
 
 public class Lexicon {
     HashMap<String, LexiconElem> lexicon;
+
+    Logs log = new Logs();
 
     public Lexicon() {
         this.lexicon = new HashMap<>();
@@ -15,14 +19,12 @@ public class Lexicon {
             LexiconElem lexiconElem = this.lexicon.get(term);
 //            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
-
         } else {
             // lexicon does not contain the term
             LexiconElem lexiconElem = new LexiconElem(term);
 //            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
             this.lexicon.put(term, lexiconElem);
-
         }
     }
 

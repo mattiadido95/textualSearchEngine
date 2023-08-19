@@ -1,5 +1,7 @@
 package it.unipi.dii.mircv.index.structures;
 
+import it.unipi.dii.mircv.index.utility.Logs;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +9,8 @@ import java.util.Map;
 
 public class PostingList implements Serializable {
     private ArrayList<Posting> postings;
+
+    Logs log = new Logs();
 
     public PostingList(Document doc) {
         postings = new ArrayList<>();
@@ -47,6 +51,7 @@ public class PostingList implements Serializable {
 
             if (postingDocID == docID) {
                 posting.updateFreq();
+                return;
             } else if (postingDocID < docID) {
                 low = mid + 1;
             } else {
