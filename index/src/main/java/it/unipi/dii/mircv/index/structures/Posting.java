@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class Posting implements Serializable {
 
-    private String docID; // TODO va cambiato con intero per essere un contatore
+    private int docID;
     private int freq;
 
-    public Posting(String docID, int freq) {
+    public Posting(int docID, int freq) {
         this.docID = docID;
         this.freq = freq;
     }
 
-    public String getDocID() {
+    public int getDocID() {
         return docID;
     }
 

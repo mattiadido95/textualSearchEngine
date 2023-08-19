@@ -25,12 +25,11 @@ public class Main {
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
-            indexCounter += 1;
 
             BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
             String line; // start reading document by document
 
-            int count = 0;
+            int documentCounter = 0;
 
             while ((line = br.readLine()) != null) {
 
@@ -39,7 +38,7 @@ public class Main {
                     //log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
                     // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
-
+                    indexCounter += 1;
                     manageMemory.saveInvertedIndexToDisk(invertedIndex, indexCounter); // save inverted index to disk
                     manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
@@ -47,20 +46,21 @@ public class Main {
                     //log.getLog(manageMemory); // print memory status after clearing memory
                 }
 
-                Preprocessing preprocessing = new Preprocessing(line);
+                Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 for (String token : tokens) {
                     lexicon.addLexiconElem(token); // add token to the lexicon
-                    //addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
+                    addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
                 }
 
-                count++;
-                if (count % 500000 == 0) {
-                    //log.getLog(invertedIndex);
-                    //log.getLog(lexicon);
-                    log.getLog("Processed: " + count + " documents");
+                documentCounter++;
+                System.out.println(documentCounter);
+                if (documentCounter % 500000 == 0) {
+                    log.getLog(invertedIndex);
+                    log.getLog(lexicon);
+                    log.getLog("Processed: " + documentCounter + " documents");
                 }
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO
@@ -75,11 +75,11 @@ public class Main {
         if (invertedIndex.containsKey(token)) {
             // update posting list for existing token
             PostingList postingList = (PostingList) invertedIndex.get(token); // get the posting list of the existing token
-            postingList.updatePostingList(token, document); // update the posting list
+            postingList.updatePostingList(document); // update the posting list
             //log.getLog(postingList);
         } else {
             // create new posting list for new token
-            PostingList postingList = new PostingList(token, document); // create a new posting list for new token
+            PostingList postingList = new PostingList(document); // create a new posting list for new token
             invertedIndex.put(token, postingList); // add the posting list to the inverted index
         }
     }

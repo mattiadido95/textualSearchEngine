@@ -46,7 +46,7 @@ public class Logs {
     }
 
     private void logPostingList(PostingList postingList) {
-        postingList.printPostingList();
+        postingList.toString();
     }
 
     private void logHashMap(HashMap invertedIndex) {

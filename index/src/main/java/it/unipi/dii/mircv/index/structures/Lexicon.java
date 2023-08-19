@@ -32,6 +32,13 @@ public class Lexicon {
         System.out.println("**************************************");
     }
 
+    @Override
+    public String toString() {
+        return "Lexicon{" +
+                "lexicon=" + lexicon +
+                '}';
+    }
+
     public LexiconElem getLexiconElem(String term) {
         return this.lexicon.get(term);
     }
