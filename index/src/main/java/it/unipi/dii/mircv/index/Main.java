@@ -7,9 +7,7 @@ import it.unipi.dii.mircv.index.structures.PostingList;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,7 +24,8 @@ public class Main {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
 
-            BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
+            //BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
             String line; // start reading document by document
 
             int documentCounter = 0;
@@ -35,14 +34,24 @@ public class Main {
 
                 MemoryManager manageMemory = new MemoryManager();
                 if (manageMemory.checkFreeMemory()) {
-                    //log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                    // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
-                    indexCounter += 1;
-                    manageMemory.saveInvertedIndexToDisk(invertedIndex, indexCounter); // save inverted index to disk
+                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+
+                    // per ogni termine del lexicon, prendere la posting list dal inverted index e aggiungerla al file
+                    // ritornare dimenisoni della posting list e offset nel file
+                    // assegnare offset al termine del lexicon
+                    // salvare lexicon su disco
+
+
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+
                     manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
+                    indexCounter += 1;
+
                     //log.getLog(manageMemory); // print memory status after clearing memory
+
+                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
+                    // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
                 }
 
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
@@ -55,6 +64,11 @@ public class Main {
                 }
 
                 documentCounter++;
+                if (documentCounter == 2) {
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                    break;
+                }
+
                 if (documentCounter % 500000 == 0) {
                     log.getLog(invertedIndex);
                     log.getLog(lexicon);
@@ -68,7 +82,7 @@ public class Main {
         }
     }
 
-    private static void addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
+    public static void addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
         // check if the token is already in the inverted index and manage the update the posting list
         if (invertedIndex.containsKey(token)) {
             // update posting list for existing token

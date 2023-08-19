@@ -1,5 +1,7 @@
 package it.unipi.dii.mircv.index.utility;
 
+import it.unipi.dii.mircv.index.structures.Document;
+import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.structures.PostingList;
 
 import java.io.FileOutputStream;
@@ -55,19 +57,27 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
-    public void saveInvertedIndexToDisk(HashMap<String, PostingList> invertedIndex, int indexCounter) {
-        // write object to file
-        try (FileOutputStream fileOut = new FileOutputStream(filePath+"_"+indexCounter, true);
-             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter){
 
-            objectOut.writeObject(invertedIndex);
-            objectOut.writeObject(null); // stopping condition for reading an hashmap object
+        for (String term : lexicon.getLexicon().keySet()) {
+            // for each term in lexicon
+            PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
+            long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
+            lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
-            log.getLog("The Object  was successfully written into invertedIndex.txt");
+            System.out.println(offset);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            PostingList readedPostingList = new PostingList();
+            readedPostingList.readPostingList(indexCounter, offset);
+
+            System.out.println("**********CHECKING POSTING LIST*********");
+            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
+            System.out.println("Posting list saved to disk: " + postingList.toString());
+            System.out.println("**************************************");
         }
+        //lexicon.saveLexiconToDisk(lexicon, indexCounter); // save lexicon to disk
+
+
 
         // TODO implement reading from file
 /*
