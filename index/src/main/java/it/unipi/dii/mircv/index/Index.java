@@ -11,9 +11,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.lang.System.exit;
-
-public class Main {
+public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static Logs log = new Logs(); // create a log object to print log messages
     private static int indexCounter = 0;
@@ -24,7 +22,6 @@ public class Main {
 
         deleteFiles("data/index/");
         deleteFiles("data/index/lexicon/");
-
 
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
@@ -40,23 +37,13 @@ public class Main {
                 MemoryManager manageMemory = new MemoryManager();
                 if (manageMemory.checkFreeMemory()) {
                     log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-
-                    // per ogni termine del lexicon, prendere la posting list dal inverted index e aggiungerla al file
-                    // ritornare dimenisoni della posting list e offset nel file
-                    // assegnare offset al termine del lexicon
-                    // salvare lexicon su disco
-
-
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-
-                    manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
+                    manageMemory.clearMemory(lexicon, invertedIndex); // clear inverted index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
                     indexCounter += 1;
-
                     //log.getLog(manageMemory); // print memory status after clearing memory
 
                     // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                    // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
                 }
 
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
@@ -108,7 +95,6 @@ public class Main {
 
     private static void deleteFiles(String folderPath) {
         File folder = new File(folderPath);
-
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles();
             if (files != null) {

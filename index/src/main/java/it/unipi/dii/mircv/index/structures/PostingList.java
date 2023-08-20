@@ -88,18 +88,52 @@ public class PostingList{
 
         try {
 
-            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
-            // Posizionati alla fine del file per l'aggiunta dei dati
-            randomAccessFile.seek(randomAccessFile.length());
+//            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+//            // Posizionati alla fine del file per l'aggiunta dei dati
+//            randomAccessFile.seek(randomAccessFile.length());
+//
+//            // Memorizza la posizione di inizio nel file
+//            offset = randomAccessFile.getFilePointer();
+////            System.out.println("Initial offset: " + offset); // Debug: Stampa l'offset
+//
+//            for (Posting posting : this.postings) {
+//                randomAccessFile.writeInt(posting.getDocID());
+//                randomAccessFile.writeInt(posting.getFreq());
+//            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+            FileChannel fileChannel = fileOutputStream.getChannel();
 
             // Memorizza la posizione di inizio nel file
-            offset = randomAccessFile.getFilePointer();
-//            System.out.println("Initial offset: " + offset); // Debug: Stampa l'offset
+            offset = fileChannel.position();
+
+            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             for (Posting posting : this.postings) {
-                randomAccessFile.writeInt(posting.getDocID());
-                randomAccessFile.writeInt(posting.getFreq());
+                buffer.putInt(posting.getDocID());
+                buffer.putInt(posting.getFreq());
+
+                // Se il buffer è pieno, scrivi il suo contenuto sul file
+                if (!buffer.hasRemaining()) {
+                    buffer.flip();
+                    fileChannel.write(buffer);
+                    buffer.clear();
+                }
             }
+
+            // Scrivi eventuali dati rimanenti nel buffer sul file
+            if (buffer.position() > 0) {
+                buffer.flip();
+                fileChannel.write(buffer);
+            }
+
+            // Chiudi le risorse
+            fileChannel.close();
+            dataOutputStream.close();
+            bufferedOutputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();

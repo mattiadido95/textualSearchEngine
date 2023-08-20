@@ -50,7 +50,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>it.unipi.dii.mircv.index.Main</mainClass>
+                            <mainClass>it.unipi.dii.mircv.index.Index</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

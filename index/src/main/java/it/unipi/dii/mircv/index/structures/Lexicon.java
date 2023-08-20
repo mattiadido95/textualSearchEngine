@@ -31,8 +31,8 @@ public class Lexicon {
         }
     }
 
-    public void printLexicon() {
-        System.out.println("Lexicon status: ");
+    public void printLexicon(String timestamp){
+        System.out.println("["+timestamp+"] Lexicon status: ");
         System.out.println(" -> Size: " + this.lexicon.size());
         System.out.println("**************************************");
     }
