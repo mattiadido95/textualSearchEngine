@@ -23,6 +23,8 @@ public class Index {
         deleteFiles("data/index/");
         deleteFiles("data/index/lexicon/");
 
+        log.getLog("Deleted old index files ...");
+
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
@@ -35,8 +37,10 @@ public class Index {
             while ((line = br.readLine()) != null) {
 
                 MemoryManager manageMemory = new MemoryManager();
-                if (manageMemory.checkFreeMemory()) {
-                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+                //if (manageMemory.checkFreeMemory()) {
+                if(documentCounter % 250000 == 0 && documentCounter != 0){
+                    log.getLog("Processed: " + documentCounter + " documents");
+//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     manageMemory.clearMemory(lexicon, invertedIndex); // clear inverted index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
@@ -58,17 +62,17 @@ public class Index {
 
                 documentCounter++;
 
-                if (documentCounter == 10) {
-                    // TODO per debug va tolto
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    break;
-                }
+//                if (documentCounter == 10) {
+//                    // TODO per debug va tolto
+//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+//                    break;
+//                }
 
-                if (documentCounter % 500000 == 0) {
-                    log.getLog(invertedIndex);
-                    log.getLog(lexicon);
-                    log.getLog("Processed: " + documentCounter + " documents");
-                }
+//                if (documentCounter % 500000 == 0) {
+//                    log.getLog(invertedIndex);
+//                    log.getLog(lexicon);
+//                    log.getLog("Processed: " + documentCounter + " documents");
+//                }
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO
             }

@@ -2,7 +2,15 @@ package it.unipi.dii.mircv.index.structures;
 
 import it.unipi.dii.mircv.index.utility.Logs;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public class Lexicon {
@@ -67,6 +75,19 @@ public class Lexicon {
         this.lexicon.get(term).setDf(newDf);
     }
 
+    public static byte[] encodeString(String input, int targetByteLength) {
+        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+        byte[] encodedBytes = new byte[targetByteLength];
+
+        System.arraycopy(inputBytes, 0, encodedBytes, 0, Math.min(inputBytes.length, targetByteLength));
+
+        return encodedBytes;
+    }
+
+    public static String decodeBytes(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8).trim();
+    }
+
     public void saveLexiconToDisk(int indexCounter) {
         String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
         try {
@@ -80,6 +101,34 @@ public class Lexicon {
                 randomAccessFile.writeLong(lexiconElem.getOffset());
             }
 
+//            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+//            FileChannel fileChannel = fileOutputStream.getChannel();
+//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
+//
+//            int targetByteLength = 64; // Lunghezza in byte del termine
+//
+//            for (String term : lexicon.keySet()) {
+//                LexiconElem lexiconElem = lexicon.get(term);
+//
+//                buffer.clear();
+//
+//                // Scrivi i dati nel buffer
+////                byte[] termBytes = lexiconElem.getTerm().getBytes();
+//
+//                byte[] termBytes = encodeString(term, targetByteLength);
+//                buffer.putInt(termBytes.length);
+//                buffer.put(termBytes);
+//
+//                buffer.putInt(lexiconElem.getDf());
+//                buffer.putLong(lexiconElem.getCf());
+//                buffer.putLong(lexiconElem.getOffset());
+//
+//                buffer.flip();
+//
+//                // Scrivi il contenuto del buffer nel canale del file
+//                fileChannel.write(buffer);
+//            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,6 +138,36 @@ public class Lexicon {
         String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
 
         try {
+
+//            FileChannel fileChannel = FileChannel.open(Path.of(filePath));
+//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
+//
+//            while (fileChannel.position() < fileChannel.size()) {
+//                buffer.clear();
+//
+//                int bytesRead = fileChannel.read(buffer);
+//
+//                if (bytesRead == -1) {
+//                    // Non ci sono abbastanza dati nel file
+//                    break;
+//                }
+//
+//                buffer.flip();
+//
+//                int termLength = buffer.getInt();
+//                byte[] termBytes = new byte[termLength];
+//                buffer.get(termBytes);
+////                String term = new String(termBytes);
+//                String term = decodeBytes(termBytes);
+//                int df = buffer.getInt();
+//                long cf = buffer.getLong();
+//                long offset = buffer.getLong();
+//
+//                // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
+//                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+//                this.lexicon.put(term, lexiconElem);
+//            }
+
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
 
             while (randomAccessFile.getFilePointer() < randomAccessFile.length()) {
@@ -100,9 +179,7 @@ public class Lexicon {
                 // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
                 LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
                 this.lexicon.put(term, lexiconElem);
-
             }
-
             randomAccessFile.close();
         } catch (Exception e) {
             e.printStackTrace();
