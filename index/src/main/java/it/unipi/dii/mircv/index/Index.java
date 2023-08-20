@@ -8,6 +8,7 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,12 +23,14 @@ public class Index {
 
         deleteFiles("data/index/");
         deleteFiles("data/index/lexicon/");
+        deleteFiles("data/index/documents/");
 
         log.getLog("Deleted old index files ...");
 
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
+            ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
 
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));// open buffer to read documents
             String line; // start reading document by document
@@ -38,21 +41,12 @@ public class Index {
 
                 MemoryManager manageMemory = new MemoryManager();
                 //if (manageMemory.checkFreeMemory()) {
-                if(documentCounter % 250000 == 0 && documentCounter != 0){
-                    log.getLog("Processed: " + documentCounter + " documents");
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    manageMemory.clearMemory(lexicon, invertedIndex); // clear inverted index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
-                    indexCounter += 1;
-                    //log.getLog(manageMemory); // print memory status after clearing memory
-
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                }
 
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
+                document.setLength(tokens.size());
+                documents.add(document); // add document to the array of documents
 
                 for (String token : tokens) {
                     lexicon.addLexiconElem(token); // add token to the lexicon
@@ -62,11 +56,25 @@ public class Index {
 
                 documentCounter++;
 
-//                if (documentCounter == 10) {
-//                    // TODO per debug va tolto
-//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-//                    break;
-//                }
+                if(documentCounter % 250000 == 0){
+                    log.getLog("Processed: " + documentCounter + " documents");
+//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, documents, indexCounter); // save inverted index to disk
+                    manageMemory.clearMemory(lexicon, invertedIndex); // clear inverted index from memory
+                    invertedIndex = new HashMap<>(); // create a new inverted index
+                    indexCounter += 1;
+                    //log.getLog(manageMemory); // print memory status after clearing memory
+
+                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
+                }
+
+                if (documentCounter == 10) {
+                    // TODO per debug va tolto
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex,documents, indexCounter); // save inverted index to disk
+                    ArrayList<Document> documents1 = Document.readDocuments();
+                    System.out.println(documents1);
+                    break;
+                }
 
 //                if (documentCounter % 500000 == 0) {
 //                    log.getLog(invertedIndex);
@@ -108,6 +116,10 @@ public class Index {
                     }
                 }
             }
+        }
+        //create folder if not exists
+        if (!folder.exists()) {
+            folder.mkdirs();
         }
     }
 

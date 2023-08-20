@@ -4,9 +4,11 @@ import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.structures.PostingList;
 
+import javax.print.Doc;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -57,7 +59,7 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
-    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter){
+    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs, int indexCounter){
 
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
@@ -74,6 +76,8 @@ public class MemoryManager {
 //            System.out.println("Posting list saved to disk: " + postingList.toString());
 //            System.out.println("**************************************");
         }
+        Document.saveDocumentsToDisk(docs);
+
         log.getLog("End index saving to disk");
 
         lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
