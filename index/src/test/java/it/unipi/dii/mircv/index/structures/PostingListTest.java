@@ -24,7 +24,7 @@ class PostingListTest {
         long startOffset = postingList.savePostingListToDisk(1);
 
         // Lettura della posting list da file
-        ArrayList<Posting> loadedPostingList = postingList.readPostingList(1, startOffset);
+        ArrayList<Posting> loadedPostingList = postingList.readPostingList(1, 1,startOffset);
 
         // Verifica che i dati siano stati letti correttamente
         assertEquals(3, loadedPostingList.size());

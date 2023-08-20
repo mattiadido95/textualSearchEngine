@@ -24,8 +24,7 @@ public class Main {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
-            //BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));// open buffer to read documents
             String line; // start reading document by document
 
             int documentCounter = 0;
@@ -60,11 +59,14 @@ public class Main {
 
                 for (String token : tokens) {
                     lexicon.addLexiconElem(token); // add token to the lexicon
-                    addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
+                    int newDf = addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
+                    lexicon.setDf(token, newDf);
                 }
 
                 documentCounter++;
-                if (documentCounter == 2) {
+
+                if (documentCounter == 10) {
+                    // TODO per debug va tolto
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     break;
                 }
@@ -82,16 +84,18 @@ public class Main {
         }
     }
 
-    public static void addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
+    public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
         // check if the token is already in the inverted index and manage the update the posting list
         if (invertedIndex.containsKey(token)) {
             // update posting list for existing token
             PostingList postingList = (PostingList) invertedIndex.get(token); // get the posting list of the existing token
             postingList.updatePostingList(document); // update the posting list
+            return postingList.getPostingListSize(); // return the size of the posting list
         } else {
             // create new posting list for new token
             PostingList postingList = new PostingList(document); // create a new posting list for new token
             invertedIndex.put(token, postingList); // add the posting list to the inverted index
+            return postingList.getPostingListSize(); // return the size of the posting list
         }
     }
 }

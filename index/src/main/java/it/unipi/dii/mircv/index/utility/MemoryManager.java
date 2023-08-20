@@ -61,20 +61,21 @@ public class MemoryManager {
 
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
+            int df = lexicon.getLexicon().get(term).getDf(); // get df of term
             PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
             long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
             lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
-            System.out.println(offset);
 
             PostingList readedPostingList = new PostingList();
-            readedPostingList.readPostingList(indexCounter, offset);
+            readedPostingList.readPostingList(indexCounter, df, offset);
 
             System.out.println("**********CHECKING POSTING LIST*********");
             System.out.println("Posting list readed from disk: " + readedPostingList.toString());
             System.out.println("Posting list saved to disk: " + postingList.toString());
             System.out.println("**************************************");
         }
+
         //lexicon.saveLexiconToDisk(lexicon, indexCounter); // save lexicon to disk
 
 

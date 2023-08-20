@@ -35,8 +35,8 @@ public class LexiconElem {
         this.offset = offset;
     }
 
-    public void incrementDf() {
-        this.df += 1;
+    public void setDf(int newDf) {
+        this.df = newDf;
     }
 
     public void incrementCf() {

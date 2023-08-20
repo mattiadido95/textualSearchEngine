@@ -74,82 +74,55 @@ public class PostingList{
         // posting list doesn't contain the document, create new posting
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
-        size++;
+        this.size++;
     }
 
     public int getPostingListSize() {
-        return this.postings.size();
+        return this.size;
     }
 
     public long savePostingListToDisk(int indexCounter)  {
-        String filePath = "data/index/index_" + indexCounter + ".ser";
+        String filePath = "data/index/index_" + indexCounter + ".bin";
 
         long offset = -1;
 
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+            // Posizionati alla fine del file per l'aggiunta dei dati
+            randomAccessFile.seek(randomAccessFile.length());
 
             // Memorizza la posizione di inizio nel file
-            offset = fileOutputStream.getChannel().position();
+            offset = randomAccessFile.getFilePointer();
+//            System.out.println("Initial offset: " + offset); // Debug: Stampa l'offset
 
-            // Scrivi l'oggetto nel file
-            objectOutputStream.writeInt(this.size);
-            for(Posting posting : this.postings) {
-                objectOutputStream.writeInt(posting.getDocID());
-                objectOutputStream.writeInt(posting.getFreq());
+            for (Posting posting : this.postings) {
+                randomAccessFile.writeInt(posting.getDocID());
+                randomAccessFile.writeInt(posting.getFreq());
             }
-
-            objectOutputStream.close();
-            fileOutputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        /*try (FileChannel channel = new FileOutputStream(filePath, true).getChannel()) {
-
-            offset = channel.size();
-
-            // Serializza l'ArrayList in un array di byte
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(this.postings);
-            objectOutputStream.close();
-
-            // Ottieni l'array di byte serializzato
-            byte[] serializedArrayList = byteArrayOutputStream.toByteArray();
-
-            // Scrivi la lunghezza dell'ArrayList come un intero
-            ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
-            intBuffer.putInt(serializedArrayList.length);
-            intBuffer.flip(); // Prepara il buffer per la lettura
-
-            // Scrivi la lunghezza e l'array serializzato nel FileChannel
-            channel.write(intBuffer);
-            channel.write(ByteBuffer.wrap(serializedArrayList));
-
-//            System.out.println("ArrayList serialized and written successfully!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
         return offset;
     }
 
-    public ArrayList<Posting> readPostingList(int indexCounter, long offset) {
-        String filePath = "data/index/index_" + indexCounter + ".ser";
+    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
+        String filePath = "data/index/index_" + indexCounter + ".bin";
         ArrayList<Posting> result = new ArrayList<>();
 
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "r");
 
+//            System.out.println("File path: " + filePath); // Debug: Stampa il percorso del file
+//            System.out.println("Offset: " + offset); // Debug: Stampa l'offset
+
             // Posizionati nella posizione desiderata
             randomAccessFile.seek(offset);
+//            System.out.println("Size: " + df); // Debug: Stampa la dimensione della posting list
 
-            // Leggi dimensione e arraylist di posting
-            int size = randomAccessFile.readInt();
-            for(int i = 0; i < size; i++) {
+            for(int i = 0; i < df; i++) {
                 int docID = randomAccessFile.readInt();
                 int freq = randomAccessFile.readInt();
                 result.add(new Posting(docID, freq));
@@ -157,39 +130,20 @@ public class PostingList{
 
             randomAccessFile.close();
 
-            // Fai qualcosa con la postingList letta
-            System.out.println("Dimensione della PostingList: " + result.size());
+
+//            System.out.println("Dimensione della PostingList: " + result.size());
+//            System.out.println("PostingList letta, docID e freq " + result.get(0).getDocID() + ", " + result.get(0).getFreq());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-/*
-        try (FileChannel channel = new FileInputStream(filePath).getChannel()) {
-            // Imposta la posizione di lettura all'offset specificato
-            channel.position(offset);
 
-            // Leggi la lunghezza dell'ArrayList (intero) dal FileChannel
-            ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
-            channel.read(intBuffer);
-            intBuffer.flip(); // Prepara il buffer per la lettura
-            int arrayListLength = intBuffer.getInt();
+        this.postings = result;
+        this.size = df;
 
-            // Leggi l'array serializzato dalla lunghezza specificata
-            ByteBuffer serializedArrayListBuffer = ByteBuffer.allocate(arrayListLength);
-            channel.read(serializedArrayListBuffer);
-            byte[] serializedArrayList = serializedArrayListBuffer.array();
-
-            // Deserializza l'ArrayList dall'array serializzato
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serializedArrayList);
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            postings = (ArrayList<Posting>) objectInputStream.readObject();
-            objectInputStream.close();
-
-//            System.out.println("ArrayList read from file successfully!");
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
-        return postings;
+        return result; // serve forse dopo per ricostruire l'indice
     }
+
+
+
 }

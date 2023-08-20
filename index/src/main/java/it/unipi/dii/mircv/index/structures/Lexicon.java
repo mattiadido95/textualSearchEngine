@@ -21,12 +21,10 @@ public class Lexicon {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {
             LexiconElem lexiconElem = this.lexicon.get(term);
-//            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
         } else {
             // lexicon does not contain the term
             LexiconElem lexiconElem = new LexiconElem(term);
-//            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
             this.lexicon.put(term, lexiconElem);
         }
@@ -62,5 +60,9 @@ public class Lexicon {
         this.lexicon = this.lexicon.entrySet().stream()
                 .sorted((e1, e2) -> e1.getValue().getTerm().compareTo(e2.getValue().getTerm()))
                 .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+    }
+
+    public void setDf(String term, int newDf) {
+        this.lexicon.get(term).setDf(newDf);
     }
 }
