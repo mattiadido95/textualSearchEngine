@@ -84,7 +84,7 @@ public class PostingList implements Serializable {
 
         try (FileChannel channel = new FileOutputStream(filePath, true).getChannel()) {
 
-            offset = channel.position();
+            offset = channel.size();
 
             // Serializza l'ArrayList in un array di byte
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -125,6 +125,7 @@ public class PostingList implements Serializable {
             channel.read(intBuffer);
             intBuffer.flip(); // Prepara il buffer per la lettura
             int arrayListLength = intBuffer.getInt();
+            System.out.println("arrayListLength: " + arrayListLength);
 
             // Leggi l'array serializzato dalla lunghezza specificata
             ByteBuffer serializedArrayListBuffer = ByteBuffer.allocate(arrayListLength);
@@ -136,6 +137,7 @@ public class PostingList implements Serializable {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             postings = (ArrayList<Posting>) objectInputStream.readObject();
             objectInputStream.close();
+
 
 //            System.out.println("ArrayList read from file successfully!");
         } catch (IOException | ClassNotFoundException e) {
