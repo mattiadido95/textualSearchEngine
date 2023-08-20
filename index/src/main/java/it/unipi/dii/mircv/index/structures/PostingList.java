@@ -9,18 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostingList implements Serializable {
+public class PostingList{
     private ArrayList<Posting> postings;
+    int size;
 
     Logs log = new Logs();
 
     public PostingList(Document doc) {
         postings = new ArrayList<>();
         postings.add(new Posting(doc.getDocID(), 1));
+        size = 1;
     }
 
     public PostingList() {
         postings = new ArrayList<>();
+        size = 0;
     }
 
     public ArrayList<Posting> getPostings() {
@@ -71,6 +74,7 @@ public class PostingList implements Serializable {
         // posting list doesn't contain the document, create new posting
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
+        size++;
     }
 
     public int getPostingListSize() {
@@ -78,13 +82,34 @@ public class PostingList implements Serializable {
     }
 
     public long savePostingListToDisk(int indexCounter)  {
-        String filePath = "data/index/index_" + indexCounter + ".bin";
+        String filePath = "data/index/index_" + indexCounter + ".ser";
 
         long offset = -1;
 
-        try (FileChannel channel = new FileOutputStream(filePath, true).getChannel()) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
-            offset = channel.position();
+            // Memorizza la posizione di inizio nel file
+            offset = fileOutputStream.getChannel().position();
+
+            // Scrivi l'oggetto nel file
+            objectOutputStream.writeInt(this.size);
+            for(Posting posting : this.postings) {
+                objectOutputStream.writeInt(posting.getDocID());
+                objectOutputStream.writeInt(posting.getFreq());
+            }
+
+            objectOutputStream.close();
+            fileOutputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*try (FileChannel channel = new FileOutputStream(filePath, true).getChannel()) {
+
+            offset = channel.size();
 
             // Serializza l'ArrayList in un array di byte
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -108,14 +133,37 @@ public class PostingList implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+*/
         return offset;
     }
 
     public ArrayList<Posting> readPostingList(int indexCounter, long offset) {
-        String filePath = "data/index/index_" + indexCounter + ".bin";
-        ArrayList<Posting> postings = new ArrayList<>();
+        String filePath = "data/index/index_" + indexCounter + ".ser";
+        ArrayList<Posting> result = new ArrayList<>();
 
+        try {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "r");
+
+            // Posizionati nella posizione desiderata
+            randomAccessFile.seek(offset);
+
+            // Leggi dimensione e arraylist di posting
+            int size = randomAccessFile.readInt();
+            for(int i = 0; i < size; i++) {
+                int docID = randomAccessFile.readInt();
+                int freq = randomAccessFile.readInt();
+                result.add(new Posting(docID, freq));
+            }
+
+            randomAccessFile.close();
+
+            // Fai qualcosa con la postingList letta
+            System.out.println("Dimensione della PostingList: " + result.size());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+/*
         try (FileChannel channel = new FileInputStream(filePath).getChannel()) {
             // Imposta la posizione di lettura all'offset specificato
             channel.position(offset);
@@ -140,7 +188,7 @@ public class PostingList implements Serializable {
 //            System.out.println("ArrayList read from file successfully!");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
 
         return postings;
     }
