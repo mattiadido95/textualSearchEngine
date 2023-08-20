@@ -8,6 +8,7 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,50 +32,55 @@ public class Main {
 
             while ((line = br.readLine()) != null) {
 
-                MemoryManager manageMemory = new MemoryManager();
-                if (manageMemory.checkFreeMemory()) {
-                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-
-                    // per ogni termine del lexicon, prendere la posting list dal inverted index e aggiungerla al file
-                    // ritornare dimenisoni della posting list e offset nel file
-                    // assegnare offset al termine del lexicon
-                    // salvare lexicon su disco
-
-
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-
-                    manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
-                    indexCounter += 1;
-
-                    //log.getLog(manageMemory); // print memory status after clearing memory
-
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
-                    // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
-                }
+//                MemoryManager manageMemory = new MemoryManager();
+//                if (manageMemory.checkFreeMemory()) {
+//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+//
+//                    // per ogni termine del lexicon, prendere la posting list dal inverted index e aggiungerla al file
+//                    // ritornare dimenisoni della posting list e offset nel file
+//                    // assegnare offset al termine del lexicon
+//                    // salvare lexicon su disco
+//
+//
+//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+//
+//                    manageMemory.clearMemory(invertedIndex); // clear inverted index from memory
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    indexCounter += 1;
+//
+//                    //log.getLog(manageMemory); // print memory status after clearing memory
+//
+//                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
+//                    // TODO verificare se le classi posting e posting list vanno davvero fatte serializzabili
+//                }
 
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
+                document.saveDocumentToDisk(); // save document to disk
 
-                for (String token : tokens) {
-                    lexicon.addLexiconElem(token); // add token to the lexicon
-                    int newDf = addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
-                    lexicon.setDf(token, newDf);
-                }
+//                for (String token : tokens) {
+//                    lexicon.addLexiconElem(token); // add token to the lexicon
+//                    int newDf = addElementToInvertedIndex(invertedIndex, token, document); // add token to the inverted index
+//                    lexicon.setDf(token, newDf);
+//                }
 
                 documentCounter++;
 
                 if (documentCounter == 10) {
                     // TODO per debug va tolto
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    break;
+//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                    ArrayList<Document> documents = Document.loadDocumentFromDisk(documentCounter);
+                    for(int i =0; i < 6; i++) {
+                        System.out.println(documents.get(i));
+                    System.exit(0);
                 }
 
                 if (documentCounter % 500000 == 0) {
                     log.getLog(invertedIndex);
                     log.getLog(lexicon);
                     log.getLog("Processed: " + documentCounter + " documents");
+                    }
                 }
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO

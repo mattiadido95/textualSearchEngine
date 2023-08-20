@@ -29,6 +29,7 @@ public class Preprocessing {
             String stem = porterStemmer.stemWord(word);
             stemWords.add(stem);
         }
+        this.doc.setLength(words.size());
         this.tokens = stemWords;
 
     }
