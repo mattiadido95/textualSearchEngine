@@ -63,4 +63,8 @@ public class Lexicon {
                 .sorted((e1, e2) -> e1.getValue().getTerm().compareTo(e2.getValue().getTerm()))
                 .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
+
+    public void setDf(String term, int newDf) {
+        this.lexicon.get(term).setDf(newDf);
+    }
 }
