@@ -66,7 +66,6 @@ public class MemoryManager {
             long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
             lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
-//            System.out.println(offset);
 
             PostingList readedPostingList = new PostingList();
             readedPostingList.readPostingList(indexCounter, df, offset);
@@ -76,6 +75,7 @@ public class MemoryManager {
             System.out.println("Posting list saved to disk: " + postingList.toString());
             System.out.println("**************************************");
         }
+
         //lexicon.saveLexiconToDisk(lexicon, indexCounter); // save lexicon to disk
 
 

@@ -24,8 +24,7 @@ public class Main {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
-            //BufferedReader br = new BufferedReader(new FileReader(COLLECTION_PATH)); // open buffer to read documents
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));// open buffer to read documents
             String line; // start reading document by document
 
             int documentCounter = 0;
@@ -65,7 +64,8 @@ public class Main {
                 }
 
                 documentCounter++;
-                if (documentCounter == 2) {
+
+                if (documentCounter == 10) {
                     // TODO per debug va tolto
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     break;

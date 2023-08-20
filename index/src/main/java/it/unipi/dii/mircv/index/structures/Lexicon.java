@@ -21,12 +21,10 @@ public class Lexicon {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {
             LexiconElem lexiconElem = this.lexicon.get(term);
-//            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
         } else {
             // lexicon does not contain the term
             LexiconElem lexiconElem = new LexiconElem(term);
-//            lexiconElem.incrementDf();
             lexiconElem.incrementCf();
             this.lexicon.put(term, lexiconElem);
         }
