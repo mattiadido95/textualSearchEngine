@@ -59,7 +59,7 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
-    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs, int indexCounter){
+    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter){
 
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
@@ -76,8 +76,6 @@ public class MemoryManager {
 //            System.out.println("Posting list saved to disk: " + postingList.toString());
 //            System.out.println("**************************************");
         }
-        Document.saveDocumentsToDisk(docs);
-
         log.getLog("End index saving to disk");
 
         lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
@@ -119,9 +117,9 @@ public class MemoryManager {
 */
     }
 
-    public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex) {
+    public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs){
         invertedIndex.clear();  // clear index
-        invertedIndex = null; // set inverted index to null to free memory
+        docs.clear(); // clear docs
         lexicon.getLexicon().clear(); // clear lexicon
     }
 }

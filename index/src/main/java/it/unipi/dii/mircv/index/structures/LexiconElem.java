@@ -15,7 +15,7 @@ public class LexiconElem {
         this.offset = offset;
     }
     public LexiconElem(String term, int df, long cf, long offset) {
-        this.term = term; // TODO ridondante si puo prendere dalla key della hashmap del lexicon
+        this.term = term; // TODO rimuovere ridondanza, forse era stata inserita per fare la sort del lexicon(ma non serve piu)
         this.df = df;
         this.cf = cf;
         this.offset = offset;

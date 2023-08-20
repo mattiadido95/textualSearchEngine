@@ -194,6 +194,7 @@ public class PostingList {
             e.printStackTrace();
         }
 
+        //TODO rendere la funzione statica ed eliminare le due righe sottostanti oppure eliminare la return
         this.postings = result;
         this.size = df;
 

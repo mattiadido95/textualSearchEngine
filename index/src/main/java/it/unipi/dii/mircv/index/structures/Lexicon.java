@@ -95,7 +95,7 @@ public class Lexicon {
 
             for (String term : lexicon.keySet()) {
                 LexiconElem lexiconElem = lexicon.get(term);
-                randomAccessFile.writeUTF(lexiconElem.getTerm());
+                randomAccessFile.writeUTF(term);
                 randomAccessFile.writeInt(lexiconElem.getDf());
                 randomAccessFile.writeLong(lexiconElem.getCf());
                 randomAccessFile.writeLong(lexiconElem.getOffset());

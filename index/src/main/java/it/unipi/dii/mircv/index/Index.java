@@ -1,9 +1,7 @@
 package it.unipi.dii.mircv.index;
 
 import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
-import it.unipi.dii.mircv.index.structures.Document;
-import it.unipi.dii.mircv.index.structures.Lexicon;
-import it.unipi.dii.mircv.index.structures.PostingList;
+import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 
@@ -59,21 +57,47 @@ public class Index {
                 if(documentCounter % 250000 == 0){
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, documents, indexCounter); // save inverted index to disk
-                    manageMemory.clearMemory(lexicon, invertedIndex); // clear inverted index from memory
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                    Document.saveDocumentsToDisk(documents,indexCounter); // save documents to disk
+                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
                     indexCounter += 1;
                     //log.getLog(manageMemory); // print memory status after clearing memory
 
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco
+                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco (forse non serve piu)
                 }
 
-                if (documentCounter == 10) {
-                    // TODO per debug va tolto
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex,documents, indexCounter); // save inverted index to disk
-                    ArrayList<Document> documents1 = Document.readDocuments();
+                if (documentCounter % 10 == 0) {
+                    // TODO TESTING dei primi 30 documenti -> 3 file diversi
+                    log.getLog("Processed: " + documentCounter + " documents");
+//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+                    //save Structures to disk
+                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                    Document.saveDocumentsToDisk(documents,indexCounter); // save documents to disk
+                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+                    //TODO serve davvero fare la new
+                    invertedIndex = new HashMap<>(); // create a new inverted index
+
+                    //read Structures from disk
+                    lexicon.readLexiconFromDisk(indexCounter);
+                    // per ogni chiave del lexicon, leggi il posting list dal file
+                    for(String key : lexicon.getLexicon().keySet()){
+                        //get lexicon elem
+                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
+                        PostingList postingList = new PostingList();
+                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
+                        System.out.println(lexiconElem);
+                        System.out.println(postingList);
+                    }
+                    // clear per sicurezza
+                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+                    invertedIndex = new HashMap<>(); // create a new inverted index
+
+                    ArrayList<Document> documents1 = Document.readDocuments(indexCounter);
                     System.out.println(documents1);
-                    break;
+                    indexCounter += 1;
+                    if(documentCounter == 30)
+                        break;
                 }
 
 //                if (documentCounter % 500000 == 0) {
