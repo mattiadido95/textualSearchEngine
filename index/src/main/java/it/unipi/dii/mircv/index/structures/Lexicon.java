@@ -2,6 +2,7 @@ package it.unipi.dii.mircv.index.structures;
 
 import it.unipi.dii.mircv.index.utility.Logs;
 
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 
 public class Lexicon {
@@ -65,4 +66,48 @@ public class Lexicon {
     public void setDf(String term, int newDf) {
         this.lexicon.get(term).setDf(newDf);
     }
+
+    public void saveLexiconToDisk(int indexCounter) {
+        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+        try {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+
+            for (String term : lexicon.keySet()) {
+                LexiconElem lexiconElem = lexicon.get(term);
+                randomAccessFile.writeUTF(lexiconElem.getTerm());
+                randomAccessFile.writeInt(lexiconElem.getDf());
+                randomAccessFile.writeLong(lexiconElem.getCf());
+                randomAccessFile.writeLong(lexiconElem.getOffset());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readLexiconFromDisk(int indexCounter) {
+        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+
+        try {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+
+            while (randomAccessFile.getFilePointer() < randomAccessFile.length()) {
+                String term = randomAccessFile.readUTF();
+                int df = randomAccessFile.readInt();
+                long cf = randomAccessFile.readLong();
+                long offset = randomAccessFile.readLong();
+
+                // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
+                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+                this.lexicon.put(term, lexiconElem);
+
+            }
+
+            randomAccessFile.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

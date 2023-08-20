@@ -70,13 +70,19 @@ public class MemoryManager {
             PostingList readedPostingList = new PostingList();
             readedPostingList.readPostingList(indexCounter, df, offset);
 
-            System.out.println("**********CHECKING POSTING LIST*********");
-            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
-            System.out.println("Posting list saved to disk: " + postingList.toString());
-            System.out.println("**************************************");
+//            System.out.println("**********CHECKING POSTING LIST*********");
+//            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
+//            System.out.println("Posting list saved to disk: " + postingList.toString());
+//            System.out.println("**************************************");
         }
 
-        //lexicon.saveLexiconToDisk(lexicon, indexCounter); // save lexicon to disk
+        lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
+        lexicon.getLexicon().clear(); // clear lexicon
+        lexicon.readLexiconFromDisk(indexCounter); // read lexicon from disk
+
+        System.out.println("**********CHECKING LEXICON*********");
+        System.out.println("Lexicon saved to disk: " + lexicon.toString());
+        System.out.println("**************************************");
 
 
 

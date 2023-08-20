@@ -11,6 +11,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.lang.System.exit;
+
 public class Main {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static Logs log = new Logs(); // create a log object to print log messages
@@ -19,6 +21,10 @@ public class Main {
     public static void main(String[] args) {
 
         log.getLog("Start indexing ...");
+
+        deleteFiles("data/index/");
+        deleteFiles("data/index/lexicon/");
+
 
         try {
             Lexicon lexicon = new Lexicon(); // create a lexicon
@@ -98,6 +104,23 @@ public class Main {
             return postingList.getPostingListSize(); // return the size of the posting list
         }
     }
+
+
+    private static void deleteFiles(String folderPath) {
+        File folder = new File(folderPath);
+
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        file.delete();
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
