@@ -14,6 +14,12 @@ public class LexiconElem {
         this.cf = cf;
         this.offset = offset;
     }
+    public LexiconElem(String term, int df, long cf, long offset) {
+        this.term = term; // TODO ridondante si puo prendere dalla key della hashmap del lexicon
+        this.df = df;
+        this.cf = cf;
+        this.offset = offset;
+    }
 
     public String getTerm() {
         return this.term;

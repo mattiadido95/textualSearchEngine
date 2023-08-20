@@ -23,11 +23,11 @@ public class MemoryManager {
         setFreeMemoryPercentage();
     }
 
-    public void printMemory() {
+    public void printMemory(String timestamp) {
         long freeMemoryMB = bytesToMegabytes(getFreeMemory());
         long totalMemoryMB = bytesToMegabytes(getTotalMemory());
 
-        System.out.println("Memory status:");
+        System.out.println("["+timestamp+"] Memory status:");
         System.out.println(" -> Free memory: " + freeMemoryMB + " MB");
         System.out.println(" -> Total memory: " + totalMemoryMB + " MB");
         System.out.println(" -> Free memory percentage: " + this.freeMemoryPercentage + "%");
@@ -66,17 +66,25 @@ public class MemoryManager {
             long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
             lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
-
-            PostingList readedPostingList = new PostingList();
-            readedPostingList.readPostingList(indexCounter, df, offset);
-
-            System.out.println("**********CHECKING POSTING LIST*********");
-            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
-            System.out.println("Posting list saved to disk: " + postingList.toString());
-            System.out.println("**************************************");
+//            PostingList readedPostingList = new PostingList();
+//            readedPostingList.readPostingList(indexCounter, df, offset);
+//
+//            System.out.println("**********CHECKING POSTING LIST*********");
+//            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
+//            System.out.println("Posting list saved to disk: " + postingList.toString());
+//            System.out.println("**************************************");
         }
+        log.getLog("End index saving to disk");
 
-        //lexicon.saveLexiconToDisk(lexicon, indexCounter); // save lexicon to disk
+        lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
+        lexicon.getLexicon().clear(); // clear lexicon
+//        lexicon.readLexiconFromDisk(indexCounter); // read lexicon from disk
+
+        log.getLog("End lexicon saving to disk");
+
+//        System.out.println("**********CHECKING LEXICON*********");
+//        System.out.println("Lexicon saved to disk: " + lexicon.toString());
+//        System.out.println("**************************************");
 
 
 
@@ -107,8 +115,9 @@ public class MemoryManager {
 */
     }
 
-    public void clearMemory(HashMap<String, PostingList> invertedIndex) {
+    public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex) {
         invertedIndex.clear();  // clear index
         invertedIndex = null; // set inverted index to null to free memory
+        lexicon.getLexicon().clear(); // clear lexicon
     }
 }
