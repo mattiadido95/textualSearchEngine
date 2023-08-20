@@ -1,10 +1,14 @@
 package it.unipi.dii.mircv.index.utility;
 
+import it.unipi.dii.mircv.index.structures.Document;
+import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.structures.PostingList;
 
+import javax.print.Doc;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -21,11 +25,11 @@ public class MemoryManager {
         setFreeMemoryPercentage();
     }
 
-    public void printMemory() {
+    public void printMemory(String timestamp) {
         long freeMemoryMB = bytesToMegabytes(getFreeMemory());
         long totalMemoryMB = bytesToMegabytes(getTotalMemory());
 
-        System.out.println("Memory status:");
+        System.out.println("["+timestamp+"] Memory status:");
         System.out.println(" -> Free memory: " + freeMemoryMB + " MB");
         System.out.println(" -> Total memory: " + totalMemoryMB + " MB");
         System.out.println(" -> Free memory percentage: " + this.freeMemoryPercentage + "%");
@@ -55,19 +59,36 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
-    public void saveInvertedIndexToDisk(HashMap<String, PostingList> invertedIndex) {
-        // write object to file
-        try (FileOutputStream fileOut = new FileOutputStream(filePath, true);
-             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter){
 
-            objectOut.writeObject(invertedIndex);
-            objectOut.writeObject(null); // stopping condition for reading an hashmap object
+        for (String term : lexicon.getLexicon().keySet()) {
+            // for each term in lexicon
+            int df = lexicon.getLexicon().get(term).getDf(); // get df of term
+            PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
+            long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
+            lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
-            log.getLog("The Object  was successfully written into invertedIndex.txt");
-
-        } catch (IOException e) {
-            e.printStackTrace();
+//            PostingList readedPostingList = new PostingList();
+//            readedPostingList.readPostingList(indexCounter, df, offset);
+//
+//            System.out.println("**********CHECKING POSTING LIST*********");
+//            System.out.println("Posting list readed from disk: " + readedPostingList.toString());
+//            System.out.println("Posting list saved to disk: " + postingList.toString());
+//            System.out.println("**************************************");
         }
+        log.getLog("End index saving to disk");
+
+        lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
+        lexicon.getLexicon().clear(); // clear lexicon
+//        lexicon.readLexiconFromDisk(indexCounter); // read lexicon from disk
+
+        log.getLog("End lexicon saving to disk");
+
+//        System.out.println("**********CHECKING LEXICON*********");
+//        System.out.println("Lexicon saved to disk: " + lexicon.toString());
+//        System.out.println("**************************************");
+
+
 
         // TODO implement reading from file
 /*
@@ -96,8 +117,9 @@ public class MemoryManager {
 */
     }
 
-    public void clearMemory(HashMap<String, PostingList> invertedIndex) {
+    public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs){
         invertedIndex.clear();  // clear index
-        invertedIndex = null; // set inverted index to null to free memory
+        docs.clear(); // clear docs
+        lexicon.getLexicon().clear(); // clear lexicon
     }
 }

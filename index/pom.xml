@@ -21,12 +21,23 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.9.0</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ca.rmen</groupId>
             <artifactId>porter-stemmer</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.rmen</groupId>
+            <artifactId>porter-stemmer</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -39,7 +50,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>it.unipi.dii.mircv.index.Main</mainClass>
+                            <mainClass>it.unipi.dii.mircv.index.Index</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -14,6 +14,12 @@ public class LexiconElem {
         this.cf = cf;
         this.offset = offset;
     }
+    public LexiconElem(String term, int df, long cf, long offset) {
+        this.term = term; // TODO rimuovere ridondanza, forse era stata inserita per fare la sort del lexicon(ma non serve piu)
+        this.df = df;
+        this.cf = cf;
+        this.offset = offset;
+    }
 
     public String getTerm() {
         return this.term;
@@ -31,11 +37,25 @@ public class LexiconElem {
         return this.offset;
     }
 
-    public void incrementDf() {
-        this.df += 1;
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    public void setDf(int newDf) {
+        this.df = newDf;
     }
 
     public void incrementCf() {
         this.cf += 1;
+    }
+
+    @Override
+    public String toString() {
+        return "LexiconElem{" +
+                "term='" + term + '\'' +
+                ", df=" + df +
+                ", cf=" + cf +
+                ", offset=" + offset +
+                '}';
     }
 }
