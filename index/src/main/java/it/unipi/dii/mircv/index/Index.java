@@ -43,7 +43,6 @@ public class Index {
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
-                document.setLength(tokens.size());
                 documents.add(document); // add document to the array of documents
 
                 for (String token : tokens) {
