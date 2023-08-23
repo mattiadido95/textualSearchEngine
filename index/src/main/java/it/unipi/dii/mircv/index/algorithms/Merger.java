@@ -50,7 +50,10 @@ public class Merger {
 
                while (fileChannel.read(buffer) != -1) {
                    buffer.flip();
-
+                   int docID = buffer.getInt();
+                   int frequency = buffer.getInt();
+                   Posting posting = new Posting(docID, frequency);
+                   postingsList.add(posting);
 
                    buffer.clear();
                }
