@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Document{
+    private static final int DOCNO_LENGTH = 64;
+
     private int docID;
     private String docNo;
     private String URL;
@@ -84,12 +86,12 @@ public class Document{
 
                 String docNo = doc.getDocNo();
                 byte[] docNoBytes = docNo.getBytes(StandardCharsets.UTF_8);
-                if (docNoBytes.length > 50) {
+                if (docNoBytes.length > DOCNO_LENGTH) {
                     throw new IllegalArgumentException("Document number exceeds maximum length.");
                 }
 
                 // Scrivi la stringa come array di byte, riempita o tagliata per adattarsi alla dimensione fissa
-                byte[] paddedDocNoBytes = new byte[50];
+                byte[] paddedDocNoBytes = new byte[DOCNO_LENGTH];
                 System.arraycopy(docNoBytes, 0, paddedDocNoBytes, 0, docNoBytes.length);
                 buffer.put(paddedDocNoBytes);
 
@@ -132,6 +134,7 @@ public class Document{
 
             // Leggi i dati dal file in blocchi di 1024 byte
             while (fileChannel.read(buffer) > 0) {
+                //TODO controlla flip
                 buffer.flip();
 
                 // Leggi i dati dal buffer
@@ -139,7 +142,7 @@ public class Document{
                     Document doc = new Document();
                     doc.docID = buffer.getInt();
 
-                    byte[] docNoBytes = new byte[50];
+                    byte[] docNoBytes = new byte[DOCNO_LENGTH];
                     buffer.get(docNoBytes);
                     doc.docNo = new String(docNoBytes, StandardCharsets.UTF_8).trim();
 
