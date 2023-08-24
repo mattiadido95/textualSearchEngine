@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
+    private static final String INDEX_PATH = "data/collection/collection.tsv";
     private static Logs log = new Logs(); // create a log object to print log messages
     private static int indexCounter = 0;
 
@@ -21,7 +22,7 @@ public class Index {
 
         Spimi spimi = new Spimi(COLLECTION_PATH);
         spimi.execute();
-        Merger merger = new Merger(COLLECTION_PATH, spimi.getIndexCounter());
+        Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
         merger.execute();
 
     }
