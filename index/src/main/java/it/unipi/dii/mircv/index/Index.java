@@ -21,7 +21,7 @@ public class Index {
 
         Spimi spimi = new Spimi(COLLECTION_PATH);
         spimi.execute();
-        Merger merger = new Merger(COLLECTION_PATH,spimi.getIndexCounter());
+        Merger merger = new Merger(COLLECTION_PATH, spimi.getIndexCounter());
         merger.execute();
 
     }

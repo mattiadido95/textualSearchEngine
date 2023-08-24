@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class Document{
+public class Document {
     private static final int DOCNO_LENGTH = 64;
 
     private int docID;
@@ -25,7 +25,7 @@ public class Document{
         parseDocument();
     }
 
-    public Document(int docID,String docNo, int length){
+    public Document(int docID, String docNo, int length) {
         this.docID = docID;
         this.docNo = docNo;
         this.length = length;
@@ -67,7 +67,7 @@ public class Document{
         return this.body;
     }
 
-    public void setLength(int length){
+    public void setLength(int length) {
         this.length = length;
     }
 
@@ -118,8 +118,6 @@ public class Document{
             e.printStackTrace();
         }
     }
-
-
 
     public static ArrayList<Document> readDocuments(int index) {
         String filePath = "data/index/documents/documents_" + index + ".bin";
