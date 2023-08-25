@@ -2,10 +2,7 @@ package it.unipi.dii.mircv.index.structures;
 
 import it.unipi.dii.mircv.index.utility.Logs;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -188,5 +185,23 @@ public class Lexicon {
         }
     }
 
+    public String readEntry(DataInputStream dis,int i) throws IOException {
+        String term = dis.readUTF();
+        int df = dis.readInt();
+        long cf = dis.readLong();
+        long offset = dis.readLong();
+        LexiconElem lexiconElem = new LexiconElem(term,df,cf,offset);
+        this.lexicon.put(term + i,lexiconElem);
+        return term;
+    }
+
+    public static String writeEntry(DataOutputStream dos,String term, int df,long cf, long offset) throws IOException {
+        dos.writeUTF(term);
+        dos.writeInt(df);
+        dos.writeLong(cf);
+        dos.writeLong(offset);
+
+        return term;
+    }
 
 }
