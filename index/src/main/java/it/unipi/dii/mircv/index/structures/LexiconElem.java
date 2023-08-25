@@ -49,6 +49,11 @@ public class LexiconElem {
         this.cf += 1;
     }
 
+    public void mergeLexiconElem(LexiconElem lexiconElem) {
+        this.df += lexiconElem.getDf();
+        this.cf += lexiconElem.getCf();
+    }
+
     @Override
     public String toString() {
         return "LexiconElem{" +
