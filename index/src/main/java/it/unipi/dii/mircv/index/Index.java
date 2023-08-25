@@ -8,20 +8,23 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
+    private static final String INDEX_PATH = "data/index";
     private static Logs log = new Logs(); // create a log object to print log messages
     private static int indexCounter = 0;
 
     public static void main(String[] args) {
-
         Spimi spimi = new Spimi(COLLECTION_PATH);
         spimi.execute();
-        Merger merger = new Merger(COLLECTION_PATH, spimi.getIndexCounter());
+        System.out.println(spimi.getIndexCounter());
+        Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
+        System.out.println(merger);
         merger.execute();
 
     }
