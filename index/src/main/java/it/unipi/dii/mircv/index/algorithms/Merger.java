@@ -157,7 +157,7 @@ public class Merger {
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                     // scrittura newPostingList nel file index
-                    long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
+                    long offset = newPostingList.savePostingListToDisk(-1);git
                     //aggiorno il newLexiconElem con l'offset della posting list appena scritta
                     newLexiconElem.setOffset(offset);
                     //aggiungo il newLexiconElem al lessico
