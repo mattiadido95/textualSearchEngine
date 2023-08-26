@@ -156,6 +156,8 @@ public class PostingList {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
 
+
+
         ArrayList<Posting> result = new ArrayList<>();
 
         try {
