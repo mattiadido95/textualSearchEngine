@@ -162,4 +162,25 @@ public class Document {
         return documents;
     }
 
+    public static void ConcatenateFiles(ArrayList<String> fileNames, String outputFileName) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(outputFileName);
+            FileChannel outputChannel = outputStream.getChannel();
+
+            for (String fileName : fileNames) {
+                FileInputStream inputStream = new FileInputStream(fileName);
+                FileChannel inputChannel = inputStream.getChannel();
+                outputChannel.transferFrom(inputChannel, outputChannel.size(), inputChannel.size());
+                inputChannel.close();
+                inputStream.close();
+            }
+
+            outputChannel.close();
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

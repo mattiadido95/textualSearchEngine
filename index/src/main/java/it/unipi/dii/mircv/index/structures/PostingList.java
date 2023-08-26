@@ -83,14 +83,14 @@ public class PostingList {
     }
 
     public long savePostingListToDisk(int indexCounter) {
-        String filePath = "";
-        long offset = -1;
-
+        String filePath;
         if (indexCounter == -1) {
+            // TODO implementare scrittura postinglist merge
             filePath = "data/index/index.bin";
         } else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
+            long offset = -1;
 
         try {
 //            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
@@ -145,7 +145,6 @@ public class PostingList {
         }
 
         return offset;
-
 
     }
 
