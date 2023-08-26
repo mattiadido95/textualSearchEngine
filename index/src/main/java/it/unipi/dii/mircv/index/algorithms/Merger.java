@@ -96,7 +96,6 @@ public class Merger {
             String term = this.nextTerm(term_index); // termine piu piccolo trovato nei file lessico
 
             while (term != null) {
-
                 PostingList newPostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem(term);
 
@@ -108,13 +107,16 @@ public class Merger {
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                     // scrittura newPostingList nel file index
-                    long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
-                    //aggiorno il newLexiconElem con l'offset della posting list appena scritta
-                    newLexiconElem.setOffset(offset);
-                    //salvo il nuovo elemento lessico nel file lessico
-                    Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset());
-                    // TODO siamo sicuri che il nuovo lessico entri tutto in memoria?
+                    if(i == 0) {
+                        long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
+                        //aggiorno il newLexiconElem con l'offset della posting list appena scritta
+                        newLexiconElem.setOffset(offset);
+                    } else {
+                        newPostingList.savePostingListToDisk(-1);
+                    }
                 }
+                //salvo il nuovo elemento lessico nel file lessico
+                Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset());
                 term = this.nextTerm(term_index);
             }
             // chiudi tutti i file
