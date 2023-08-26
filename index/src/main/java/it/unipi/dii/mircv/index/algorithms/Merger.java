@@ -95,7 +95,7 @@ public class Merger {
             String term = this.nextTerm(term_index); // termine piu piccolo trovato nei file lessico
 
             while (term != null) {
-                System.out.println(term);
+
                 PostingList newPostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem(term);
 

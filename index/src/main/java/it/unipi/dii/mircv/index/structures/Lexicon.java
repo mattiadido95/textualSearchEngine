@@ -140,7 +140,13 @@ public class Lexicon {
     }
 
     public void readLexiconFromDisk(int indexCounter) {
-        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+        String filePath;
+
+        if (indexCounter == -1){
+            filePath = "data/index/lexicon.bin";
+        }else {
+            filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+        }
 
         try {
 

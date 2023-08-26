@@ -149,7 +149,13 @@ public class PostingList {
     }
 
     public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
-        String filePath = "data/index/index_" + indexCounter + ".bin";
+        String filePath;
+        if(indexCounter == -1) {
+            filePath = "data/index/index.bin";
+        }else {
+            filePath = "data/index/index_" + indexCounter + ".bin";
+        }
+
         ArrayList<Posting> result = new ArrayList<>();
 
         try {

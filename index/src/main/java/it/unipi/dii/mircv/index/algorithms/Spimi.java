@@ -110,7 +110,7 @@ public class Spimi {
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    ArrayList<Document> documents1 = Document.readDocuments(indexCounter);
+                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
                     System.out.println(documents1);
                     indexCounter += 1;
                     if (documentCounter == 30)
