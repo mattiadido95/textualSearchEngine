@@ -2,6 +2,8 @@ package it.unipi.dii.mircv.index.algorithms;
 
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.structures.LexiconElem;
+import it.unipi.dii.mircv.index.structures.Posting;
+import it.unipi.dii.mircv.index.structures.PostingList;
 import it.unipi.dii.mircv.index.utility.Logs;
 
 import java.io.*;
@@ -16,7 +18,7 @@ public class Merger {
     private String INDEX_PATH;
     private int numberOfFiles;
     private Logs log;
-    private ArrayList<ArrayList<String>> terms;
+    private ArrayList<ArrayList<String>> terms; // matrix of terms, each row is a list of terms and columns are the files
 
     public Merger(String INDEX_PATH, int numberOfFiles) {
         this.INDEX_PATH = INDEX_PATH;
@@ -55,6 +57,7 @@ public class Merger {
                 smallestTerm = currentTerm;
                 file_index.clear();
                 file_index.add(i);
+                // TODO MATTEO se io cancello la lista e poi inserisco quando ho un termine piu piccolo che fine fanno gli indici cancellati?
             }else if (currentTerm.equals(smallestTerm)) {
                 file_index.add(i);
             }
@@ -71,7 +74,7 @@ public class Merger {
         // TODO implement merge algorithm
         log.getLog("Start merging ...");
         //load in memory first file index_0
-        ArrayList<Integer> term_index = new ArrayList<>();
+        ArrayList<Integer> term_index = new ArrayList<>(); // lista degli indici dei file che hanno il termine più piccolo
 //
 //        System.out.print(this.nextTerm(index));
 //        System.out.println(index);
@@ -139,14 +142,29 @@ public class Merger {
                 readers.add(new DataInputStream(new FileInputStream(inputFile)));
             }
             //get the term to be processed
-            String term = this.nextTerm(term_index);
+            String term = this.nextTerm(term_index); // termine piu piccolo trovato nei file lessico
 
             while(term != null) {
                 Lexicon lexicon = new Lexicon();
+                PostingList newPostingList = new PostingList();
+                LexiconElem newLexiconElem = new LexiconElem(term);
 
                 for (int i = 0; i < term_index.size(); i++) {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
-                    lexicon.readEntry(readers.get((i)),i);
+                    LexiconElem lexiconElem = lexicon.readEntry(readers.get((i)),i);
+                    // recupero la posting list dal file index_i dove i è dato da term_index(i)
+                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset());
+                    //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
+                    newLexiconElem.mergeLexiconElem(lexiconElem);
+                    // scrittura newPostingList nel file index
+                    long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
+                    //aggiorno il newLexiconElem con l'offset della posting list appena scritta
+                    newLexiconElem.setOffset(offset);
+                    //aggiungo il newLexiconElem al lessico
+                    lexicon.addLexiconElem(newLexiconElem);
+                    // TODO siamo sicuri che il nuovo lessico entri tutto in memoria?
+
+
                 }
                 //per ogni elemento nel lexicon fare il merge dei termini dentro lexicon (df,cf)
                 //fare concat ti tutte le posting list accedendo agli offset di lexicon il file associato si trova usando la lista term_index

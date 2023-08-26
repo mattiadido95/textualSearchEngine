@@ -25,6 +25,10 @@ public class Lexicon {
         return this.lexicon;
     }
 
+    public void addLexiconElem(LexiconElem lexiconElem) {
+        this.lexicon.put(lexiconElem.getTerm(), lexiconElem);
+    }
+
     public void addLexiconElem(String term) {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {
@@ -185,14 +189,14 @@ public class Lexicon {
         }
     }
 
-    public String readEntry(DataInputStream dis,int i) throws IOException {
+    public LexiconElem readEntry(DataInputStream dis,int i) throws IOException {
         String term = dis.readUTF();
         int df = dis.readInt();
         long cf = dis.readLong();
         long offset = dis.readLong();
         LexiconElem lexiconElem = new LexiconElem(term,df,cf,offset);
-        this.lexicon.put(term + i,lexiconElem);
-        return term;
+        this.lexicon.put(term + i,lexiconElem); // TODO MATTEO chiedere a cosa serve reinserire
+        return lexiconElem;
     }
 
     public static String writeEntry(DataOutputStream dos,String term, int df,long cf, long offset) throws IOException {
