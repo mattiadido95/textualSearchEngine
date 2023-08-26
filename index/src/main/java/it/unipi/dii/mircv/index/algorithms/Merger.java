@@ -95,7 +95,6 @@ public class Merger {
             String term = this.nextTerm(term_index); // termine piu piccolo trovato nei file lessico
 
             while (term != null) {
-
                 PostingList newPostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem(term);
 
@@ -103,23 +102,20 @@ public class Merger {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
                     LexiconElem lexiconElem = Lexicon.readEntry(readers, readOffset, term_index.get(i));
                     // recupero la posting list dal file index_i dove i è dato da term_index(i)
-
-                    if (lexiconElem.getTerm().equals("â\u0080¦")) {
-                        System.out.println("Error: terms are different");
-
-                    }
-
                     newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset());
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                     // scrittura newPostingList nel file index
-                    long offset = newPostingList.savePostingListToDisk(-1);
-                    //aggiorno il newLexiconElem con l'offset della posting list appena scritta
-                    newLexiconElem.setOffset(offset);
-                    //salvo il nuovo elemento lessico nel file lessico
-                    Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset());
-                    // TODO siamo sicuri che il nuovo lessico entri tutto in memoria?
+                    if(i == 0) {
+                        long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
+                        //aggiorno il newLexiconElem con l'offset della posting list appena scritta
+                        newLexiconElem.setOffset(offset);
+                    } else {
+                        newPostingList.savePostingListToDisk(-1);
+                    }
                 }
+                //salvo il nuovo elemento lessico nel file lessico
+                Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset());
                 term = this.nextTerm(term_index);
             }
             // chiudi tutti i file
