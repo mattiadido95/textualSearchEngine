@@ -4,7 +4,6 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Document {
@@ -119,8 +118,16 @@ public class Document {
         }
     }
 
-    public static ArrayList<Document> readDocuments(int index) {
-        String filePath = "data/index/documents/documents_" + index + ".bin";
+    public static ArrayList<Document> readDocumentsFromDisk(int index) {
+        String filePath;
+
+        if(index == -1){
+            filePath = "data/index/documents.bin";
+        }else{
+            filePath = "data/index/documents/documents_" + index + ".bin";
+        }
+
+
         ArrayList<Document> documents = new ArrayList<>();
 
         try {
@@ -128,7 +135,7 @@ public class Document {
             FileChannel fileChannel = fileInputStream.getChannel();
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di lettura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(DOCNO_LENGTH + 4 + 4);
 
             // Leggi i dati dal file in blocchi di 1024 byte
             while (fileChannel.read(buffer) > 0) {
