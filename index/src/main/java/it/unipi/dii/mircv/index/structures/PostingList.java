@@ -83,14 +83,13 @@ public class PostingList {
     }
 
     public long savePostingListToDisk(int indexCounter) {
-
+        String filePath;
         if (indexCounter == -1) {
             // TODO implementare scrittura postinglist merge
-            return -1;
+            filePath = "data/index/index.bin";
         } else {
-
-            String filePath = "data/index/index_" + indexCounter + ".bin";
-
+            filePath = "data/index/index_" + indexCounter + ".bin";
+        }
             long offset = -1;
 
             try {
@@ -147,8 +146,6 @@ public class PostingList {
             }
 
             return offset;
-        }
-
     }
 
     public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {

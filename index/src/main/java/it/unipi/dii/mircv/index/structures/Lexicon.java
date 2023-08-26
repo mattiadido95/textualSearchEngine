@@ -8,8 +8,10 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
+
 
 public class Lexicon {
     //TODO cambiare in treeMap
@@ -189,22 +191,27 @@ public class Lexicon {
         }
     }
 
-    public LexiconElem readEntry(DataInputStream dis,int i) throws IOException {
-        String term = dis.readUTF();
-        int df = dis.readInt();
-        long cf = dis.readLong();
-        long offset = dis.readLong();
-        LexiconElem lexiconElem = new LexiconElem(term,df,cf,offset);
-        this.lexicon.put(term + i,lexiconElem); // TODO MATTEO chiedere a cosa serve reinserire
+    public static LexiconElem readEntry(ArrayList<RandomAccessFile> araf, long[] arrayOffset, int i) throws IOException {
+        //get right file and offset
+        RandomAccessFile raf = araf.get(i);
+        raf.seek(arrayOffset[i]);
+
+        String term = raf.readUTF();
+        int df = raf.readInt();
+        long cf = raf.readLong();
+        long offset = raf.readLong();
+
+        arrayOffset[i] = raf.getFilePointer();
+        // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
+        LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
         return lexiconElem;
     }
 
-    public static String writeEntry(DataOutputStream dos,String term, int df,long cf, long offset) throws IOException {
-        dos.writeUTF(term);
-        dos.writeInt(df);
-        dos.writeLong(cf);
-        dos.writeLong(offset);
-
+    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset) throws IOException {
+        raf.writeUTF(term);
+        raf.writeInt(df);
+        raf.writeLong(cf);
+        raf.writeLong(offset);
         return term;
     }
 

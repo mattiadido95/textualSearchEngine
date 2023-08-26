@@ -50,7 +50,10 @@ public class Merger {
 
         // Trova il termine più piccolo e il suo indice
         for (int i = 0; i < terms.size(); i++) {
-            //get first term
+            //get first term if terms is not empty
+            if(terms.get(i).isEmpty()){
+                continue;
+            }
             String currentTerm = terms.get(i).get(0);
 
             if (smallestTerm == null || currentTerm.compareTo(smallestTerm) < 0) {
@@ -62,10 +65,11 @@ public class Merger {
                 file_index.add(i);
             }
         }
-
-        for (int i = 0; i < file_index.size(); i++) {
-            int index = file_index.get(i);
-            terms.get(index).remove(0);
+        if(smallestTerm != null) {
+            for (int i = 0; i < file_index.size(); i++) {
+                int index = file_index.get(i);
+                terms.get(index).remove(0);
+            }
         }
         return smallestTerm;
     }
@@ -134,24 +138,26 @@ public class Merger {
         }
         String lexiconFinal = INDEX_PATH + "/lexicon.bin"; // File di output
 
-        try (DataOutputStream writer = new DataOutputStream(new FileOutputStream(lexiconFinal))) {
-            ArrayList<DataInputStream> readers = new ArrayList<>();
+        long[] readOffset = new long[numberOfFiles]; // offset dei file di lettura
+
+        try (RandomAccessFile writer = new RandomAccessFile(lexiconFinal,"rw")) {
+            ArrayList<RandomAccessFile> readers = new ArrayList<>();
 
             // Apri tutti i file per la lettura
             for (String inputFile : lexiconFiles) {
-                readers.add(new DataInputStream(new FileInputStream(inputFile)));
+                readers.add(new RandomAccessFile(inputFile, "r"));
             }
             //get the term to be processed
             String term = this.nextTerm(term_index); // termine piu piccolo trovato nei file lessico
 
             while(term != null) {
-                Lexicon lexicon = new Lexicon();
+                System.out.println(term);
                 PostingList newPostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem(term);
 
                 for (int i = 0; i < term_index.size(); i++) {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
-                    LexiconElem lexiconElem = lexicon.readEntry(readers.get((i)),i);
+                    LexiconElem lexiconElem = Lexicon.readEntry(readers,readOffset,term_index.get(i));
                     // recupero la posting list dal file index_i dove i è dato da term_index(i)
                     newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset());
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
@@ -160,12 +166,12 @@ public class Merger {
                     long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
                     //aggiorno il newLexiconElem con l'offset della posting list appena scritta
                     newLexiconElem.setOffset(offset);
+                    Lexicon.writeEntry(writer,term,newLexiconElem.getDf(),newLexiconElem.getCf(),newLexiconElem.getOffset());
                     //aggiungo il newLexiconElem al lessico
-                    lexicon.addLexiconElem(newLexiconElem);
+                    //lexicon.addLexiconElem(newLexiconElem);
                     // TODO siamo sicuri che il nuovo lessico entri tutto in memoria?
-
-
                 }
+                term = this.nextTerm(term_index);
                 //per ogni elemento nel lexicon fare il merge dei termini dentro lexicon (df,cf)
                 //fare concat ti tutte le posting list accedendo agli offset di lexicon il file associato si trova usando la lista term_index
                 //scrivere il risultato nel file index
