@@ -1,14 +1,21 @@
 package it.unipi.dii.mircv.prompt.query;
 
 import it.unipi.dii.mircv.index.structures.*;
+import it.unipi.dii.mircv.prompt.structure.PostingListIterator;
+import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Searcher {
 
     private String term;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
+    private ArrayList<QueryResult> queryResults;
+    private static int N_docs = 0; // number of documents in the collection
 
     public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
         // TODO cosi carico ma poi passo le strutture in copia al searcher e occupo il doppio !!!!
@@ -17,10 +24,22 @@ public class Searcher {
     }
 
     public Searcher() {
+        queryResults = new ArrayList<>();
+        //read number of docs from disk
+        try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
+             ObjectInputStream in = new ObjectInputStream(fileIn)){
+            N_docs = (int) in.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<QueryResult> getQueryResults() {
+        return queryResults;
     }
 
     public ArrayList<String> search(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents) {
-        ArrayList<String> pid_results = new ArrayList<String>();
+        ArrayList<String> pid_results = new ArrayList<>();
         for (String term : queryTerms) {
             pid_results.addAll(searchTerm(term, lexicon, documents));
         }
@@ -29,7 +48,7 @@ public class Searcher {
 
     public ArrayList<String> searchTerm(String term, Lexicon lexicon, ArrayList<Document> documents) {
         this.term = term;
-        ArrayList<String> term_pid_results = new ArrayList<String>();
+        ArrayList<String> term_pid_results = new ArrayList<>();
         if (lexicon.getLexicon().containsKey(term)) {
             System.out.println("Term " + term + " found in lexicon");
             // get lexicon element
@@ -53,4 +72,78 @@ public class Searcher {
 
         return term_pid_results;
     }
+
+    public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode){
+        //create postingListIterator
+        PostingListIterator postingListIterator = new PostingListIterator();
+
+        for(String term : queryTerms){
+            if(lexicon.getLexicon().containsKey(term)) {
+                postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
+                postingListIterator.addDf(lexicon.getLexiconElem(term).getDf());
+            }
+        }
+        if(postingListIterator.getCursor().size() == 0)
+            return;
+        postingListIterator.openList();
+
+        int next_docId;
+        do{
+            ArrayList<Double> scores = new ArrayList<>();
+            //get next docId
+            next_docId = getNextDocId(postingListIterator);
+            double document_score = 0;
+
+            for(int i = 0; i < postingListIterator.getCursor().size(); i++){
+                int docId = postingListIterator.getDocId(i);
+                if(docId == next_docId){
+                    int tf = postingListIterator.getFreq(i);
+                    postingListIterator.next(i);
+                    scores.add(tfidf(tf, postingListIterator.getDf().get(i)));
+                }else{
+                    if(mode.equals("conjunctive")) {
+                        scores.clear();
+                        break;
+                    }
+                }
+            }
+            //sum all the value of scores
+            for(double score : scores){
+                document_score += score;
+            }
+            if(document_score > 0){
+                // get document
+                Document document = documents.get(next_docId);
+                // get document pid
+                String pid = document.getDocNo();
+                // add pid to results
+                queryResults.add(new QueryResult(pid, document_score));
+            }
+            if(queryResults.size() == K)
+                break;
+        }
+        while (next_docId != Integer.MAX_VALUE);
+        postingListIterator.closeList();
+        Collections.sort(queryResults);
+    }
+
+    private double tfidf(int tf, int df){
+        double score = 0;
+        if(tf > 0)
+            score = (1 + Math.log(tf)) * Math.log(N_docs / df);
+        return score;
+    }
+
+    private int getNextDocId(PostingListIterator pli){
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < pli.getCursor().size(); i++){
+            int id = pli.getDocId(i);
+            if(id == -1)
+                continue;
+            if(id < min)
+                min = id;
+        }
+        return min;
+    }
+
 }
