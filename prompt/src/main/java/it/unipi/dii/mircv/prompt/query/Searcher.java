@@ -50,7 +50,7 @@ public class Searcher {
         this.term = term;
         ArrayList<String> term_pid_results = new ArrayList<>();
         if (lexicon.getLexicon().containsKey(term)) {
-            System.out.println("Term " + term + " found in lexicon");
+            System.out.println("Term " + term + " offset" + lexicon.getLexiconElem(term).getOffset());
             // get lexicon element
             LexiconElem lexiconElem = lexicon.getLexiconElem(term);
             // use lexiconElem.offset and lexiconElem.df to read posting list from index.bin
@@ -77,11 +77,13 @@ public class Searcher {
         queryResults.clear();
         //create postingListIterator
         PostingListIterator postingListIterator = new PostingListIterator();
+        ArrayList<Integer> counter = new ArrayList<>();
 
         for(String term : queryTerms){
             if(lexicon.getLexicon().containsKey(term)) {
                 postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
                 postingListIterator.addDf(lexicon.getLexiconElem(term).getDf());
+                counter.add(lexicon.getLexiconElem(term).getDf());
             }
         }
         if(postingListIterator.getCursor().size() == 0)
@@ -89,10 +91,13 @@ public class Searcher {
         postingListIterator.openList();
 
         int next_docId;
+
         do{
             ArrayList<Double> scores = new ArrayList<>();
             //get next docId
-            next_docId = getNextDocId(postingListIterator);
+            next_docId = getNextDocId(postingListIterator, counter);
+            if(next_docId == Integer.MAX_VALUE)
+                break;
             double document_score = 0;
 
             for(int i = 0; i < postingListIterator.getCursor().size(); i++){
@@ -100,6 +105,7 @@ public class Searcher {
                 if(docId == next_docId){
                     int tf = postingListIterator.getFreq(i);
                     postingListIterator.next(i);
+                    counter.set(i, counter.get(i) - 1);
                     scores.add(tfidf(tf, postingListIterator.getDf().get(i)));
                 }else{
                     if(mode.equals("conjunctive")) {
@@ -122,8 +128,8 @@ public class Searcher {
             }
             if(queryResults.size() == K)
                 break;
-        }
-        while (next_docId != Integer.MAX_VALUE);
+        } while (next_docId != Integer.MAX_VALUE);
+
         postingListIterator.closeList();
         Collections.sort(queryResults);
     }
@@ -135,9 +141,11 @@ public class Searcher {
         return score;
     }
 
-    private int getNextDocId(PostingListIterator pli){
+    private int getNextDocId(PostingListIterator pli, ArrayList<Integer> counter){
         int min = Integer.MAX_VALUE;
         for(int i = 0; i < pli.getCursor().size(); i++){
+            if(counter.get(i) == 0) //posting list finished
+                continue;
             int id = pli.getDocId(i);
             if(id == -1)
                 continue;
