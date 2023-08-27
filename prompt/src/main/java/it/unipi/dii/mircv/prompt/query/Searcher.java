@@ -27,7 +27,7 @@ public class Searcher {
         queryResults = new ArrayList<>();
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
-             ObjectInputStream in = new ObjectInputStream(fileIn)){
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
             N_docs = (int) in.readObject();
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +58,7 @@ public class Searcher {
             PostingList postingList = new PostingList();
             postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset());
             // for each posting in posting list get document pid
-            for( Posting posting : postingList.getPostings()){
+            for (Posting posting : postingList.getPostings()) {
                 // get document
                 Document document = documents.get(posting.getDocID());
                 // get document pid
@@ -73,52 +73,53 @@ public class Searcher {
         return term_pid_results;
     }
 
-    public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode){
+    public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
         //create postingListIterator
         PostingListIterator postingListIterator = new PostingListIterator();
         ArrayList<Integer> counter = new ArrayList<>();
 
-        for(String term : queryTerms){
-            if(lexicon.getLexicon().containsKey(term)) {
+        for (String term : queryTerms) {
+            if (lexicon.getLexicon().containsKey(term)) {
                 postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
                 postingListIterator.addDf(lexicon.getLexiconElem(term).getDf());
                 counter.add(lexicon.getLexiconElem(term).getDf());
             }
         }
-        if(postingListIterator.getCursor().size() == 0)
+        if (postingListIterator.getCursor().size() == 0)
             return;
         postingListIterator.openList();
 
         int next_docId;
 
-        do{
+        do {
             ArrayList<Double> scores = new ArrayList<>();
             //get next docId
             next_docId = getNextDocId(postingListIterator, counter);
-            if(next_docId == Integer.MAX_VALUE)
+            if (next_docId == Integer.MAX_VALUE)
                 break;
             double document_score = 0;
+            int term_counter = 0;
 
-            for(int i = 0; i < postingListIterator.getCursor().size(); i++){
+            for (int i = 0; i < postingListIterator.getCursor().size(); i++) {
                 int docId = postingListIterator.getDocId(i);
-                if(docId == next_docId){
+                if (docId == next_docId) {
                     int tf = postingListIterator.getFreq(i);
                     postingListIterator.next(i);
                     counter.set(i, counter.get(i) - 1);
                     scores.add(tfidf(tf, postingListIterator.getDf().get(i)));
-                }else{
-                    if(mode.equals("conjunctive")) {
-                        scores.clear();
-                        break;
-                    }
+                    term_counter++;
                 }
             }
+
+            if (mode.equals("conjunctive") && term_counter != queryTerms.size())
+                scores.clear();
+
             //sum all the value of scores
-            for(double score : scores){
+            for (double score : scores) {
                 document_score += score;
             }
-            if(document_score > 0){
+            if (document_score > 0) {
                 // get document
                 Document document = documents.get(next_docId);
                 // get document pid
@@ -126,7 +127,7 @@ public class Searcher {
                 // add pid to results
                 queryResults.add(new QueryResult(pid, document_score));
             }
-            if(queryResults.size() == K)
+            if (queryResults.size() == K)
                 break;
         } while (next_docId != Integer.MAX_VALUE);
 
@@ -134,22 +135,22 @@ public class Searcher {
         Collections.sort(queryResults);
     }
 
-    private double tfidf(int tf, int df){
+    private double tfidf(int tf, int df) {
         double score = 0;
-        if(tf > 0)
+        if (tf > 0)
             score = (1 + Math.log(tf)) * Math.log(N_docs / df);
         return score;
     }
 
-    private int getNextDocId(PostingListIterator pli, ArrayList<Integer> counter){
+    private int getNextDocId(PostingListIterator pli, ArrayList<Integer> counter) {
         int min = Integer.MAX_VALUE;
-        for(int i = 0; i < pli.getCursor().size(); i++){
-            if(counter.get(i) == 0) //posting list finished
+        for (int i = 0; i < pli.getCursor().size(); i++) {
+            if (counter.get(i) == 0) //posting list finished
                 continue;
             int id = pli.getDocId(i);
-            if(id == -1)
+            if (id == -1)
                 continue;
-            if(id < min)
+            if (id < min)
                 min = id;
         }
         return min;
