@@ -90,7 +90,7 @@ public class PostingList {
         } else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
-            long offset = -1;
+        long offset = -1;
 
         try {
 //            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
@@ -150,13 +150,11 @@ public class PostingList {
 
     public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
         String filePath;
-        if(indexCounter == -1) {
+        if (indexCounter == -1) {
             filePath = "data/index/index.bin";
-        }else {
+        } else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
-
-
 
         ArrayList<Posting> result = new ArrayList<>();
 
