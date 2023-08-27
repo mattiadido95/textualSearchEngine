@@ -58,6 +58,7 @@ public class PostingListIterator {
             return;
         try {
             fileChannel.close();
+            fileChannel = null;
         } catch (IOException e) {
             e.printStackTrace();
         }

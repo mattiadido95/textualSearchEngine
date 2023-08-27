@@ -74,6 +74,7 @@ public class Searcher {
     }
 
     public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode){
+        queryResults.clear();
         //create postingListIterator
         PostingListIterator postingListIterator = new PostingListIterator();
 
