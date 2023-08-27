@@ -18,6 +18,18 @@ public class Preprocessing {
 
     public List<String> tokens = new ArrayList<>();
 
+    public Preprocessing(String query){
+        List<String> words = tokenization(query);
+        words = removeWordstop(words); // Remove stopwords
+        PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
+        List<String> stemWords = new ArrayList<>();
+        for (String word : words) {
+            String stem = porterStemmer.stemWord(word);
+            stemWords.add(stem);
+        }
+        this.tokens = stemWords;
+    }
+
     public Preprocessing(String document,int docCounter){
         // create new document
         this.doc = new Document(document,docCounter);
@@ -31,7 +43,6 @@ public class Preprocessing {
             stemWords.add(stem);
         }
         this.tokens = stemWords;
-
     }
 
 //    public Preprocessing() {
@@ -111,26 +122,26 @@ public class Preprocessing {
         words.removeAll(stopwords);
         return words;
     }
-
-    private void buildIndex(String id, List<String> words) {
-        Map<String, Integer> postingList;
-        int frequency;
-        for (String word : words) {
-            if (index.containsKey(word)) {
-                postingList = index.get(word);
-                if (postingList.containsKey(id)) {
-                    frequency = postingList.get(id) + 1;
-                } else {
-                    frequency = 1;
-                }
-            } else {
-                postingList = new HashMap<>();
-                frequency = 1;
-            }
-            postingList.put(id, frequency);
-            index.put(word, postingList);
-        }
-    }
+//
+//    private void buildIndex(String id, List<String> words) {
+//        Map<String, Integer> postingList;
+//        int frequency;
+//        for (String word : words) {
+//            if (index.containsKey(word)) {
+//                postingList = index.get(word);
+//                if (postingList.containsKey(id)) {
+//                    frequency = postingList.get(id) + 1;
+//                } else {
+//                    frequency = 1;
+//                }
+//            } else {
+//                postingList = new HashMap<>();
+//                frequency = 1;
+//            }
+//            postingList.put(id, frequency);
+//            index.put(word, postingList);
+//        }
+//    }
 
 
     public Document getDoc() {

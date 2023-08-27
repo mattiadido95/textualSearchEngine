@@ -57,7 +57,6 @@ public class Merger {
                 smallestTerm = currentTerm;
                 file_index.clear();
                 file_index.add(i);
-                // TODO MATTEO se io cancello la lista e poi inserisco quando ho un termine piu piccolo che fine fanno gli indici cancellati?
             } else if (currentTerm.equals(smallestTerm)) {
                 file_index.add(i);
             }
