@@ -20,7 +20,7 @@ public class PostingListIterator {
         this.offset = new ArrayList<>();
         this.cursor = new ArrayList<>();
         this.df = new ArrayList<>();
-        this.buffer = ByteBuffer.allocate(1024);
+        this.buffer = ByteBuffer.allocate(4);
     }
 
     public void addOffset(long offset) {
@@ -73,7 +73,8 @@ public class PostingListIterator {
             fileChannel.position(cursor.get(index));
             fileChannel.read(buffer);
             buffer.flip();
-            result = buffer.getInt();
+            if (buffer.remaining() >= 4)
+                result = buffer.getInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +92,8 @@ public class PostingListIterator {
             fileChannel.position(cursor.get(index) + 4);
             fileChannel.read(buffer);
             buffer.flip();
-            result = buffer.getInt();
+            if (buffer.remaining() >= 4)
+                result = buffer.getInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
