@@ -125,9 +125,17 @@ public class Spimi {
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO
             }
+            //save into disk documentCounter
+            FileOutputStream fileOut = new FileOutputStream("data/index/numberOfDocs.bin");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(documentCounter);
+            out.close();
+            fileOut.close();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
