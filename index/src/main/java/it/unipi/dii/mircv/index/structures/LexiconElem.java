@@ -49,6 +49,15 @@ public class LexiconElem {
         this.cf += 1;
     }
 
+    public void mergeLexiconElem(LexiconElem lexiconElem) {
+        if (lexiconElem.getTerm().equals("â\u0080¦")) {
+            System.out.println("Error: terms are different");
+
+        }
+        this.df += lexiconElem.getDf();
+        this.cf += lexiconElem.getCf();
+    }
+
     @Override
     public String toString() {
         return "LexiconElem{" +

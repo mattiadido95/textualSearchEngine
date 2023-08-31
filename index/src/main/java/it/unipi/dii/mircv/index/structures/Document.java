@@ -4,10 +4,9 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class Document{
+public class Document {
     private static final int DOCNO_LENGTH = 64;
 
     private int docID;
@@ -25,7 +24,7 @@ public class Document{
         parseDocument();
     }
 
-    public Document(int docID,String docNo, int length){
+    public Document(int docID, String docNo, int length) {
         this.docID = docID;
         this.docNo = docNo;
         this.length = length;
@@ -67,7 +66,7 @@ public class Document{
         return this.body;
     }
 
-    public void setLength(int length){
+    public void setLength(int length) {
         this.length = length;
     }
 
@@ -119,10 +118,16 @@ public class Document{
         }
     }
 
+    public static ArrayList<Document> readDocumentsFromDisk(int index) {
+        String filePath;
+
+        if(index == -1){
+            filePath = "data/index/documents.bin";
+        }else{
+            filePath = "data/index/documents/documents_" + index + ".bin";
+        }
 
 
-    public static ArrayList<Document> readDocuments(int index) {
-        String filePath = "data/index/documents/documents_" + index + ".bin";
         ArrayList<Document> documents = new ArrayList<>();
 
         try {
@@ -130,7 +135,7 @@ public class Document{
             FileChannel fileChannel = fileInputStream.getChannel();
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di lettura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(DOCNO_LENGTH + 4 + 4);
 
             // Leggi i dati dal file in blocchi di 1024 byte
             while (fileChannel.read(buffer) > 0) {
@@ -162,6 +167,27 @@ public class Document{
         }
 
         return documents;
+    }
+
+    public static void ConcatenateFiles(ArrayList<String> fileNames, String outputFileName) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(outputFileName);
+            FileChannel outputChannel = outputStream.getChannel();
+
+            for (String fileName : fileNames) {
+                FileInputStream inputStream = new FileInputStream(fileName);
+                FileChannel inputChannel = inputStream.getChannel();
+                outputChannel.transferFrom(inputChannel, outputChannel.size(), inputChannel.size());
+                inputChannel.close();
+                inputStream.close();
+            }
+
+            outputChannel.close();
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

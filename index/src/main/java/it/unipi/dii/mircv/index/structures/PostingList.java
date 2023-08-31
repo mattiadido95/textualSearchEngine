@@ -83,12 +83,16 @@ public class PostingList {
     }
 
     public long savePostingListToDisk(int indexCounter) {
-        String filePath = "data/index/index_" + indexCounter + ".bin";
-
+        String filePath;
+        if (indexCounter == -1) {
+            // TODO implementare scrittura postinglist merge
+            filePath = "data/index/index.bin";
+        } else {
+            filePath = "data/index/index_" + indexCounter + ".bin";
+        }
         long offset = -1;
 
         try {
-
 //            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
 //            // Posizionati alla fine del file per l'aggiunta dei dati
 //            randomAccessFile.seek(randomAccessFile.length());
@@ -141,10 +145,17 @@ public class PostingList {
         }
 
         return offset;
+
     }
 
     public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
-        String filePath = "data/index/index_" + indexCounter + ".bin";
+        String filePath;
+        if (indexCounter == -1) {
+            filePath = "data/index/index.bin";
+        } else {
+            filePath = "data/index/index_" + indexCounter + ".bin";
+        }
+
         ArrayList<Posting> result = new ArrayList<>();
 
         try {

@@ -38,13 +38,13 @@ public class Spimi {
 
         log.getLog("Start indexing ...");
 
-        deleteFiles("data/index/");
-        deleteFiles("data/index/lexicon/");
-        deleteFiles("data/index/documents/");
+        deleteFiles("data/index/", "bin");
+        deleteFiles("data/index/lexicon/", "bin");
+        deleteFiles("data/index/documents/", "bin");
 
         log.getLog("Deleted old index files ...");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"))){// open buffer to read documents
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"))) {// open buffer to read documents
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
@@ -71,11 +71,11 @@ public class Spimi {
 
                 documentCounter++;
 
-                if(documentCounter % 250000 == 0){
+                if (documentCounter % 250000 == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents,indexCounter); // save documents to disk
+                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
                     indexCounter += 1;
@@ -90,7 +90,7 @@ public class Spimi {
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents,indexCounter); // save documents to disk
+                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     //TODO serve davvero fare la new
                     invertedIndex = new HashMap<>(); // create a new inverted index
@@ -98,7 +98,7 @@ public class Spimi {
                     //read Structures from disk
                     lexicon.readLexiconFromDisk(indexCounter);
                     // per ogni chiave del lexicon, leggi il posting list dal file
-                    for(String key : lexicon.getLexicon().keySet()){
+                    for (String key : lexicon.getLexicon().keySet()) {
                         //get lexicon elem
                         LexiconElem lexiconElem = lexicon.getLexiconElem(key);
                         PostingList postingList = new PostingList();
@@ -110,10 +110,10 @@ public class Spimi {
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    ArrayList<Document> documents1 = Document.readDocuments(indexCounter);
+                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
                     System.out.println(documents1);
                     indexCounter += 1;
-                    if(documentCounter == 30)
+                    if (documentCounter == 100)
                         break;
                 }
 
@@ -125,9 +125,17 @@ public class Spimi {
 
                 // TODO FARE MERGE INDICI E VOCABOLARIO
             }
+            //save into disk documentCounter
+            FileOutputStream fileOut = new FileOutputStream("data/index/numberOfDocs.bin");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(documentCounter);
+            out.close();
+            fileOut.close();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
@@ -146,13 +154,13 @@ public class Spimi {
     }
 
 
-    private static void deleteFiles(String folderPath) {
+    private static void deleteFiles(String folderPath, String extension) {
         File folder = new File(folderPath);
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isFile()) {
+                    if (file.isFile() && file.getName().endsWith("." + extension)) {
                         file.delete();
                     }
                 }
