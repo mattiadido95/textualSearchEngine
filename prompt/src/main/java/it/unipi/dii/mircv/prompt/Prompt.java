@@ -24,43 +24,50 @@ public class Prompt {
         lexicon.readLexiconFromDisk(-1);
         ArrayList<Document> documents = Document.readDocumentsFromDisk(-1);
 
-        System.out.println("Insert your query ...");
         Scanner scanner = new Scanner(System.in);
-        String userInput = scanner.nextLine();
-        scanner.close();
+        while(true){
+            System.out.println("--------------------------------------------------");
+            System.out.println("Welcome to the search engine!");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to exit");
+            int userInput = scanner.nextInt();
+            scanner.nextLine(); // to consume the \n character left by nextInt()
+            if (userInput == 1){
+                System.out.println("Insert your query ...");
+                String queryInput = scanner.nextLine();
 
-        Query query = new Query(userInput);
-        ArrayList<String> queryTerms = query.getQueryTerms();
+                Query query = new Query(queryInput);
+                ArrayList<String> queryTerms = query.getQueryTerms();
 
-//        // print query terms
-//        System.out.println("User Query terms:");
-//        for (String term : queryTerms) {
-//            System.out.println(term);
-//        }
+                Searcher searcher = new Searcher();
 
-//        Searcher searcher = new Searcher(lexicon, documents);
-        Searcher searcher = new Searcher();
-        ArrayList<String> pid_results = searcher.search(queryTerms, lexicon, documents);
+                System.out.println("disjunctive");
+                ArrayList<QueryResult> results;
+                searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
+                results = searcher.getQueryResults();
+                System.out.println(results);
 
-        if (pid_results.size() != 0) {
-            System.out.println("PID results:");
-            for (String pid : pid_results) {
-                System.out.println(pid);
+                System.out.println("conjunctive");
+                searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
+                results = searcher.getQueryResults();
+                System.out.println(results);
             }
-        } else {
-            System.out.println("No results found");
+            else if (userInput == 2){
+                System.out.println("Bye!");
+                scanner.close();
+                break;
+            }
+            else{
+                System.out.println("Wrong input");
+            }
+
+
+
         }
 
-        System.out.println("disjunctive");
-        ArrayList<QueryResult> results;
-        searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
-        results = searcher.getQueryResults();
-        System.out.println(results);
 
-        System.out.println("conjunctive");
-        searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
-        results = searcher.getQueryResults();
-        System.out.println(results);
+
+
+
 
     }
 }
