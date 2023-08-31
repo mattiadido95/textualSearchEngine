@@ -77,6 +77,7 @@ public class Searcher {
         //create postingListIterator
         PostingListIterator postingListIterator = new PostingListIterator();
 
+        // populate postingListIterator with offset and df for each term in query
         for(String term : queryTerms){
             if(lexicon.getLexicon().containsKey(term)) {
                 postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
@@ -84,8 +85,8 @@ public class Searcher {
             }
         }
         if(postingListIterator.getCursor().size() == 0)
-            return;
-        postingListIterator.openList();
+            return; // if no terms in query are in lexicon means that there are no results
+        postingListIterator.openList(); // there are results so open the postingList
 
         int next_docId;
         do{

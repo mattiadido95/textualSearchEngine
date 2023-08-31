@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class PostingListIterator {
 
     private static final Integer POSTING_DIM = 8;
-
     private ArrayList<Long> offset;
     private ArrayList<Long> cursor;
     private ArrayList<Integer> df;
@@ -43,8 +42,8 @@ public class PostingListIterator {
     }
 
     public FileChannel openList() {
-        if(fileChannel != null)
-            return fileChannel;
+        if (fileChannel != null)
+            return fileChannel; // posting list already open
         try {
             fileChannel = FileChannel.open(Path.of(("data/index/index.bin")));
         } catch (IOException e) {
@@ -54,7 +53,7 @@ public class PostingListIterator {
     }
 
     public void closeList() {
-        if(fileChannel == null)
+        if (fileChannel == null)
             return;
         try {
             fileChannel.close();
@@ -63,7 +62,7 @@ public class PostingListIterator {
         }
     }
 
-    public int getDocId(int index){
+    public int getDocId(int index) {
         int result = -1;
         long cursor_old = cursor.get(index);
         try {
@@ -71,14 +70,14 @@ public class PostingListIterator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cursor.set(index,cursor_old);
+        cursor.set(index, cursor_old);
         return result;
     }
 
-    public int getFreq(int index){
+    public int getFreq(int index) {
         int result = -1;
         long cursor_old = cursor.get(index);
-        if(cursor.get(index) + 8 > offset.get(index) + (df.get(index) * POSTING_DIM)){
+        if (cursor.get(index) + 8 > offset.get(index) + (df.get(index) * POSTING_DIM)) {
             return result;
         }
         try {
@@ -86,11 +85,11 @@ public class PostingListIterator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cursor.set(index,cursor_old);
+        cursor.set(index, cursor_old);
         return result;
     }
 
-    public void next(int index){
+    public void next(int index) {
         cursor.set(index, cursor.get(index) + POSTING_DIM);
     }
 
