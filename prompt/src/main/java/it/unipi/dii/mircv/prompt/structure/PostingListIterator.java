@@ -13,11 +13,13 @@ public class PostingListIterator {
     private ArrayList<Long> cursor;
     private ArrayList<Integer> df;
     private static FileChannel fileChannel = null;
+    private ByteBuffer buffer;
 
     public PostingListIterator() {
         this.offset = new ArrayList<>();
         this.cursor = new ArrayList<>();
         this.df = new ArrayList<>();
+        this.buffer = ByteBuffer.allocate(4);
     }
 
     public void addOffset(long offset) {
@@ -57,6 +59,7 @@ public class PostingListIterator {
             return;
         try {
             fileChannel.close();
+            fileChannel = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,28 +67,35 @@ public class PostingListIterator {
 
     public int getDocId(int index) {
         int result = -1;
-        long cursor_old = cursor.get(index);
         try {
-            result = fileChannel.read(ByteBuffer.allocate(4), cursor.get(index));
+            buffer.clear();
+            fileChannel.position(cursor.get(index));
+            fileChannel.read(buffer);
+            buffer.flip();
+            if (buffer.remaining() >= 4)
+                result = buffer.getInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cursor.set(index, cursor_old);
+
         return result;
     }
 
     public int getFreq(int index) {
         int result = -1;
-        long cursor_old = cursor.get(index);
         if (cursor.get(index) + 8 > offset.get(index) + (df.get(index) * POSTING_DIM)) {
             return result;
         }
         try {
-            result = fileChannel.read(ByteBuffer.allocate(4), cursor.get(index) + 4);
+            buffer.clear();
+            fileChannel.position(cursor.get(index) + 4);
+            fileChannel.read(buffer);
+            buffer.flip();
+            if (buffer.remaining() >= 4)
+                result = buffer.getInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cursor.set(index, cursor_old);
         return result;
     }
 

@@ -32,22 +32,22 @@ public class Prompt {
         Query query = new Query(userInput);
         ArrayList<String> queryTerms = query.getQueryTerms();
 
-        // print query terms
-        System.out.println("User Query terms:");
-        for (String term : queryTerms) {
-            System.out.println(term);
-        }
+//        // print query terms
+//        System.out.println("User Query terms:");
+//        for (String term : queryTerms) {
+//            System.out.println(term);
+//        }
 
 //        Searcher searcher = new Searcher(lexicon, documents);
         Searcher searcher = new Searcher();
         ArrayList<String> pid_results = searcher.search(queryTerms, lexicon, documents);
 
-        if(pid_results.size() != 0){
+        if (pid_results.size() != 0) {
             System.out.println("PID results:");
-            for(String pid : pid_results){
+            for (String pid : pid_results) {
                 System.out.println(pid);
             }
-        }else{
+        } else {
             System.out.println("No results found");
         }
 
@@ -56,6 +56,7 @@ public class Prompt {
         searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
         results = searcher.getQueryResults();
         System.out.println(results);
+
         System.out.println("conjunctive");
         searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
         results = searcher.getQueryResults();
