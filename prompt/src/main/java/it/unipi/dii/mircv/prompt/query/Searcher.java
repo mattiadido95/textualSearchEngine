@@ -128,12 +128,13 @@ public class Searcher {
                 // add pid to results
                 queryResults.add(new QueryResult(pid, document_score));
             }
-            if (queryResults.size() == K)
-                break;
         } while (next_docId != Integer.MAX_VALUE);
 
         postingListIterator.closeList();
         Collections.sort(queryResults);
+        if (queryResults.size() > K) {
+            queryResults = new ArrayList<>(queryResults.subList(0, K));;
+        }
     }
 
     private double tfidf(int tf, int df) {
