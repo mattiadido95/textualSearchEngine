@@ -38,40 +38,40 @@ public class Searcher {
         return queryResults;
     }
 
-    public ArrayList<String> search(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents) {
-        ArrayList<String> pid_results = new ArrayList<>();
-        for (String term : queryTerms) {
-            pid_results.addAll(searchTerm(term, lexicon, documents));
-        }
-        return pid_results;
-    }
-
-    public ArrayList<String> searchTerm(String term, Lexicon lexicon, ArrayList<Document> documents) {
-        this.term = term;
-        ArrayList<String> term_pid_results = new ArrayList<>();
-        if (lexicon.getLexicon().containsKey(term)) {
-            System.out.println("Term " + term + " offset" + lexicon.getLexiconElem(term).getOffset());
-            // get lexicon element
-            LexiconElem lexiconElem = lexicon.getLexiconElem(term);
-            // use lexiconElem.offset and lexiconElem.df to read posting list from index.bin
-            // get posting list
-            PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset());
-            // for each posting in posting list get document pid
-            for (Posting posting : postingList.getPostings()) {
-                // get document
-                Document document = documents.get(posting.getDocID());
-                // get document pid
-                String pid = document.getDocNo();
-                // add pid to results
-                term_pid_results.add(pid);
-            }
-        } else {
-            System.out.println("Term " + term + " not found in lexicon");
-        }
-
-        return term_pid_results;
-    }
+//    public ArrayList<String> search(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents) {
+//        ArrayList<String> pid_results = new ArrayList<>();
+//        for (String term : queryTerms) {
+//            pid_results.addAll(searchTerm(term, lexicon, documents));
+//        }
+//        return pid_results;
+//    }
+//
+//    public ArrayList<String> searchTerm(String term, Lexicon lexicon, ArrayList<Document> documents) {
+//        this.term = term;
+//        ArrayList<String> term_pid_results = new ArrayList<>();
+//        if (lexicon.getLexicon().containsKey(term)) {
+//            System.out.println("Term " + term + " found at offset " + lexicon.getLexiconElem(term).getOffset());
+//            // get lexicon element
+//            LexiconElem lexiconElem = lexicon.getLexiconElem(term);
+//            // use lexiconElem.offset and lexiconElem.df to read posting list from index.bin
+//            // get posting list
+//            PostingList postingList = new PostingList();
+//            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset());
+//            // for each posting in posting list get document pid
+//            for (Posting posting : postingList.getPostings()) {
+//                // get document
+//                Document document = documents.get(posting.getDocID());
+//                // get document pid
+//                String pid = document.getDocNo();
+//                // add pid to results
+//                term_pid_results.add(pid);
+//            }
+//        } else {
+//            System.out.println("Term " + term + " not found in lexicon");
+//        }
+//
+//        return term_pid_results;
+//    }
 
     public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
@@ -79,6 +79,7 @@ public class Searcher {
         PostingListIterator postingListIterator = new PostingListIterator();
         ArrayList<Integer> counter = new ArrayList<>();
 
+        // populate postingListIterator with offset and df for each term in query
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
@@ -87,8 +88,8 @@ public class Searcher {
             }
         }
         if (postingListIterator.getCursor().size() == 0)
-            return;
-        postingListIterator.openList();
+            return; // if no terms in query are in lexicon means that there are no results
+        postingListIterator.openList(); // there are results so open the postingList
 
         int next_docId;
 
