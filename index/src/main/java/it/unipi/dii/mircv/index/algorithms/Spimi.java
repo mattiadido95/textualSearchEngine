@@ -4,15 +4,16 @@ import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
-
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Spimi {
-
     private String COLLECTION_PATH;
+
     private Logs log;
     private int indexCounter;
 
@@ -34,7 +35,7 @@ public class Spimi {
         return indexCounter;
     }
 
-    public void execute() {
+    public void execute() throws IOException {
 
         log.getLog("Start indexing ...");
 
@@ -44,7 +45,13 @@ public class Spimi {
 
         log.getLog("Deleted old index files ...");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"))) {// open buffer to read documents
+
+        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
+        tarArchiveInputStream.getNextEntry();
+
+
+        // open buffer to read documents
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"))) {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
@@ -130,6 +137,7 @@ public class Spimi {
             out.writeObject(documentCounter);
             out.close();
             fileOut.close();
+            tarArchiveInputStream.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
