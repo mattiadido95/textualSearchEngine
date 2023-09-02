@@ -97,7 +97,8 @@ public class Document {
                 buffer.putInt(doc.getLength());
 
                 // Se il buffer è pieno, scrivi il suo contenuto sul file
-                if (!buffer.hasRemaining()) {
+                //if (!buffer.hasRemaining()) {
+                if (buffer.remaining() < (paddedDocNoBytes.length + 4 + 4)) {
                     buffer.flip();
                     fileChannel.write(buffer);
                     buffer.clear();

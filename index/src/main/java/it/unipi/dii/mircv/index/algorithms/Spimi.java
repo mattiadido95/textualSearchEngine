@@ -71,20 +71,20 @@ public class Spimi {
 
                 documentCounter++;
 
+//                if (documentCounter % 250000 == 0) {
+//                    log.getLog("Processed: " + documentCounter + " documents");
+////                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
+//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+//                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
+//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    indexCounter += 1;
+//                    //log.getLog(manageMemory); // print memory status after clearing memory
+//
+//                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco (forse non serve piu)
+//                }
+
                 if (documentCounter % 250000 == 0) {
-                    log.getLog("Processed: " + documentCounter + " documents");
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
-                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
-                    indexCounter += 1;
-                    //log.getLog(manageMemory); // print memory status after clearing memory
-
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco (forse non serve piu)
-                }
-
-                if (documentCounter % 10 == 0) {
                     // TODO TESTING dei primi 30 documenti -> 3 file diversi
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
@@ -103,18 +103,18 @@ public class Spimi {
                         LexiconElem lexiconElem = lexicon.getLexiconElem(key);
                         PostingList postingList = new PostingList();
                         postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
-                        System.out.println(lexiconElem);
-                        System.out.println(postingList);
+//                        System.out.println(lexiconElem);
+//                        System.out.println(postingList);
                     }
                     // clear per sicurezza
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     invertedIndex = new HashMap<>(); // create a new inverted index
 
                     ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
-                    System.out.println(documents1);
+//                    System.out.println(documents1);
                     indexCounter += 1;
-                    if (documentCounter == 10000)
-                        break;
+//                    if (documentCounter == 10000)
+//                        break;
                 }
 
 //                if (documentCounter % 500000 == 0) {
@@ -123,7 +123,6 @@ public class Spimi {
 //                    log.getLog("Processed: " + documentCounter + " documents");
 //                }
 
-                // TODO FARE MERGE INDICI E VOCABOLARIO
             }
             //save into disk documentCounter
             FileOutputStream fileOut = new FileOutputStream("data/index/numberOfDocs.bin");
