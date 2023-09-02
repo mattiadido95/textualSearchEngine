@@ -50,7 +50,6 @@ public class Prompt {
 
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
-                ArrayList<QueryResult> results;
                 searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
