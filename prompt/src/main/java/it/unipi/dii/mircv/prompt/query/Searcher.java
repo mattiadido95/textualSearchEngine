@@ -11,17 +11,17 @@ import java.util.Collections;
 
 public class Searcher {
 
-    private String term;
+//    private String term;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private ArrayList<QueryResult> queryResults;
     private static int N_docs = 0; // number of documents in the collection
 
-    public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
-        // TODO cosi carico ma poi passo le strutture in copia al searcher e occupo il doppio !!!!
-        this.lexicon = lexicon;
-        this.documents = documents;
-    }
+//    public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
+//        // TODO cosi carico ma poi passo le strutture in copia al searcher e occupo il doppio !!!!
+//        this.lexicon = lexicon;
+//        this.documents = documents;
+//    }
 
     public Searcher() {
         queryResults = new ArrayList<>();
