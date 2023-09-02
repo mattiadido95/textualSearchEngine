@@ -1,6 +1,5 @@
 package it.unipi.dii.mircv.prompt;
 
-
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Query;
@@ -11,6 +10,7 @@ import javax.print.Doc;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Prompt {
@@ -23,15 +23,23 @@ public class Prompt {
         Lexicon lexicon = new Lexicon();
         lexicon.readLexiconFromDisk(-1);
         ArrayList<Document> documents = Document.readDocumentsFromDisk(-1);
+        long start, end;
 
         Scanner scanner = new Scanner(System.in);
-        while(true){
+        while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
             System.out.println("MENU: \n - insert 1 to search \n - insert 2 to exit");
-            int userInput = scanner.nextInt();
+//            int userInput = scanner.nextInt();
+            int userInput = 0;
+            try {
+                userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
+            } catch (InputMismatchException e) {
+                System.out.println("Wrong input, please insert 1 or 2");
+                continue;
+            }
             scanner.nextLine(); // to consume the \n character left by nextInt()
-            if (userInput == 1){
+            if (userInput == 1) {
                 System.out.println("Insert your query ...");
                 String queryInput = scanner.nextLine();
 
@@ -41,33 +49,30 @@ public class Prompt {
                 Searcher searcher = new Searcher();
 
                 System.out.println("disjunctive");
+                start = System.currentTimeMillis();
                 ArrayList<QueryResult> results;
                 searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
-                results = searcher.getQueryResults();
-                System.out.println(results);
+                end = System.currentTimeMillis();
+                searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
+                start = System.currentTimeMillis();
                 searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
-                results = searcher.getQueryResults();
-                System.out.println(results);
-            }
-            else if (userInput == 2){
+                end = System.currentTimeMillis();
+                searcher.printResults(end - start);
+
+            } else if (userInput == 2) {
                 System.out.println("Bye!");
                 scanner.close();
                 break;
+            } else {
+                System.out.println("Wrong input, please insert 1 or 2");
             }
-            else{
-                System.out.println("Wrong input");
-            }
-
 
 
         }
 
 
-
-
-
-
     }
 }
+

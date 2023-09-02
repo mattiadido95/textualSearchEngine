@@ -128,12 +128,13 @@ public class Searcher {
                 // add pid to results
                 queryResults.add(new QueryResult(pid, document_score));
             }
-            if (queryResults.size() == K)
-                break;
         } while (next_docId != Integer.MAX_VALUE);
 
         postingListIterator.closeList();
         Collections.sort(queryResults);
+        if (queryResults.size() > K) {
+            queryResults = new ArrayList<>(queryResults.subList(0, K));;
+        }
     }
 
     private double tfidf(int tf, int df) {
@@ -157,6 +158,15 @@ public class Searcher {
         return min;
     }
 
+    public void printResults(long time) {
+            if(queryResults == null || queryResults.size() == 0){
+                System.out.println("Unfortunately, no documents were found for your query.");
+                return;
+            }
 
+            System.out.println("These " + queryResults.size() + " documents may are of your interest");
+            System.out.println(queryResults);
+            System.out.println("Search time: " + time + " ms");
+        }
 
 }
