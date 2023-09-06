@@ -76,13 +76,13 @@ public class MemoryManager {
 //            System.out.println("Posting list saved to disk: " + postingList.toString());
 //            System.out.println("**************************************");
         }
-        log.getLog("End index saving to disk");
+//        log.getLog("End index saving to disk");
 
         lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
         lexicon.getLexicon().clear(); // clear lexicon
 //        lexicon.readLexiconFromDisk(indexCounter); // read lexicon from disk
 
-        log.getLog("End lexicon saving to disk");
+//        log.getLog("End lexicon saving to disk");
 
 //        System.out.println("**********CHECKING LEXICON*********");
 //        System.out.println("Lexicon saved to disk: " + lexicon.toString());

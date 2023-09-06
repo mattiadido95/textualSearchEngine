@@ -50,10 +50,6 @@ public class LexiconElem {
     }
 
     public void mergeLexiconElem(LexiconElem lexiconElem) {
-        if (lexiconElem.getTerm().equals("â\u0080¦")) {
-            System.out.println("Error: terms are different");
-
-        }
         this.df += lexiconElem.getDf();
         this.cf += lexiconElem.getCf();
     }
