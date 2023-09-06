@@ -42,13 +42,22 @@ public class Index {
     }
 
     public static void main(String[] args) throws IOException {
+
+        Logs log = new Logs();
+        long start, end;
+
 //        Index index = new Index();
         Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
+        start = System.currentTimeMillis();
         spimi.execute();
+        end = System.currentTimeMillis();
+        log.addLog("spimi", start, end);
 //        System.out.println(spimi.getIndexCounter());
         Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
-//        System.out.println(merger);
+        start = System.currentTimeMillis();
         merger.execute();
+        end = System.currentTimeMillis();
+        log.addLog("merger", start, end);
 
 //        index.getLexicon().readLexiconFromDisk(-1);
 //        // per ogni chiave del lexicon, leggi il posting list dal file

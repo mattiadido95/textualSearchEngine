@@ -15,27 +15,31 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Prompt {
-
     private static int n_results = 10; // number of documents to return for a query
-
-
 
     public static void main(String[] args) {
 
         Logs log = new Logs();
+        long start, end;
 
         // load main structure in memory
         Lexicon lexicon = new Lexicon();
+        start = System.currentTimeMillis();
         lexicon.readLexiconFromDisk(-1);
+        end = System.currentTimeMillis();
+        log.addLog("load_lexicon", start, end);
+
+        start = System.currentTimeMillis();
         ArrayList<Document> documents = Document.readDocumentsFromDisk(-1);
-        long start, end;
+        end = System.currentTimeMillis();
+        log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
+
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
             System.out.println("MENU: \n - insert 1 to search \n - insert 2 to exit");
-//            int userInput = scanner.nextInt();
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
@@ -65,7 +69,7 @@ public class Prompt {
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
-                log.addLog("query", start,end);
+                log.addLog("query", start, end);
 
             } else if (userInput == 2) {
                 System.out.println("Bye!");
