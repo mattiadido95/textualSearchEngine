@@ -24,7 +24,6 @@ public class Index {
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
-        this.log = new Logs();
     }
 
     public Lexicon getLexicon() {
@@ -54,21 +53,22 @@ public class Index {
     }
 
     public static void main(String[] args) throws IOException {
+
         Logs log = new Logs();
         long start, end;
+
 //        Index index = new Index();
-        start = System.currentTimeMillis();
         Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
+        start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
-        log.getLog(" SPIMI TIME: " + convertMillisecondsToHMmSs(end - start));
+        log.addLog("spimi", start, end);
 //        System.out.println(spimi.getIndexCounter());
-        start = System.currentTimeMillis();
         Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
-//        System.out.println(merger);
+        start = System.currentTimeMillis();
         merger.execute();
         end = System.currentTimeMillis();
-        log.getLog(" MERGING TIME: " + convertMillisecondsToHMmSs(end - start));
+        log.addLog("merger", start, end);
 
 //        index.getLexicon().readLexiconFromDisk(-1);
 //        // per ogni chiave del lexicon, leggi il posting list dal file

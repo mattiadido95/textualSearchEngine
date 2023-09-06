@@ -1,0 +1,20 @@
+[
+    {
+        "duration": 302,
+        "start_time": 1693993708541,
+        "end_time": 1693993708843,
+        "type": "query"
+    },
+    {
+        "duration": 66835,
+        "start_time": 1693997120804,
+        "end_time": 1693997187639,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 16288,
+        "start_time": 1693997187655,
+        "end_time": 1693997203943,
+        "type": "load_documents"
+    }
+]
