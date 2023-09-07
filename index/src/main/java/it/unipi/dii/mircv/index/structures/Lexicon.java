@@ -27,9 +27,6 @@ public class Lexicon {
         return this.lexicon;
     }
 
-    public void addLexiconElem(LexiconElem lexiconElem) {
-        this.lexicon.put(lexiconElem.getTerm(), lexiconElem);
-    }
 
     public void addLexiconElem(String term) {
         // lexicon contains the term
@@ -38,7 +35,7 @@ public class Lexicon {
             lexiconElem.incrementCf();
         } else {
             // lexicon does not contain the term
-            LexiconElem lexiconElem = new LexiconElem(term);
+            LexiconElem lexiconElem = new LexiconElem();
             lexiconElem.incrementCf();
             this.lexicon.put(term, lexiconElem);
         }
@@ -186,9 +183,12 @@ public class Lexicon {
                 int df = randomAccessFile.readInt();
                 long cf = randomAccessFile.readLong();
                 long offset = randomAccessFile.readLong();
-
+                int numblock = -1;
+                if(indexCounter == -1) {
+                    numblock = randomAccessFile.readInt();
+                }
                 // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+                LexiconElem lexiconElem = new LexiconElem(df, cf, offset,numblock);
                 this.lexicon.put(term, lexiconElem);
             }
             randomAccessFile.close();
@@ -202,22 +202,23 @@ public class Lexicon {
         RandomAccessFile raf = araf.get(i);
         raf.seek(arrayOffset[i]);
 
-        String term = raf.readUTF();
+        raf.readUTF();
         int df = raf.readInt();
         long cf = raf.readLong();
         long offset = raf.readLong();
 
         arrayOffset[i] = raf.getFilePointer();
         // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-        LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+        LexiconElem lexiconElem = new LexiconElem(df, cf, offset,-1);
         return lexiconElem;
     }
 
-    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset) throws IOException {
+    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset, int numBlock) throws IOException {
         raf.writeUTF(term);
         raf.writeInt(df);
         raf.writeLong(cf);
         raf.writeLong(offset);
+        raf.writeInt(numBlock);
         return term;
     }
 
