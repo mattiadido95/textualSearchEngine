@@ -4,11 +4,7 @@ import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
-import javax.print.Doc;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -50,13 +46,13 @@ public class Prompt {
 
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
+                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
+                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 

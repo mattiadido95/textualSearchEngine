@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 public class Searcher {
 
@@ -15,6 +16,7 @@ public class Searcher {
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private ArrayList<QueryResult> queryResults;
+    private Iterator<PostingList> postingListIterator;
     private static int N_docs = 0; // number of documents in the collection
 
 //    public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
@@ -32,10 +34,6 @@ public class Searcher {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<QueryResult> getQueryResults() {
-        return queryResults;
     }
 
 //    public ArrayList<String> search(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents) {
@@ -73,7 +71,7 @@ public class Searcher {
 //        return term_pid_results;
 //    }
 
-    public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
+    public void DAAT_disk(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
         //create postingListIterator
         PostingListIterator postingListIterator = new PostingListIterator();

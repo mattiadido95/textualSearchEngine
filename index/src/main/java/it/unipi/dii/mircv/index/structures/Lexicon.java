@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 
 public class Lexicon {
-    //TODO cambiare in treeMap
+
     TreeMap<String, LexiconElem> lexicon;
 
     Logs log = new Logs();
