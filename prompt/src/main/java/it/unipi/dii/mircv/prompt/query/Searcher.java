@@ -98,9 +98,61 @@ public class Searcher {
 
         if (postingsIterators.size() == 0)
             return; // if no terms in query are in lexicon means that there are no results
-        
 
+        int next_docId;
+        do {
+            ArrayList<Double> scores = new ArrayList<>();
+            // Get the next docId by finding the minimum docId among all iterators
+            next_docId = Integer.MAX_VALUE;
+            for (Iterator<Posting> postingIterator : postingsIterators) {
+                if (postingIterator.hasNext()) {
+                    int currentDocId = postingIterator.next().getDocID();
+                    if (currentDocId < next_docId) {
+                        next_docId = currentDocId;
+                    }
+                }
+            }
 
+            if (next_docId == Integer.MAX_VALUE)
+                break;
+
+            double document_score = 0;
+            int term_counter = 0;
+
+            for (int i = 0; i < postingsIterators.size(); i++) {
+                Iterator<Posting> postingIterator = postingsIterators.get(i);
+                if (postingIterator.hasNext()) {
+                    Posting posting = postingIterator.next();
+                    int docId = posting.getDocID();
+                    if (docId == next_docId) {
+                        int tf = posting.getFreq();
+                        scores.add(tfidf(tf, lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                        term_counter++;
+                    }
+                }
+            }
+
+            if (mode.equals("conjunctive") && term_counter != queryTerms.size())
+                scores.clear();
+
+            // Sum all the values of scores
+            for (double score : scores) {
+                document_score += score;
+            }
+            if (document_score > 0) {
+                // Get document
+                Document document = documents.get(next_docId);
+                // Get document pid
+                String pid = document.getDocNo();
+                // Add pid to results
+                queryResults.add(new QueryResult(pid, document_score));
+            }
+        } while (next_docId != Integer.MAX_VALUE);
+
+        Collections.sort(queryResults);
+        if (queryResults.size() > K) {
+            queryResults = new ArrayList<>(queryResults.subList(0, K));
+        }
 
 
     }
