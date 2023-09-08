@@ -82,6 +82,10 @@ public class PostingList {
         this.size++;
     }
 
+    public int getMinDocId() {
+        return this.postings.get(0).getDocID();
+    }
+
     public int getPostingListSize() {
         return this.size;
     }

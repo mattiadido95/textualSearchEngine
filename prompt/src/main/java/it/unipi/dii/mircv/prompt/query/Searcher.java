@@ -10,23 +10,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import static it.unipi.dii.mircv.index.structures.BlockDescriptor.readBlockDescriptorList;
+import static it.unipi.dii.mircv.index.structures.BlockDescriptor.readFirstBlock;
+
 public class Searcher {
 
-//    private String term;
+    //    private String term;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private ArrayList<QueryResult> queryResults;
-    private Iterator<PostingList> postingListIterator;
+    private ArrayList<Iterator<Posting>> postingsIterators = null;
+    private ArrayList<Iterator<BlockDescriptor>> blockDescriptorIterators = null;
     private static int N_docs = 0; // number of documents in the collection
 
-//    public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
-//        // TODO cosi carico ma poi passo le strutture in copia al searcher e occupo il doppio !!!!
-//        this.lexicon = lexicon;
-//        this.documents = documents;
-//    }
+    private static final int NUMBER_OF_POSTING = 10;
+    private static final int BLOCK_SIZE = (4 * 2 + 8) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq, 8 byte per offset, 8 byte per size
+
 
     public Searcher() {
         queryResults = new ArrayList<>();
+        postingsIterators = new ArrayList<>();
+        blockDescriptorIterators = new ArrayList<>();
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
@@ -36,40 +40,64 @@ public class Searcher {
         }
     }
 
-//    public ArrayList<String> search(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents) {
-//        ArrayList<String> pid_results = new ArrayList<>();
-//        for (String term : queryTerms) {
-//            pid_results.addAll(searchTerm(term, lexicon, documents));
-//        }
-//        return pid_results;
-//    }
-//
-//    public ArrayList<String> searchTerm(String term, Lexicon lexicon, ArrayList<Document> documents) {
-//        this.term = term;
-//        ArrayList<String> term_pid_results = new ArrayList<>();
-//        if (lexicon.getLexicon().containsKey(term)) {
-//            System.out.println("Term " + term + " found at offset " + lexicon.getLexiconElem(term).getOffset());
-//            // get lexicon element
-//            LexiconElem lexiconElem = lexicon.getLexiconElem(term);
-//            // use lexiconElem.offset and lexiconElem.df to read posting list from index.bin
-//            // get posting list
-//            PostingList postingList = new PostingList();
-//            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset());
-//            // for each posting in posting list get document pid
-//            for (Posting posting : postingList.getPostings()) {
-//                // get document
-//                Document document = documents.get(posting.getDocID());
-//                // get document pid
-//                String pid = document.getDocNo();
-//                // add pid to results
-//                term_pid_results.add(pid);
-//            }
-//        } else {
-//            System.out.println("Term " + term + " not found in lexicon");
-//        }
-//
-//        return term_pid_results;
-//    }
+    /*
+     * query
+     * termine
+     * termine -> lexicon
+     * lexicon -> block offset
+     * read first block
+     * iterate over blocks
+     *
+     */
+
+    // search min docID in the posting list iterator array
+    private int getMinDocId(ArrayList<Iterator<Posting>> postingListIterators) {
+        int min = Integer.MAX_VALUE;
+        for (Iterator<Posting> postingListIterator : postingListIterators) {
+            if (postingListIterator.hasNext()) {
+                int id = postingListIterator.next().getDocId();
+                if (id < min)
+                    min = id;
+            }
+        }
+        return min;
+    }
+
+    private ArrayList<BlockDescriptor> openBlocks(long firstBlockoffset, Integer blocksNumber) {
+
+        ArrayList<BlockDescriptor> blocks = new ArrayList<>();
+        blocks = readBlockDescriptorList(firstBlockoffset, blocksNumber);
+
+        return blocks;
+    }
+
+
+    public void DAAT_disk_by_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
+        queryResults.clear();
+        long firstBlockOffset;
+        int blocksNumber;
+        int minDocId = Integer.MAX_VALUE;
+        ArrayList<BlockDescriptor> firstBlockDescriptors = new ArrayList<>();
+
+        // for each term in query get all block descriptors and add them to blockDescriptorIterators
+        for (String term : queryTerms) {
+            if (lexicon.getLexicon().containsKey(term)) {
+                firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
+                BlockDescriptor firstBlockDescriptor = readFirstBlock(firstBlockOffset);
+//                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
+//                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
+
+                // load posting list for each term
+                PostingList postingList = new PostingList();
+                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
+            }
+        }
+
+
+
+
+    }
+
 
     public void DAAT_disk(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
@@ -131,7 +159,7 @@ public class Searcher {
         postingListIterator.closeList();
         Collections.sort(queryResults);
         if (queryResults.size() > K) {
-            queryResults = new ArrayList<>(queryResults.subList(0, K));;
+            queryResults = new ArrayList<>(queryResults.subList(0, K));
         }
     }
 
@@ -157,14 +185,14 @@ public class Searcher {
     }
 
     public void printResults(long time) {
-            if(queryResults == null || queryResults.size() == 0){
-                System.out.println("Unfortunately, no documents were found for your query.");
-                return;
-            }
-
-            System.out.println("These " + queryResults.size() + " documents may are of your interest");
-            System.out.println(queryResults);
-            System.out.println("Search time: " + time + " ms");
+        if (queryResults == null || queryResults.size() == 0) {
+            System.out.println("Unfortunately, no documents were found for your query.");
+            return;
         }
+
+        System.out.println("These " + queryResults.size() + " documents may are of your interest");
+        System.out.println(queryResults);
+        System.out.println("Search time: " + time + " ms");
+    }
 
 }

@@ -60,4 +60,7 @@ public class LexiconElem {
     }
 
 
+    public Integer getBlocksNumber() {
+        return this.numBlock;
+    }
 }
