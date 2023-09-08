@@ -79,7 +79,6 @@ public class Spimi {
                 documentCounter++;
 
                 if (documentCounter % 250000 == 0) {
-                    // TODO TESTING dei primi 30 documenti -> 3 file diversi
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk

@@ -34,6 +34,7 @@ public class PostingList {
     public void mergePosting(PostingList postingList) {
         this.postings.addAll(postingList.getPostings());
         this.size += postingList.getPostingListSize();
+        log.getLog(this.postings);
     }
 
     @Override
@@ -52,8 +53,6 @@ public class PostingList {
             }
         }
         output.append("]\n");
-        //System.out.println(output);
-        //System.out.println("**************************************");
         return output.toString();
     }
 

@@ -16,5 +16,221 @@
         "start_time": 1693997187655,
         "end_time": 1693997203943,
         "type": "load_documents"
+    },
+    {
+        "duration": 311,
+        "start_time": 1694158914575,
+        "end_time": 1694158914886,
+        "type": "spimi"
+    },
+    {
+        "duration": 236,
+        "start_time": 1694158994067,
+        "end_time": 1694158994303,
+        "type": "spimi"
+    },
+    {
+        "duration": 241,
+        "start_time": 1694159002016,
+        "end_time": 1694159002257,
+        "type": "spimi"
+    },
+    {
+        "duration": 204,
+        "start_time": 1694159049932,
+        "end_time": 1694159050136,
+        "type": "spimi"
+    },
+    {
+        "duration": 216,
+        "start_time": 1694159086327,
+        "end_time": 1694159086543,
+        "type": "spimi"
+    },
+    {
+        "duration": 206,
+        "start_time": 1694159165521,
+        "end_time": 1694159165727,
+        "type": "spimi"
+    },
+    {
+        "duration": 220,
+        "start_time": 1694159274162,
+        "end_time": 1694159274382,
+        "type": "spimi"
+    },
+    {
+        "duration": 189,
+        "start_time": 1694159318785,
+        "end_time": 1694159318974,
+        "type": "spimi"
+    },
+    {
+        "duration": 192,
+        "start_time": 1694159336069,
+        "end_time": 1694159336261,
+        "type": "spimi"
+    },
+    {
+        "duration": 189,
+        "start_time": 1694159410505,
+        "end_time": 1694159410694,
+        "type": "spimi"
+    },
+    {
+        "duration": 197,
+        "start_time": 1694159440839,
+        "end_time": 1694159441036,
+        "type": "spimi"
+    },
+    {
+        "duration": 207,
+        "start_time": 1694159501114,
+        "end_time": 1694159501321,
+        "type": "spimi"
+    },
+    {
+        "duration": 217,
+        "start_time": 1694159538356,
+        "end_time": 1694159538573,
+        "type": "spimi"
+    },
+    {
+        "duration": 210,
+        "start_time": 1694160937494,
+        "end_time": 1694160937704,
+        "type": "spimi"
+    },
+    {
+        "duration": 191,
+        "start_time": 1694160960487,
+        "end_time": 1694160960678,
+        "type": "spimi"
+    },
+    {
+        "duration": 194,
+        "start_time": 1694160993332,
+        "end_time": 1694160993526,
+        "type": "spimi"
+    },
+    {
+        "duration": 214,
+        "start_time": 1694161049546,
+        "end_time": 1694161049760,
+        "type": "spimi"
+    },
+    {
+        "duration": 201,
+        "start_time": 1694161075587,
+        "end_time": 1694161075788,
+        "type": "spimi"
+    },
+    {
+        "duration": 209,
+        "start_time": 1694161083699,
+        "end_time": 1694161083908,
+        "type": "spimi"
+    },
+    {
+        "duration": 191,
+        "start_time": 1694161182613,
+        "end_time": 1694161182804,
+        "type": "spimi"
+    },
+    {
+        "duration": 184,
+        "start_time": 1694161242709,
+        "end_time": 1694161242893,
+        "type": "spimi"
+    },
+    {
+        "duration": 186,
+        "start_time": 1694161289640,
+        "end_time": 1694161289826,
+        "type": "spimi"
+    },
+    {
+        "duration": 218,
+        "start_time": 1694161318453,
+        "end_time": 1694161318671,
+        "type": "spimi"
+    },
+    {
+        "duration": 197,
+        "start_time": 1694161340474,
+        "end_time": 1694161340671,
+        "type": "spimi"
+    },
+    {
+        "duration": 217,
+        "start_time": 1694161350918,
+        "end_time": 1694161351135,
+        "type": "spimi"
+    },
+    {
+        "duration": 202,
+        "start_time": 1694161371986,
+        "end_time": 1694161372188,
+        "type": "spimi"
+    },
+    {
+        "duration": 192,
+        "start_time": 1694161402296,
+        "end_time": 1694161402488,
+        "type": "spimi"
+    },
+    {
+        "duration": 194,
+        "start_time": 1694161425034,
+        "end_time": 1694161425228,
+        "type": "spimi"
+    },
+    {
+        "duration": 192,
+        "start_time": 1694161442786,
+        "end_time": 1694161442978,
+        "type": "spimi"
+    },
+    {
+        "duration": 232,
+        "start_time": 1694161462934,
+        "end_time": 1694161463166,
+        "type": "spimi"
+    },
+    {
+        "duration": 312,
+        "start_time": 1694161575333,
+        "end_time": 1694161575645,
+        "type": "spimi"
+    },
+    {
+        "duration": 218,
+        "start_time": 1694161590706,
+        "end_time": 1694161590924,
+        "type": "spimi"
+    },
+    {
+        "duration": 191,
+        "start_time": 1694161696335,
+        "end_time": 1694161696526,
+        "type": "spimi"
+    },
+    {
+        "duration": 243,
+        "start_time": 1694161696555,
+        "end_time": 1694161696798,
+        "type": "merger"
+    },
+    {
+        "duration": 197,
+        "start_time": 1694161736767,
+        "end_time": 1694161736964,
+        "type": "spimi"
+    },
+    {
+        "duration": 220,
+        "start_time": 1694161736990,
+        "end_time": 1694161737210,
+        "type": "merger"
     }
 ]
