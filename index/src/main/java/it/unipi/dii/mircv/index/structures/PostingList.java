@@ -31,6 +31,11 @@ public class PostingList {
         return postings;
     }
 
+    public void mergePosting(PostingList postingList) {
+        this.postings.addAll(postingList.getPostings());
+        this.size += postingList.getPostingListSize();
+    }
+
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();

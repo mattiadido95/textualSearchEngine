@@ -78,19 +78,6 @@ public class Spimi {
 
                 documentCounter++;
 
-//                if (documentCounter % 250000 == 0) {
-//                    log.getLog("Processed: " + documentCounter + " documents");
-////                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-//                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-//                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
-//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-//                    invertedIndex = new HashMap<>(); // create a new inverted index
-//                    indexCounter += 1;
-//                    //log.getLog(manageMemory); // print memory status after clearing memory
-//
-//                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco (forse non serve piu)
-//                }
-
                 if (documentCounter % 250000 == 0) {
                     // TODO TESTING dei primi 30 documenti -> 3 file diversi
                     log.getLog("Processed: " + documentCounter + " documents");
@@ -100,35 +87,30 @@ public class Spimi {
                     Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     //TODO serve davvero fare la new
-                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    //read Structures from disk
-                    lexicon.readLexiconFromDisk(indexCounter);
-                    // per ogni chiave del lexicon, leggi il posting list dal file
-                    for (String key : lexicon.getLexicon().keySet()) {
-                        //get lexicon elem
-                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
-                        PostingList postingList = new PostingList();
-                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
+//                    //read Structures from disk
+//                    lexicon.readLexiconFromDisk(indexCounter);
+//                    // per ogni chiave del lexicon, leggi il posting list dal file
+//                    for (String key : lexicon.getLexicon().keySet()) {
+//                        //get lexicon elem
+//                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
+//                        PostingList postingList = new PostingList();
+//                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
 //                        System.out.println(lexiconElem);
 //                        System.out.println(postingList);
-                    }
+//                    }
                     // clear per sicurezza
-                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
+//                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
 //                    System.out.println(documents1);
                     indexCounter += 1;
 //                    if (documentCounter == 30)
 //                        break;
                 }
 
-//                if (documentCounter % 500000 == 0) {
-//                    log.getLog(invertedIndex);
-//                    log.getLog(lexicon);
-//                    log.getLog("Processed: " + documentCounter + " documents");
-//                }
 
             }
             //save into disk documentCounter
