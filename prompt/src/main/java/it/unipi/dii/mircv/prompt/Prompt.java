@@ -41,6 +41,7 @@ public class Prompt {
                 userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
             } catch (InputMismatchException e) {
                 System.out.println("Wrong input, please insert 1 or 2");
+                scanner.nextLine(); // to consume the \n character left by nextInt()
                 continue;
             }
             scanner.nextLine(); // to consume the \n character left by nextInt()

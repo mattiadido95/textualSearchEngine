@@ -34,6 +34,7 @@ public class PostingList {
     public void mergePosting(PostingList postingList) {
         this.postings.addAll(postingList.getPostings());
         this.size += postingList.getPostingListSize();
+        log.getLog(this.postings);
     }
 
     @Override
@@ -52,8 +53,6 @@ public class PostingList {
             }
         }
         output.append("]\n");
-        //System.out.println(output);
-        //System.out.println("**************************************");
         return output.toString();
     }
 
@@ -81,6 +80,10 @@ public class PostingList {
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
         this.size++;
+    }
+
+    public int getMinDocId() {
+        return this.postings.get(0).getDocID();
     }
 
     public int getPostingListSize() {

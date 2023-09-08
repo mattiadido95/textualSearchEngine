@@ -63,7 +63,9 @@ public class Logs {
     }
 
     private void logPostingList(PostingList postingList, String timestamp) {
-        postingList.toString();
+        System.out.println("[" + timestamp + "]");
+        System.out.println(postingList.toString());
+        System.out.println("**************************************");
     }
 
     private void logHashMap(HashMap invertedIndex, String timestamp) {
