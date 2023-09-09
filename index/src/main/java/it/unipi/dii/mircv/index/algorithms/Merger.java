@@ -121,7 +121,7 @@ public class Merger {
                 for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
                     if ((i + 1) % NUMBER_OF_POSTING == 0) {
                         //salva il block descriptor
-                        blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i+1));
+                        blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
                         postingOffsetStart += BLOCK_SIZE;
                         blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk();
                         if (blockCounter == 0)
@@ -179,6 +179,8 @@ public class Merger {
         // rimuovi cartella lexicon
         dir = new File(INDEX_PATH + "/documents");
         dir.delete();
+
+        log.getLog("End merging ...");
     }
 }
 

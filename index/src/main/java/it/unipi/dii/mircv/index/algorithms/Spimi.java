@@ -6,6 +6,7 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,7 +107,7 @@ public class Spimi {
 //                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
 //                    System.out.println(documents1);
                     indexCounter += 1;
-                    if (documentCounter == 30)
+                    if (documentCounter == 90)
                         break;
                 }
 
@@ -123,7 +124,7 @@ public class Spimi {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        log.getLog("Indexing completed ...");
     }
 
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
