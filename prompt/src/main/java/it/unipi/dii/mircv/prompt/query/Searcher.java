@@ -51,17 +51,17 @@ public class Searcher {
      */
 
     // search min docID in the posting list iterator array
-    private int getMinDocId(ArrayList<Iterator<Posting>> postingListIterators) {
-        int min = Integer.MAX_VALUE;
-        for (Iterator<Posting> postingListIterator : postingListIterators) {
-            if (postingListIterator.hasNext()) {
-                int id = postingListIterator.next().getDocId();
-                if (id < min)
-                    min = id;
-            }
-        }
-        return min;
-    }
+//    private int getMinDocId(ArrayList<Iterator<Posting>> postingListIterators) {
+//        int min = Integer.MAX_VALUE;
+//        for (Iterator<Posting> postingListIterator : postingListIterators) {
+//            if (postingListIterator.hasNext()) {
+//                int id = postingListIterator.next().getDocID();
+//                if (id < min)
+//                    min = id;
+//            }
+//        }
+//        return min;
+//    }
 
     private ArrayList<BlockDescriptor> openBlocks(long firstBlockoffset, Integer blocksNumber) {
 
@@ -71,29 +71,88 @@ public class Searcher {
         return blocks;
     }
 
-
-    public void DAAT_disk_by_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
+    public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
         long firstBlockOffset;
         int blocksNumber;
         int minDocId = Integer.MAX_VALUE;
-        ArrayList<BlockDescriptor> firstBlockDescriptors = new ArrayList<>();
 
         // for each term in query get all block descriptors and add them to blockDescriptorIterators
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-                BlockDescriptor firstBlockDescriptor = readFirstBlock(firstBlockOffset);
+                BlockDescriptor firstBlockDescriptor = readFirstBlock(firstBlockOffset); // read first block descriptor, used because MaxScore is not implemented
+
 //                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
 
-                // load posting list for each term
+                // load total posting list for the term, used because MaxScore is not implemented
                 PostingList postingList = new PostingList();
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
+                postingsIterators.add(postingList.getPostings().iterator()); // add postinglist of the term to postingListIterators
+                // check if the min docID of the posting list is the new min
+                if (postingList.getMinDocId() < minDocId)
+                    minDocId = postingList.getMinDocId();
             }
         }
 
+        if (postingsIterators.size() == 0)
+            return; // if no terms in query are in lexicon means that there are no results
 
+        int next_docId;
+        do {
+            ArrayList<Double> scores = new ArrayList<>();
+            // Get the next docId by finding the minimum docId among all iterators
+            next_docId = Integer.MAX_VALUE;
+            for (Iterator<Posting> postingIterator : postingsIterators) {
+                if (postingIterator.hasNext()) {
+                    int currentDocId = postingIterator.next().getDocID();
+                    if (currentDocId < next_docId) {
+                        next_docId = currentDocId;
+                    }
+                }
+            }
+
+            if (next_docId == Integer.MAX_VALUE)
+                break;
+
+            double document_score = 0;
+            int term_counter = 0;
+
+            for (int i = 0; i < postingsIterators.size(); i++) {
+                Iterator<Posting> postingIterator = postingsIterators.get(i);
+                if (postingIterator.hasNext()) {
+                    Posting posting = postingIterator.next();
+                    int docId = posting.getDocID();
+                    if (docId == next_docId) {
+                        int tf = posting.getFreq();
+                        scores.add(tfidf(tf, lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                        term_counter++;
+                    }
+                }
+            }
+
+            if (mode.equals("conjunctive") && term_counter != queryTerms.size())
+                scores.clear();
+
+            // Sum all the values of scores
+            for (double score : scores) {
+                document_score += score;
+            }
+            if (document_score > 0) {
+                // Get document
+                Document document = documents.get(next_docId);
+                // Get document pid
+                String pid = document.getDocNo();
+                // Add pid to results
+                queryResults.add(new QueryResult(pid, document_score));
+            }
+        } while (next_docId != Integer.MAX_VALUE);
+
+        Collections.sort(queryResults);
+        if (queryResults.size() > K) {
+            queryResults = new ArrayList<>(queryResults.subList(0, K));
+        }
 
 
     }
