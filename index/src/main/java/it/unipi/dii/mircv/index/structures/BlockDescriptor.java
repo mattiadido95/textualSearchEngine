@@ -10,6 +10,8 @@ import java.util.List;
 public class BlockDescriptor {
     private int maxDocID;
     private int numPosting; // number of posting in the block
+    private long postingListOffset;
+
 
     public int getMaxDocID() {
         return this.maxDocID;
@@ -22,8 +24,6 @@ public class BlockDescriptor {
     public long getPostingListOffset() {
         return this.postingListOffset;
     }
-
-    private long postingListOffset;
 
     public BlockDescriptor(long postingOffsetStart, List<Posting> subList) {
         this.maxDocID = subList.get(subList.size() - 1).getDocID();
@@ -49,9 +49,7 @@ public class BlockDescriptor {
     public long saveBlockDescriptorToDisk() {
         String filePath;
         filePath = "data/index/blockDescriptor.bin";
-
         long offset = -1;
-
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
@@ -72,7 +70,6 @@ public class BlockDescriptor {
                 fileChannel.write(buffer);
                 buffer.clear();
             }
-
 
             // Scrivi eventuali dati rimanenti nel buffer sul file
             if (buffer.position() > 0) {
