@@ -19,8 +19,10 @@ public class Searcher {
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private ArrayList<QueryResult> queryResults;
-    private ArrayList<Iterator<Posting>> postingsIterators = null;
+    private ArrayList<String> previousQueryTerms;
     private ArrayList<Iterator<BlockDescriptor>> blockDescriptorIterators = null;
+    private ArrayList<PostingList> postingLists = null;
+    private String previousMode;
     private static int N_docs = 0; // number of documents in the collection
 
     private static final int NUMBER_OF_POSTING = 10;
@@ -29,8 +31,10 @@ public class Searcher {
 
     public Searcher() {
         queryResults = new ArrayList<>();
-        postingsIterators = new ArrayList<>();
         blockDescriptorIterators = new ArrayList<>();
+        postingLists = new ArrayList<>();
+        previousQueryTerms = new ArrayList<>();
+        previousMode = "";
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
@@ -62,64 +66,52 @@ public class Searcher {
 //    }
 
     public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
+        if ((previousQueryTerms.equals(queryTerms) && previousMode.equals(mode))
+                || (previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
+            return;
+
+        //process query and clear previous results
+        previousQueryTerms = queryTerms;
+        previousMode = mode;
         queryResults.clear();
+
         long firstBlockOffset;
         int blocksNumber;
-        int minDocId = Integer.MAX_VALUE;
+        int minDocId;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        ArrayList<Double> scores = new ArrayList<>();
 
         // for each term in query get all block descriptors and add them to blockDescriptorIterators
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
                 BlockDescriptor firstBlockDescriptor = readFirstBlock(firstBlockOffset); // read first block descriptor, used because MaxScore is not implemented
-
 //                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
-
                 // load total posting list for the term, used because MaxScore is not implemented
                 PostingList postingList = new PostingList();
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
-                postingsIterators.add(postingList.getPostings().iterator()); // add postinglist of the term to postingListIterators
-                // check if the min docID of the posting list is the new min
-                if (postingList.getMinDocId() < minDocId)
-                    minDocId = postingList.getMinDocId();
+                postingList.openList();
+                postingLists.add(postingList); // add postinglist of the term to postingListIterators
             }
         }
 
-        if (postingsIterators.size() == 0)
+        if (postingLists.size() == 0)
             return; // if no terms in query are in lexicon means that there are no results
 
-        int next_docId;
+        // get min docID from posting list iterators and indexes of posting list iterators with min docID
+        minDocId = getNextDocId(indexes);
+
         do {
-            ArrayList<Double> scores = new ArrayList<>();
-            // Get the next docId by finding the minimum docId among all iterators
-            next_docId = Integer.MAX_VALUE;
-            for (Iterator<Posting> postingIterator : postingsIterators) {
-                if (postingIterator.hasNext()) {
-                    int currentDocId = postingIterator.next().getDocID();
-                    if (currentDocId < next_docId) {
-                        next_docId = currentDocId;
-                    }
-                }
-            }
-
-            if (next_docId == Integer.MAX_VALUE)
-                break;
-
             double document_score = 0;
             int term_counter = 0;
 
-            for (int i = 0; i < postingsIterators.size(); i++) {
-                Iterator<Posting> postingIterator = postingsIterators.get(i);
-                if (postingIterator.hasNext()) {
-                    Posting posting = postingIterator.next();
-                    int docId = posting.getDocID();
-                    if (docId == next_docId) {
-                        int tf = posting.getFreq();
-                        scores.add(tfidf(tf, lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
-                        term_counter++;
-                    }
-                }
+            for (Integer i : indexes) {
+                //calculate score for posting list with min docID
+                scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                term_counter++;
+                // get next posting from posting list with min docID
+                postingLists.get(i).next();
             }
 
             if (mode.equals("conjunctive") && term_counter != queryTerms.size())
@@ -131,84 +123,30 @@ public class Searcher {
             }
             if (document_score > 0) {
                 // Get document
-                Document document = documents.get(next_docId);
+                Document document = documents.get(minDocId);
                 // Get document pid
                 String pid = document.getDocNo();
                 // Add pid to results
                 queryResults.add(new QueryResult(pid, document_score));
             }
-        } while (next_docId != Integer.MAX_VALUE);
+
+            scores.clear();
+            indexes.clear();
+
+            // get min docID from posting list iterators and indexes of posting list iterators with min docID
+            minDocId = getNextDocId(indexes);
+        } while (minDocId != Integer.MAX_VALUE);
 
         Collections.sort(queryResults);
         if (queryResults.size() > K) {
             queryResults = new ArrayList<>(queryResults.subList(0, K));
         }
 
-
-    }
-
-    public void DAAT_disk(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
-        queryResults.clear();
-        //create postingListIterator
-        PostingListIterator postingListIterator = new PostingListIterator();
-        ArrayList<Integer> counter = new ArrayList<>();
-
-        // populate postingListIterator with offset and df for each term in query
-        for (String term : queryTerms) {
-            if (lexicon.getLexicon().containsKey(term)) {
-                postingListIterator.addOffset(lexicon.getLexiconElem(term).getOffset());
-                postingListIterator.addDf(lexicon.getLexiconElem(term).getDf());
-                counter.add(lexicon.getLexiconElem(term).getDf());
-            }
+        for (PostingList pi : postingLists) {
+            pi.closeList();
         }
-        if (postingListIterator.getCursor().size() == 0)
-            return; // if no terms in query are in lexicon means that there are no results
-        postingListIterator.openList(); // there are results so open the postingList
+        postingLists.clear();
 
-        int next_docId;
-
-        do {
-            ArrayList<Double> scores = new ArrayList<>();
-            //get next docId
-            next_docId = getNextDocId(postingListIterator, counter);
-            if (next_docId == Integer.MAX_VALUE)
-                break;
-            double document_score = 0;
-            int term_counter = 0;
-
-            for (int i = 0; i < postingListIterator.getCursor().size(); i++) {
-                int docId = postingListIterator.getDocId(i);
-                if (docId == next_docId) {
-                    int tf = postingListIterator.getFreq(i);
-                    postingListIterator.next(i);
-                    counter.set(i, counter.get(i) - 1);
-                    scores.add(tfidf(tf, postingListIterator.getDf().get(i)));
-                    term_counter++;
-                }
-            }
-
-            if (mode.equals("conjunctive") && term_counter != queryTerms.size())
-                scores.clear();
-
-            //sum all the value of scores
-            for (double score : scores) {
-                document_score += score;
-            }
-            if (document_score > 0) {
-                // get document
-                Document document = documents.get(next_docId);
-                // get document pid
-                String pid = document.getDocNo();
-                // add pid to results
-                queryResults.add(new QueryResult(pid, document_score));
-            }
-        } while (next_docId != Integer.MAX_VALUE);
-
-        postingListIterator.closeList();
-        Collections.sort(queryResults);
-        if (queryResults.size() > K) {
-            queryResults = new ArrayList<>(queryResults.subList(0, K));
-        }
     }
 
     private double tfidf(int tf, int df) {
@@ -218,16 +156,26 @@ public class Searcher {
         return score;
     }
 
-    private int getNextDocId(PostingListIterator pli, ArrayList<Integer> counter) {
+    private int getNextDocId(ArrayList<Integer> indexes) {
         int min = Integer.MAX_VALUE;
-        for (int i = 0; i < pli.getCursor().size(); i++) {
-            if (counter.get(i) == 0) //posting list finished
-                continue;
-            int id = pli.getDocId(i);
-            if (id == -1)
-                continue;
-            if (id < min)
-                min = id;
+
+        for (int i = 0; i < postingLists.size(); i++) {
+            PostingList postList = postingLists.get(i);
+
+            if (postList.getActualPosting() == null) { //first lecture
+                if (postList.hasNext())
+                    postList.next();
+                else
+                    continue;
+            }
+
+            if (postList.getDocId() < min) {
+                indexes.clear();
+                min = postList.getDocId();
+                indexes.add(i);
+            } else if (postList.getDocId() == min) {
+                indexes.add(i);
+            }
         }
         return min;
     }
