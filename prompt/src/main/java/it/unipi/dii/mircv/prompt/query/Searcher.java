@@ -40,16 +40,6 @@ public class Searcher {
         }
     }
 
-    /*
-     * query
-     * termine
-     * termine -> lexicon
-     * lexicon -> block offset
-     * read first block
-     * iterate over blocks
-     *
-     */
-
     // search min docID in the posting list iterator array
 //    private int getMinDocId(ArrayList<Iterator<Posting>> postingListIterators) {
 //        int min = Integer.MAX_VALUE;
@@ -63,13 +53,13 @@ public class Searcher {
 //        return min;
 //    }
 
-    private ArrayList<BlockDescriptor> openBlocks(long firstBlockoffset, Integer blocksNumber) {
-
-        ArrayList<BlockDescriptor> blocks = new ArrayList<>();
-        blocks = readBlockDescriptorList(firstBlockoffset, blocksNumber);
-
-        return blocks;
-    }
+//    private ArrayList<BlockDescriptor> openBlocks(long firstBlockoffset, Integer blocksNumber) {
+//
+//        ArrayList<BlockDescriptor> blocks = new ArrayList<>();
+//        blocks = readBlockDescriptorList(firstBlockoffset, blocksNumber);
+//
+//        return blocks;
+//    }
 
     public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
@@ -156,7 +146,6 @@ public class Searcher {
 
 
     }
-
 
     public void DAAT_disk(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
         queryResults.clear();
