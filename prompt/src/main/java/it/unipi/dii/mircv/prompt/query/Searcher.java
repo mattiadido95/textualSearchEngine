@@ -24,7 +24,7 @@ public class Searcher {
     private static int N_docs = 0; // number of documents in the collection
 
     private static final int NUMBER_OF_POSTING = 10;
-    private static final int BLOCK_SIZE = (4 * 2 + 8) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq, 8 byte per offset, 8 byte per size
+    private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
 
 
     public Searcher() {
