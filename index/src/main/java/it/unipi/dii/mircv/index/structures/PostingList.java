@@ -8,10 +8,13 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PostingList {
     private ArrayList<Posting> postings;
+    private Iterator<Posting> postingIterator;
+    private Posting actualPosting;
     int size;
 
     Logs log = new Logs();
@@ -19,11 +22,15 @@ public class PostingList {
     public PostingList(Document doc) {
         postings = new ArrayList<>();
         postings.add(new Posting(doc.getDocID(), 1));
+        postingIterator = null;
+        actualPosting = null;
         size = 1;
     }
 
     public PostingList() {
         postings = new ArrayList<>();
+        postingIterator = null;
+        actualPosting = null;
         size = 0;
     }
 
@@ -35,6 +42,10 @@ public class PostingList {
         this.postings.addAll(postingList.getPostings());
         this.size += postingList.getPostingListSize();
         log.getLog(this.postings);
+    }
+
+    public Posting getActualPosting() {
+        return actualPosting;
     }
 
     @Override
@@ -80,6 +91,33 @@ public class PostingList {
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
         this.size++;
+    }
+
+    public void openList(){
+        postingIterator = postings.iterator();
+    }
+
+    public void closeList(){
+        postingIterator = null;
+    }
+
+    public void next(){
+        if(postingIterator.hasNext())
+            actualPosting = postingIterator.next();
+        else
+            actualPosting = null;
+    }
+
+    public int getDocId(){
+        return actualPosting.getDocID();
+    }
+
+    public int getFreq(){
+        return actualPosting.getFreq();
+    }
+
+    public boolean hasNext(){
+        return postingIterator.hasNext();
     }
 
     public int getMinDocId() {
