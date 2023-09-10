@@ -122,12 +122,11 @@ public class Document {
     public static ArrayList<Document> readDocumentsFromDisk(int index) {
         String filePath;
 
-        if(index == -1){
+        if (index == -1) {
             filePath = "data/index/documents.bin";
-        }else{
+        } else {
             filePath = "data/index/documents/documents_" + index + ".bin";
         }
-
 
         ArrayList<Document> documents = new ArrayList<>();
 
@@ -136,15 +135,12 @@ public class Document {
             FileChannel fileChannel = fileInputStream.getChannel();
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di lettura
-            ByteBuffer buffer = ByteBuffer.allocate(DOCNO_LENGTH + 4 + 4);
+            ByteBuffer buffer = ByteBuffer.allocate(1024); // Usiamo un buffer di 1024 byte
 
-            // Leggi i dati dal file in blocchi di 1024 byte
             while (fileChannel.read(buffer) > 0) {
-                //TODO controlla flip
                 buffer.flip();
 
-                // Leggi i dati dal buffer
-                while (buffer.hasRemaining()) {
+                while (buffer.remaining() >= (DOCNO_LENGTH + 4 + 4)) {
                     Document doc = new Document();
                     doc.docID = buffer.getInt();
 
@@ -157,11 +153,12 @@ public class Document {
                     documents.add(doc);
                 }
 
-                buffer.clear();
+                buffer.compact();
             }
 
             // Chiudi le risorse
             fileChannel.close();
+            fileInputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();

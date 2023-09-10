@@ -145,8 +145,6 @@ public class Lexicon {
             filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
         }
 
-        try {
-
 //            FileChannel fileChannel = FileChannel.open(Path.of(filePath));
 //            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
 //
@@ -175,23 +173,25 @@ public class Lexicon {
 //                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
 //                this.lexicon.put(term, lexiconElem);
 //            }
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(randomAccessFile.getFD()))) {
 
-            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+            DataInputStream dataInputStream = new DataInputStream(bufferedInputStream);
 
-            while (randomAccessFile.getFilePointer() < randomAccessFile.length()) {
-                String term = randomAccessFile.readUTF();
-                int df = randomAccessFile.readInt();
-                long cf = randomAccessFile.readLong();
-                long offset = randomAccessFile.readLong();
+
+            while (dataInputStream.available() > 0) {
+                String term = dataInputStream.readUTF();
+                int df = dataInputStream.readInt();
+                long cf = dataInputStream.readLong();
+                long offset = dataInputStream.readLong();
                 int numblock = -1;
-                if(indexCounter == -1) {
-                    numblock = randomAccessFile.readInt();
+                if (indexCounter == -1) {
+                    numblock = dataInputStream.readInt();
                 }
                 // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-                LexiconElem lexiconElem = new LexiconElem(df, cf, offset,numblock);
+                LexiconElem lexiconElem = new LexiconElem(df, cf, offset, numblock);
                 this.lexicon.put(term, lexiconElem);
             }
-            randomAccessFile.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
