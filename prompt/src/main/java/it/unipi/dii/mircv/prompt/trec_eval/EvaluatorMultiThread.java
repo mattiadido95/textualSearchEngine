@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Evaluator {
+public class EvaluatorMultiThread {
     private Searcher searcher;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
@@ -31,7 +31,7 @@ public class Evaluator {
     private static final int NUM_QUERIES = 100000; // Numero totale di query
     private static final String OUTPUT_FILE = "results.txt"; // File di output
 
-    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
+    public EvaluatorMultiThread(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
         this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
@@ -42,26 +42,18 @@ public class Evaluator {
     }
 
     private List<String> loadAllQueries() {
-        // Carica tutte le query dal tuo file e restituiscile come una lista di stringhe
-        // Questa è una funzione di esempio, dovresti implementare il caricamento reale delle query.
+
         List<String> queries = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(QUERY_PATH)))) {
             String line; // start reading query by query
             int queryCounter = 0;
             while ((line = br.readLine()) != null) {
-                String[] input = line.split("\t");
-                String queryId = input[0];
-                String queryText = input[1];
+//                String[] input = line.split("\t");
+//                String queryId = input[0];
+//                String queryText = input[1];
 
-                queries.add(queryText);
-
+                queries.add(line);
                 queryCounter++;
-
-//                if (queryCounter % 100 == 0) {
-//                    System.out.println("Query " + queryCounter + " processed");
-//                    //TODO FOR TESTING PURPOSES
-//                    break;
-//                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -84,20 +76,31 @@ public class Evaluator {
             subsets.add(subset);
             startIndex = endIndex;
         }
-
         return subsets;
     }
 
     private static class QueryProcessor implements Runnable {
         private final int threadId;
         private final List<String> queries;
+        private ArrayList<String> queryIDs;
+        private Searcher searcher;
+        private Lexicon lexicon;
+        private ArrayList<Document> documents;
+        private int n_results;
+        private String mode;
+        private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
 
-        public QueryProcessor(int threadId, List<String> queries) {
+        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
             this.threadId = threadId;
             this.queries = queries;
+            this.searcher = searcher;
+            this.lexicon = lexicon;
+            this.documents = documents;
+            this.n_results = n_results;
+            this.mode = mode;
         }
 
-        @Override
+
         public void run() {
             try {
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
@@ -105,15 +108,32 @@ public class Evaluator {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
                 for (String query : queries) {
-                    // Esegui il processamento della query e scrivi i risultati su writer
-                    // Sostituisci questa parte con il tuo codice effettivo di elaborazione della query
-                    String result = "Query: " + query + " - Result: YourResultHere";
-                    writer.write(result);
+
+                    String[] split = query.split("\t");
+                    String queryId = split[0];
+                    String queryText = split[1];
+
+                    this.queryIDs.add(queryId);
+//                    Query queryObj = new Query(queryText);
+//                    ArrayList<String> queryTerms = queryObj.getQueryTerms();
+                    // esegui la query
+//                    searcher.DAAT_block(queryTerms, this.lexicon, this.documents, this.n_results, this.mode);
+//                    arrayQueryResults.add(searcher.getQueryResults());
+
+
+//                    // write arratQueryResults to file in a line
+//                    for (int i = 0; i < arrayQueryResults.size(); i++) {
+//                        for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
+//                            String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
+//                            writer.write(line);
+//                        }
+//                    }
+                    writer.write(queryText);
                     writer.newLine();
                 }
 
                 writer.close();
-//                System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
+               System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -130,40 +150,10 @@ public class Evaluator {
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
-            executorService.submit(new QueryProcessor(i, subset));
+            executorService.submit(new QueryProcessor(i, subset, searcher, lexicon, documents, n_results, mode));
         }
         executorService.shutdown();
 
-        // leggi una query e sottomettila al motore di ricerca
-//        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(QUERY_PATH)))) {
-//            String line; // start reading query by query
-//
-//            int queryCounter = 0;
-//
-//            while ((line = br.readLine()) != null) {
-//                String[] input = line.split("\t");
-//                String queryId = input[0];
-//                String queryText = input[1];
-//
-//                queryIDs.add(queryId);
-//                query = new Query(queryText);
-//                ArrayList<String> queryTerms = query.getQueryTerms();
-//                // esegui la query
-//                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, mode);
-//                arrayQueryResults.add(searcher.getQueryResults());
-//                queryCounter++;
-//
-//                if (queryCounter % 100 == 0) {
-//                    System.out.println("Query " + queryCounter + " processed");
-//                    //TODO FOR TESTING PURPOSES
-//                    break;
-//                }
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         //salvare in un file i risultati results.test
 //        saveResults();
         //avviare trec eval
