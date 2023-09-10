@@ -69,7 +69,6 @@ public class Searcher {
         if ((previousQueryTerms.equals(queryTerms) && previousMode.equals(mode))
                 || (previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
             return;
-
         //process query and clear previous results
         previousQueryTerms = queryTerms;
         previousMode = mode;
@@ -93,6 +92,8 @@ public class Searcher {
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
+            }else{// if term is not in lexicon add empty posting list
+                postingLists.add(new PostingList());
             }
         }
 
@@ -162,7 +163,8 @@ public class Searcher {
 
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
-
+            if(postList.getActualPosting() == null) // term not in lexicon
+                continue;
             if (postList.getActualPosting() == null) { //first lecture
                 if (postList.hasNext())
                     postList.next();
