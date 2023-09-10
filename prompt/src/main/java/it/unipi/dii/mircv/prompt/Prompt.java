@@ -71,10 +71,10 @@ public class Prompt {
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results,"disjunctive");
+                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results, "disjunctive");
                 evaluator.execute();
                 evaluator.printResults();
-            }else if (userInput == 10) {
+            } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();
                 break;

@@ -1348,5 +1348,17 @@
         "start_time": 1694352715292,
         "end_time": 1694352715292,
         "type": "query"
+    },
+    {
+        "duration": 3575,
+        "start_time": 1694354053655,
+        "end_time": 1694354057230,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2098,
+        "start_time": 1694354057255,
+        "end_time": 1694354059353,
+        "type": "load_documents"
     }
 ]
