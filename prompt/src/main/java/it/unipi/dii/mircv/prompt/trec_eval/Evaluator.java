@@ -52,7 +52,7 @@ public class Evaluator {
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
                 searcher.DAAT_block(queryTerms, lexicon, documents, n_results, mode);
-                arrayQueryResults.add(searcher.getQueryResults());
+                arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
                 if (queryCounter % 100 == 0) {
