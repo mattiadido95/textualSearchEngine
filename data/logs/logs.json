@@ -1906,5 +1906,17 @@
         "start_time": 1694359008169,
         "end_time": 1694359008169,
         "type": "query"
+    },
+    {
+        "duration": 2962881,
+        "start_time": 1694359106904,
+        "end_time": 1694362069785,
+        "type": "spimi"
+    },
+    {
+        "duration": 3779859,
+        "start_time": 1694362081465,
+        "end_time": 1694365861324,
+        "type": "merger"
     }
 ]
