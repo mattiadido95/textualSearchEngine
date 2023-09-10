@@ -52,10 +52,10 @@ public class Evaluator {
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
                 searcher.DAAT_block(queryTerms, lexicon, documents, n_results, mode);
-                arrayQueryResults.add(searcher.getQueryResults());
+                arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
-                if (queryCounter % 10 == 0) {
+                if (queryCounter % 100 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
                     break;
                 }
@@ -76,8 +76,6 @@ public class Evaluator {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
             for (int i = 0; i < queryIDs.size(); i++) {
                 for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
-                    System.out.println("Query " + queryIDs.get(i) + " processed");
-                    System.out.println("Document " + arrayQueryResults.get(i).get(j).getDocNo() + " processed");
                     String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD";
                     bw.write(line);
                     bw.newLine();
@@ -89,45 +87,49 @@ public class Evaluator {
     }
 
 
-    private void trecEvalLaucher() {
-        try {
-            // Costruisci il comando come una lista di stringhe
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                    "../trec_eval/trec_eval",
-                    "-q",
-                    "-c",
-                    "-M1000",
-                    Q_REL_PATH,
-                    RESULTS_PATH
-            );
+    private void trecEvalLauncher() {
+    try {
+        // Costruisci il comando come una lista di stringhe
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "../trec_eval/trec_eval",
+                "-q",
+                "-c",
+                "-M1000",
+                Q_REL_PATH,
+                RESULTS_PATH
+        );
 
-            // Avvia il processo
-            Process process = processBuilder.start();
+        // Avvia il processo
+        Process process = processBuilder.start();
 
-            // Attendere che il processo termini
-            int exitCode = process.waitFor();
+        // Attendere che il processo termini
+        int exitCode = process.waitFor();
 
-            // Utilizza un BufferedReader per leggere l'output del processo
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH));
+        // Utilizza un BufferedReader per leggere l'output del processo
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(EVALUATION_PATH))) {
+
             String line;
+            StringBuilder output = new StringBuilder();
+
             while ((line = reader.readLine()) != null) {
-                bw.write(line);
+                output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
             }
 
-            // Chiudi i buffer
-            reader.close();
-            bw.close();
-
-            if (exitCode == 0) {
-                System.out.println("Il comando è stato eseguito con successo.");
-            } else {
-                System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            // Scrivi l'output nel file
+            bw.write(output.toString());
         }
+
+        if (exitCode == 0) {
+            System.out.println("Il comando è stato eseguito con successo.");
+        } else {
+            System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
+        }
+    } catch (IOException | InterruptedException e) {
+        e.printStackTrace();
     }
+}
+
 
     public void printResults() {
         File file = new File(EVALUATION_PATH);

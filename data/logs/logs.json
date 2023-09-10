@@ -1918,5 +1918,29 @@
         "start_time": 1694362081465,
         "end_time": 1694365861324,
         "type": "merger"
+    },
+    {
+        "duration": 3567,
+        "start_time": 1694366313739,
+        "end_time": 1694366317306,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2637,
+        "start_time": 1694366317333,
+        "end_time": 1694366319970,
+        "type": "load_documents"
+    },
+    {
+        "duration": 253,
+        "start_time": 1694366335242,
+        "end_time": 1694366335495,
+        "type": "query"
+    },
+    {
+        "duration": 195,
+        "start_time": 1694366350617,
+        "end_time": 1694366350812,
+        "type": "query"
     }
 ]
