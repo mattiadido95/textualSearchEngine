@@ -108,6 +108,7 @@ public class Searcher {
 
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
+
                 scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
                 term_counter++;
                 // get next posting from posting list with min docID
@@ -191,4 +192,7 @@ public class Searcher {
         System.out.println("Search time: " + time + " ms");
     }
 
+    public ArrayList<QueryResult> getQueryResults() {
+        return queryResults;
+    }
 }

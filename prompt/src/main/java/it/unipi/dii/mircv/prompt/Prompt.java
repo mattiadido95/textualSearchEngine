@@ -5,6 +5,7 @@ import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
+import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -17,7 +18,7 @@ public class Prompt {
 
         Logs log = new Logs();
         long start, end;
-
+        System.out.println("Loading index ...");
         // load main structure in memory
         Lexicon lexicon = new Lexicon();
         start = System.currentTimeMillis();
@@ -31,16 +32,17 @@ public class Prompt {
         log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
+        Searcher searcher = new Searcher();
 
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
-            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to exit");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 10 to exit");
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
             } catch (InputMismatchException e) {
-                System.out.println("Wrong input, please insert 1 or 2");
+                System.out.println("Wrong input");
                 scanner.nextLine(); // to consume the \n character left by nextInt()
                 continue;
             }
@@ -51,8 +53,6 @@ public class Prompt {
 
                 Query query = new Query(queryInput);
                 ArrayList<String> queryTerms = query.getQueryTerms();
-
-                Searcher searcher = new Searcher();
 
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
@@ -71,6 +71,10 @@ public class Prompt {
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
+                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results,"disjunctive");
+                evaluator.execute();
+                evaluator.printResults();
+            }else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();
                 break;
