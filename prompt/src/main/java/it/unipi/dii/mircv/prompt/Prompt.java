@@ -74,7 +74,7 @@ public class Prompt {
             } else if (userInput == 2) {
                 Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results, "disjunctive");
                 evaluator.execute();
-                evaluator.printResults();
+//                evaluator.printResults();
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();

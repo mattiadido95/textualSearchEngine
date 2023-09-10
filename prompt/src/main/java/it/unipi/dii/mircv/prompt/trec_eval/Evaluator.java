@@ -55,7 +55,7 @@ public class Evaluator {
                 arrayQueryResults.add(searcher.getQueryResults());
                 queryCounter++;
 
-                if (queryCounter % 10000 == 0) {
+                if (queryCounter % 100 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
                     break;
                 }
