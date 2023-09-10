@@ -7,6 +7,8 @@ import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -99,7 +101,7 @@ public class Evaluator {
         public void run() {
             try {
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
-                String outputFile = "results_thread_" + threadId + ".txt";
+                String outputFile = "data/collection/results_thread_" + threadId + ".txt";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
                 for (String query : queries) {
@@ -111,7 +113,7 @@ public class Evaluator {
                 }
 
                 writer.close();
-                System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
+//                System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -224,12 +226,16 @@ public class Evaluator {
     }
 
     public void printResults() {
-        //print Metrics from evaluation.txt
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(EVALUATION_PATH)))) {
+        File file = new File(EVALUATION_PATH);
+        try {
+            if (!file.exists())
+                Files.createFile(Path.of(EVALUATION_PATH));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(EVALUATION_PATH)));
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
