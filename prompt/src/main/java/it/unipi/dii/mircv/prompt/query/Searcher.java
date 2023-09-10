@@ -93,7 +93,7 @@ public class Searcher {
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
             }else{// if term is not in lexicon add empty posting list
-                postingLists.add(new PostingList());
+                postingLists.add(null);
             }
         }
 
@@ -145,7 +145,8 @@ public class Searcher {
         }
 
         for (PostingList pi : postingLists) {
-            pi.closeList();
+            if(pi != null)
+                pi.closeList();
         }
         postingLists.clear();
 
@@ -163,7 +164,7 @@ public class Searcher {
 
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
-            if(postList.getActualPosting() == null) // term not in lexicon
+            if(postList == null) // term not in lexicon
                 continue;
             if (postList.getActualPosting() == null) { //first lecture
                 if (postList.hasNext())

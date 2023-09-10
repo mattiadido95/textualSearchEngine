@@ -57,8 +57,6 @@ public class Evaluator {
 
                 if (queryCounter % 10000 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
-                    System.out.println("IDS " + queryIDs);
-                    System.out.println("Results " + arrayQueryResults);
                     break;
                 }
             }
