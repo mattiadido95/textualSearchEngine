@@ -55,7 +55,7 @@ public class Evaluator {
                 arrayQueryResults.add(searcher.getQueryResults());
                 queryCounter++;
 
-                if (queryCounter % 10000 == 0) {
+                if (queryCounter % 10 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
                     System.out.println("IDS " + queryIDs);
                     System.out.println("Results " + arrayQueryResults);
@@ -70,7 +70,7 @@ public class Evaluator {
         //salvare in un file i risultati results.test
         saveResults();
         //avviare trec eval
-        trecEvalLaucher();
+//        trecEvalLaucher();
     }
 
     //topicid   Q0  docno   rank    score   STANDARD
