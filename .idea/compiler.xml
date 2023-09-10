@@ -10,5 +10,8 @@
         <module name="prompt" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="trec_eval" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
