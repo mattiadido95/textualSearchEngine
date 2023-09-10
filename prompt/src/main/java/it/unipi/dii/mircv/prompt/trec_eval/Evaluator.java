@@ -55,9 +55,8 @@ public class Evaluator {
                 arrayQueryResults.add(searcher.getQueryResults());
                 queryCounter++;
 
-                if (queryCounter % 100 == 0) {
+                if (queryCounter % 10000 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
-                    //TODO FOR TESTING PURPOSES
                     break;
                 }
             }
@@ -77,8 +76,9 @@ public class Evaluator {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
             for (int i = 0; i < queryIDs.size(); i++) {
                 for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
-                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
+                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD";
                     bw.write(line);
+                    bw.newLine();
                 }
             }
         } catch (IOException e) {
