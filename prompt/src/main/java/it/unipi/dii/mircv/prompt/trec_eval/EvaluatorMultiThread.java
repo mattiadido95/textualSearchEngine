@@ -100,7 +100,6 @@ public class EvaluatorMultiThread {
             this.mode = mode;
         }
 
-
         public void run() {
             try {
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
@@ -133,7 +132,7 @@ public class EvaluatorMultiThread {
                 }
 
                 writer.close();
-               System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
+                System.out.println("Thread " + threadId + " ha completato l'elaborazione.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
