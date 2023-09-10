@@ -5,7 +5,7 @@ import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
+import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -71,10 +71,10 @@ public class Prompt {
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results,"disjunctive");
+                EvaluatorMultiThread evaluator = new EvaluatorMultiThread(searcher, lexicon, documents, n_results, "disjunctive");
                 evaluator.execute();
                 evaluator.printResults();
-            }else if (userInput == 10) {
+            } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();
                 break;

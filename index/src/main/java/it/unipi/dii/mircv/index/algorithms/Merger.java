@@ -72,7 +72,6 @@ public class Merger {
     }
 
     public void execute() {
-        // TODO implement merge algorithm
         log.getLog("Start merging ...");
         //load in memory first file index_0
         ArrayList<Integer> term_index = new ArrayList<>(); // lista degli indici dei file che hanno il termine più piccolo
@@ -100,7 +99,7 @@ public class Merger {
                 PostingList mergePostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem();
 
-                if(term.equals("american")) {
+                if (term.equals("american")) {
                     System.out.println("TEST");
 //                    System.out.println(mergePostingList);
 //                    System.out.println(blockCounter);
@@ -134,7 +133,7 @@ public class Merger {
                             //salva inzio del block descriptor nel newLexiconElem
                             newLexiconElem.setOffset(blockDescriptorOffset);
                         blockCounter++;
-                    } else if ((mergePostingList.getPostingListSize() - (blockCounter*10)) < NUMBER_OF_POSTING) {
+                    } else if ((mergePostingList.getPostingListSize() - (blockCounter * 10)) < NUMBER_OF_POSTING) {
                         //salva il block descriptor
                         blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
                         blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk();
