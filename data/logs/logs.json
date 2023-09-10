@@ -1810,5 +1810,17 @@
         "start_time": 1694358760361,
         "end_time": 1694358760365,
         "type": "load_documents"
+    },
+    {
+        "duration": 15,
+        "start_time": 1694359421520,
+        "end_time": 1694359421535,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 28,
+        "start_time": 1694359421698,
+        "end_time": 1694359421726,
+        "type": "load_documents"
     }
 ]
