@@ -76,16 +76,16 @@ public class Evaluator {
     private void saveResults() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
             for (int i = 0; i < queryIDs.size(); i++) {
-                String partialResults = "";
                 for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
-                    partialResults += queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
-                    bw.write(partialResults);
+                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
+                    bw.write(line);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void trecEvalLaucher() {
         try {
@@ -129,7 +129,7 @@ public class Evaluator {
 
     public void printResults() {
         File file = new File(EVALUATION_PATH);
-        try{
+        try {
             if (!file.exists())
                 Files.createFile(Path.of(EVALUATION_PATH));
             BufferedReader reader = new BufferedReader(new FileReader(new File(EVALUATION_PATH)));
