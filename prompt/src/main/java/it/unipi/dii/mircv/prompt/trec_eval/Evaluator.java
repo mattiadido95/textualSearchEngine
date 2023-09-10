@@ -57,6 +57,8 @@ public class Evaluator {
 
                 if (queryCounter % 10000 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
+                    System.out.println("IDS " + queryIDs);
+                    System.out.println("Results " + arrayQueryResults);
                     break;
                 }
             }
@@ -76,6 +78,8 @@ public class Evaluator {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
             for (int i = 0; i < queryIDs.size(); i++) {
                 for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
+                    System.out.println("Query " + queryIDs.get(i) + " processed");
+                    System.out.println("Document " + arrayQueryResults.get(i).get(j).getDocNo() + " processed");
                     String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD";
                     bw.write(line);
                     bw.newLine();
