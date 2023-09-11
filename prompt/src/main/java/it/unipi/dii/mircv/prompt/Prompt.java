@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class Prompt {
     private static int n_results = 10; // number of documents to return for a query
-    private static int n_results_eval = 1000; // number of documents to return for evaluation
+    private static int n_results_eval = 15; // number of documents to return for evaluation
 
     public static void main(String[] args) {
 
@@ -73,8 +73,11 @@ public class Prompt {
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
-                evaluator.execute();
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, n_results_eval, "disjunctive");
+                evaluatorMT.execute();
+
+//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
+//                evaluator.execute();
 //                evaluator.printResults();
             } else if (userInput == 10) {
                 System.out.println("Bye!");

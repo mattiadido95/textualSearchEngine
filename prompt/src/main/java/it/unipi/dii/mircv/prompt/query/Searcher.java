@@ -30,15 +30,15 @@ public class Searcher {
 
 
     public Searcher() {
-        queryResults = new ArrayList<>();
-        blockDescriptorIterators = new ArrayList<>();
-        postingLists = new ArrayList<>();
-        previousQueryTerms = new ArrayList<>();
-        previousMode = "";
+        this.queryResults = new ArrayList<>();
+        this.blockDescriptorIterators = new ArrayList<>();
+        this.postingLists = new ArrayList<>();
+        this.previousQueryTerms = new ArrayList<>();
+        this.previousMode = "";
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            N_docs = (int) in.readObject();
+            this.N_docs = (int) in.readObject();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,13 +66,13 @@ public class Searcher {
 //    }
 
     public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
-        if ((previousQueryTerms.equals(queryTerms) && previousMode.equals(mode))
-                || (previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
+        if ((this.previousQueryTerms.equals(queryTerms) && this.previousMode.equals(mode))
+                || (this.previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
             return;
         //process query and clear previous results
-        previousQueryTerms = queryTerms;
-        previousMode = mode;
-        queryResults.clear();
+        this.previousQueryTerms = queryTerms;
+        this.previousMode = mode;
+        this.queryResults.clear();
 
         long firstBlockOffset;
         int blocksNumber;
@@ -92,7 +92,8 @@ public class Searcher {
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
-            }else{// if term is not in lexicon add empty posting list
+            }else{
+                // if term is not in lexicon add empty posting list
                 postingLists.add(null);
             }
         }
@@ -107,6 +108,7 @@ public class Searcher {
             double document_score = 0;
             int term_counter = 0;
 
+            // TODO QUI NON TORNA QUALCOSA CON GLI INDICI DELLE POSTING LIST
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
 
@@ -196,6 +198,6 @@ public class Searcher {
     }
 
     public ArrayList<QueryResult> getQueryResults() {
-        return queryResults;
+        return this.queryResults;
     }
 }
