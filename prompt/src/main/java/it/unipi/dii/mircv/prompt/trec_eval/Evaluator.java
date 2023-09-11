@@ -51,11 +51,11 @@ public class Evaluator {
                 query = new Query(queryText);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, mode);
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, mode,"BM25");
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
-                if (queryCounter % 100 == 0) {
+                if (queryCounter % 10 == 0) {
                     System.out.println("Query " + queryCounter + " processed");
                     break;
                 }
@@ -76,9 +76,8 @@ public class Evaluator {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
             for (int i = 0; i < queryIDs.size(); i++) {
                 for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
-                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD";
+                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
                     bw.write(line);
-                    bw.newLine();
                 }
             }
         } catch (IOException e) {
@@ -94,7 +93,7 @@ public class Evaluator {
                 "../trec_eval/trec_eval",
                 "-q",
                 "-c",
-                "-M1000",
+                "-M15",
                 Q_REL_PATH,
                 RESULTS_PATH
         );

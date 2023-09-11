@@ -23,7 +23,9 @@ public class Searcher {
     private ArrayList<Iterator<BlockDescriptor>> blockDescriptorIterators = null;
     private ArrayList<PostingList> postingLists = null;
     private String previousMode;
+    private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
+
 
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
@@ -36,9 +38,13 @@ public class Searcher {
         previousQueryTerms = new ArrayList<>();
         previousMode = "";
         //read number of docs from disk
-        try (FileInputStream fileIn = new FileInputStream("data/index/numberOfDocs.bin");
+        try (FileInputStream fileIn = new FileInputStream("data/index/documentInfo.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             N_docs = (int) in.readObject();
+            AVG_DOC_LENGTH = (double) in.readObject();
+            AVG_DOC_LENGTH = AVG_DOC_LENGTH / N_docs;
+            System.out.println(N_docs);
+            System.out.println(AVG_DOC_LENGTH);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +71,8 @@ public class Searcher {
 //        return blocks;
 //    }
 
-    public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode) {
+    public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode, String scoringFunction) {
+        //TODO INTRODOTTO IL PARAMETRO SCORE PER LA SCORING FUNCTION quindi cambiare condizioni dell'if
         if ((previousQueryTerms.equals(queryTerms) && previousMode.equals(mode))
                 || (previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
             return;
@@ -110,7 +117,10 @@ public class Searcher {
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
 
-                scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                if(scoringFunction.equals("TFIDF"))
+                    scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                else if(scoringFunction.equals("BM25"))
+                    scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
                 term_counter++;
                 // get next posting from posting list with min docID
                 postingLists.get(i).next();
@@ -156,6 +166,18 @@ public class Searcher {
         double score = 0;
         if (tf > 0)
             score = (1 + Math.log(tf)) * Math.log(N_docs / df);
+        return score;
+    }
+
+    private double BM25(int tf, int df, int docLength, double avgDocLength) {
+        double score = 0;
+        double k1 = 1.2;
+        double b = 0.75;
+        double k2 = 100;
+        double K = k1 * ((1 - b) + b * (docLength / avgDocLength));
+        double qf = 1;
+        double idf = Math.log((N_docs - df + 0.5) / (df + 0.5));
+        score = idf * ((k1 + 1) * tf / (K + tf)) * ((k2 + 1) * qf / (k2 + qf));
         return score;
     }
 

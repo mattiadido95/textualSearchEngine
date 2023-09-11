@@ -17,6 +17,8 @@ public class Spimi {
 
     private Logs log;
     private int indexCounter;
+    private int documentCounter;
+    private int totDocLength;
 
     public Spimi(String collection) {
         this.COLLECTION_PATH = collection;
@@ -59,7 +61,7 @@ public class Spimi {
 
             String line; // start reading document by document
 
-            int documentCounter = 0;
+            totDocLength = 0;
 
             while ((line = br.readLine()) != null) {
 
@@ -70,6 +72,7 @@ public class Spimi {
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents
+                totDocLength += document.getLength();
 
                 for (String token : tokens) {
                     lexicon.addLexiconElem(token); // add token to the lexicon
@@ -114,9 +117,10 @@ public class Spimi {
 
             }
             //save into disk documentCounter
-            FileOutputStream fileOut = new FileOutputStream("data/index/numberOfDocs.bin");
+            FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(documentCounter);
+            out.writeObject(totDocLength);
             out.close();
             fileOut.close();
             tarArchiveInputStream.close();

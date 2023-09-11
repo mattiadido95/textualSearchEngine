@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class Prompt {
     private static int n_results = 10; // number of documents to return for a query
-    private static int n_results_eval = 1000; // number of documents to return for evaluation
+    private static int n_results_eval = 15; // number of documents to return for evaluation
 
     public static void main(String[] args) {
 
@@ -59,14 +59,14 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive","BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive","BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
@@ -74,7 +74,10 @@ public class Prompt {
 
             } else if (userInput == 2) {
                 Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
+                start = System.currentTimeMillis();
                 evaluator.execute();
+                end = System.currentTimeMillis();
+                System.out.println("Evaluation time: " + (end - start) + " ms");
 //                evaluator.printResults();
             } else if (userInput == 10) {
                 System.out.println("Bye!");
