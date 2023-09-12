@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Index {
+    //https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
