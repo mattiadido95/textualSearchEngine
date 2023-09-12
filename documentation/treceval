@@ -53,3 +53,92 @@ Remember to replace official_qrels and submitted_results with the actual paths t
 Additionally, make sure you understand the specific measures you want to calculate and their parameters if needed.
 
 Please note that trec_eval is a command-line tool, so you should run it in a terminal or command prompt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public void run() {
+    try {
+        // Elabora le query e scrivi i risultati su un file specifico per il thread
+        String outputFile = "data/collection/results_thread_" + threadId + ".txt";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+
+        for (String query : thread_queries) {
+            String[] split = query.split("\t");
+            String queryId = split[0];
+            String queryText = split[1];
+
+            this.thread_queryIDs.add(queryId);
+            Query queryObj = new Query(queryText);
+            ArrayList<String> queryTerms = queryObj.getQueryTerms();
+            writer.write(queryTerms.toString());
+            writer.newLine();
+
+            this.thread_searcher.DAAT_block(queryTerms, this.thread_lexicon, this.thread_documents, this.thread_n_results, this.thread_mode);
+            ArrayList<QueryResult> queryResults = this.thread_searcher.getQueryResults();
+
+            for (int j = 0; j < queryResults.size(); j++) {
+                QueryResult result = queryResults.get(j);
+                String line = this.thread_queryIDs.get(i) + "\tQ0\t" + result.getDocNo() + "\t" + (j + 1) + "\t" + result.getScoring() + "\tSTANDARD\n";
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+        writer.close();
+        Logs log = new Logs();
+        log.getLog("Thread " + threadId + " ha completato l'elaborazione.");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}

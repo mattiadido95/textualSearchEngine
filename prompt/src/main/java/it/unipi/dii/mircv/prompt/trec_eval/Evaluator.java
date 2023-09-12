@@ -68,7 +68,7 @@ public class Evaluator {
         //salvare in un file i risultati results.test
         saveResults();
         //avviare trec eval
-        trecEvalLauncher();
+//        trecEvalLaucher();
     }
 
     //topicid   Q0  docno   rank    score   STANDARD

@@ -7,6 +7,9 @@ public class LexiconElem {
     private long cf; // collection frequency, is the number of occurrences of the term in the entire collection
     private long offset; // offset of posting list in SPIMI / offset of first block descriptor in MERGER
     private int numBlock; // number of blocks
+    private double TUB_bm25; // term upper bound for bm25
+    private double TUB_tfidf; // term upper bound for tfidf
+
 
     public LexiconElem(){
         this.cf = 0;
@@ -42,6 +45,22 @@ public class LexiconElem {
 
     public void incrementCf() {
         this.cf += 1;
+    }
+
+    public double getTUB_bm25() {
+        return TUB_bm25;
+    }
+
+    public void setTUB_bm25(double TUB_bm25) {
+        this.TUB_bm25 = TUB_bm25;
+    }
+
+    public double getTUB_tfidf() {
+        return TUB_tfidf;
+    }
+
+    public void setTUB_tfidf(double TUB_tfidf) {
+        this.TUB_tfidf = TUB_tfidf;
     }
 
     public void mergeLexiconElem(LexiconElem lexiconElem) {
