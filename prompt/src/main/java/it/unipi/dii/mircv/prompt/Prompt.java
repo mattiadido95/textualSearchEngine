@@ -16,7 +16,7 @@ public class Prompt {
     private static int n_results = 10; // number of documents to return for a query
     private static int n_results_eval = 15; // number of documents to return for evaluation
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Logs log = new Logs();
         long start, end;

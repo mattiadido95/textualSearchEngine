@@ -32,6 +32,7 @@ public class EvaluatorMultiThread {
     private static final int NUM_THREADS = 4; // Numero di thread o job paralleli
     private static final int NUM_QUERIES = 100000; // Numero totale di query
     private static final String OUTPUT_FILE = "results.txt"; // File di output
+    public static boolean[] t_main = new boolean[NUM_THREADS];
 
     public EvaluatorMultiThread(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
         this.searcher = searcher;
@@ -50,9 +51,6 @@ public class EvaluatorMultiThread {
             String line; // start reading query by query
             int queryCounter = 0;
             while ((line = br.readLine()) != null) {
-//                String[] input = line.split("\t");
-//                String queryId = input[0];
-//                String queryText = input[1];
 
                 queries.add(line);
                 queryCounter++;
@@ -94,9 +92,9 @@ public class EvaluatorMultiThread {
         private int thread_n_results;
         private String thread_mode;
         private ArrayList<ArrayList<QueryResult>> thread_arrayQueryResults;
-        private Boolean[] t;
+        private boolean[] t;
 
-        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, Boolean[] t) {
+        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t) {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
@@ -127,9 +125,6 @@ public class EvaluatorMultiThread {
                     Query queryObj = new Query(queryText);
                     ArrayList<String> queryTerms = queryObj.getQueryTerms();
 
-//                    writer.write(queryTerms.toString());
-//                    writer.newLine();
-
                     this.thread_searcher.DAAT_block(queryTerms, this.thread_lexicon, this.thread_documents, this.thread_n_results, this.thread_mode);
                     this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
 
@@ -139,9 +134,12 @@ public class EvaluatorMultiThread {
                             writer.write(line);
                         }
                     }
-//                    writer.newLine();
                 }
-                this.t[threadId] = true;
+
+                synchronized (t) {
+                    t[threadId] = true;
+                }
+
                 writer.close();
                 Logs log = new Logs();
                 log.getLog("Thread " + threadId + " ha completato l'elaborazione.");
@@ -153,12 +151,7 @@ public class EvaluatorMultiThread {
         }
     }
 
-    public void execute() {
-
-        Boolean[] t = new Boolean[4];
-        Arrays.fill(t, Boolean.FALSE);
-
-
+    public void execute() throws InterruptedException {
         List<String> allQueries = loadAllQueries();
 
         // Divide le query in sottoinsiemi per i thread
@@ -168,22 +161,28 @@ public class EvaluatorMultiThread {
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
             Searcher thread_searcher = new Searcher();
-            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, t));
+            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main));
         }
         executorService.shutdown();
 
-        while (t[0] == false || t[1] == false || t[2] == false || t[3] == false) { // TODO problema di coordinamento credo
+        while (!allThreadEnds(t_main)) {
             // Aspetta che tutti i thread abbiano terminato
-            //System.out.println("Aspetto che tutti i thread abbiano terminato..." + t.get(0) + " " + t.get(1) + " " + t.get(2) + " " + t.get(3));
+            Thread.sleep(100);
         }
-
         concatenateFileResults("results.test", "results_thread_0.txt", "results_thread_1.txt", "results_thread_2.txt", "results_thread_3.txt");
 
-        //salvare in un file i risultati results.test
-//        saveResults();
-        //avviare trec eval
-//        trecEvalLaucher();
+//        trecEvalLauncher();
     }
+
+    private boolean allThreadEnds(boolean[] array) {
+        for (boolean b : array) {
+            if (!b) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private void concatenateFileResults(String outputFileName, String... inputFiles) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/collection/" + outputFileName))) {
@@ -261,7 +260,6 @@ public class EvaluatorMultiThread {
             e.printStackTrace();
         }
     }
-
 
     public void printResults() {
         File file = new File(EVALUATION_PATH);

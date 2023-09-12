@@ -3328,5 +3328,491 @@
         "start_time": 1694447312325,
         "end_time": 1694447634995,
         "type": "Thread_1"
+    },
+    {
+        "duration": 3575,
+        "start_time": 1694500803718,
+        "end_time": 1694500807293,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2119,
+        "start_time": 1694500807325,
+        "end_time": 1694500809444,
+        "type": "load_documents"
+    },
+    {
+        "duration": 3537,
+        "start_time": 1694500824933,
+        "end_time": 1694500828470,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2163,
+        "start_time": 1694500828502,
+        "end_time": 1694500830665,
+        "type": "load_documents"
+    },
+    {
+        "duration": 37,
+        "start_time": 1694500831780,
+        "end_time": 1694500831817,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 194,
+        "start_time": 1694500831780,
+        "end_time": 1694500831974,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1153,
+        "start_time": 1694500831779,
+        "end_time": 1694500832932,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1401,
+        "start_time": 1694500831780,
+        "end_time": 1694500833181,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3567,
+        "start_time": 1694500964138,
+        "end_time": 1694500967705,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2202,
+        "start_time": 1694500967738,
+        "end_time": 1694500969940,
+        "type": "load_documents"
+    },
+    {
+        "duration": 32,
+        "start_time": 1694500972054,
+        "end_time": 1694500972086,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 197,
+        "start_time": 1694500972054,
+        "end_time": 1694500972251,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1027,
+        "start_time": 1694500972054,
+        "end_time": 1694500973081,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1219,
+        "start_time": 1694500972054,
+        "end_time": 1694500973273,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3606,
+        "start_time": 1694501024572,
+        "end_time": 1694501028178,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2207,
+        "start_time": 1694501028224,
+        "end_time": 1694501030431,
+        "type": "load_documents"
+    },
+    {
+        "duration": 260513,
+        "start_time": 1694501032437,
+        "end_time": 1694501292950,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 397313,
+        "start_time": 1694501032437,
+        "end_time": 1694501429750,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 3571,
+        "start_time": 1694501544839,
+        "end_time": 1694501548410,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2342,
+        "start_time": 1694501548444,
+        "end_time": 1694501550786,
+        "type": "load_documents"
+    },
+    {
+        "duration": 32,
+        "start_time": 1694501552071,
+        "end_time": 1694501552103,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 267,
+        "start_time": 1694501552070,
+        "end_time": 1694501552337,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1054,
+        "start_time": 1694501552070,
+        "end_time": 1694501553124,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1243,
+        "start_time": 1694501552071,
+        "end_time": 1694501553314,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3672,
+        "start_time": 1694501589700,
+        "end_time": 1694501593372,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2261,
+        "start_time": 1694501593419,
+        "end_time": 1694501595680,
+        "type": "load_documents"
+    },
+    {
+        "duration": 3574,
+        "start_time": 1694502048897,
+        "end_time": 1694502052471,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2203,
+        "start_time": 1694502052504,
+        "end_time": 1694502054707,
+        "type": "load_documents"
+    },
+    {
+        "duration": 36,
+        "start_time": 1694502055530,
+        "end_time": 1694502055566,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 209,
+        "start_time": 1694502055530,
+        "end_time": 1694502055739,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1093,
+        "start_time": 1694502055529,
+        "end_time": 1694502056622,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1291,
+        "start_time": 1694502055530,
+        "end_time": 1694502056821,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3594,
+        "start_time": 1694502090377,
+        "end_time": 1694502093971,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2081,
+        "start_time": 1694502094005,
+        "end_time": 1694502096086,
+        "type": "load_documents"
+    },
+    {
+        "duration": 31,
+        "start_time": 1694502099450,
+        "end_time": 1694502099481,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 192,
+        "start_time": 1694502099450,
+        "end_time": 1694502099642,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1066,
+        "start_time": 1694502099449,
+        "end_time": 1694502100515,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1279,
+        "start_time": 1694502099450,
+        "end_time": 1694502100729,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3566,
+        "start_time": 1694502162184,
+        "end_time": 1694502165750,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2213,
+        "start_time": 1694502165785,
+        "end_time": 1694502167998,
+        "type": "load_documents"
+    },
+    {
+        "duration": 31,
+        "start_time": 1694502168901,
+        "end_time": 1694502168932,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 192,
+        "start_time": 1694502168900,
+        "end_time": 1694502169092,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1035,
+        "start_time": 1694502168900,
+        "end_time": 1694502169935,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1223,
+        "start_time": 1694502168901,
+        "end_time": 1694502170124,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3566,
+        "start_time": 1694502247630,
+        "end_time": 1694502251196,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2195,
+        "start_time": 1694502251228,
+        "end_time": 1694502253423,
+        "type": "load_documents"
+    },
+    {
+        "duration": 33,
+        "start_time": 1694502254438,
+        "end_time": 1694502254471,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 195,
+        "start_time": 1694502254437,
+        "end_time": 1694502254632,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1043,
+        "start_time": 1694502254437,
+        "end_time": 1694502255480,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1238,
+        "start_time": 1694502254438,
+        "end_time": 1694502255676,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3549,
+        "start_time": 1694502317981,
+        "end_time": 1694502321530,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2217,
+        "start_time": 1694502321564,
+        "end_time": 1694502323781,
+        "type": "load_documents"
+    },
+    {
+        "duration": 33,
+        "start_time": 1694502325119,
+        "end_time": 1694502325152,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 183,
+        "start_time": 1694502325119,
+        "end_time": 1694502325302,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1014,
+        "start_time": 1694502325119,
+        "end_time": 1694502326133,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1224,
+        "start_time": 1694502325119,
+        "end_time": 1694502326343,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3596,
+        "start_time": 1694502344519,
+        "end_time": 1694502348115,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2224,
+        "start_time": 1694502348148,
+        "end_time": 1694502350372,
+        "type": "load_documents"
+    },
+    {
+        "duration": 33,
+        "start_time": 1694502351383,
+        "end_time": 1694502351416,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 188,
+        "start_time": 1694502351383,
+        "end_time": 1694502351571,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 966,
+        "start_time": 1694502351383,
+        "end_time": 1694502352349,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 1170,
+        "start_time": 1694502351383,
+        "end_time": 1694502352553,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3569,
+        "start_time": 1694502434099,
+        "end_time": 1694502437668,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2244,
+        "start_time": 1694502437717,
+        "end_time": 1694502439961,
+        "type": "load_documents"
+    },
+    {
+        "duration": 40164,
+        "start_time": 1694502441500,
+        "end_time": 1694502481664,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 40348,
+        "start_time": 1694502441500,
+        "end_time": 1694502481848,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 42265,
+        "start_time": 1694502441500,
+        "end_time": 1694502483765,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 27839,
+        "start_time": 1694502456108,
+        "end_time": 1694502483947,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3608,
+        "start_time": 1694502521281,
+        "end_time": 1694502524889,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2132,
+        "start_time": 1694502524936,
+        "end_time": 1694502527068,
+        "type": "load_documents"
+    },
+    {
+        "duration": 50799,
+        "start_time": 1694502528557,
+        "end_time": 1694502579356,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 3580,
+        "start_time": 1694503021668,
+        "end_time": 1694503025248,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2208,
+        "start_time": 1694503025282,
+        "end_time": 1694503027490,
+        "type": "load_documents"
+    },
+    {
+        "duration": 19,
+        "start_time": 1694503028480,
+        "end_time": 1694503028499,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 722,
+        "start_time": 1694503028480,
+        "end_time": 1694503029202,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3591,
+        "start_time": 1694503088455,
+        "end_time": 1694503092046,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2176,
+        "start_time": 1694503092080,
+        "end_time": 1694503094256,
+        "type": "load_documents"
+    },
+    {
+        "duration": 263301,
+        "start_time": 1694503095298,
+        "end_time": 1694503358599,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 297856,
+        "start_time": 1694503095299,
+        "end_time": 1694503393155,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 305456,
+        "start_time": 1694503095299,
+        "end_time": 1694503400755,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 320113,
+        "start_time": 1694503095298,
+        "end_time": 1694503415411,
+        "type": "Thread_1"
     }
 ]
