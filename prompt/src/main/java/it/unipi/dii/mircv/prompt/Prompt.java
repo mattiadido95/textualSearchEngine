@@ -39,7 +39,7 @@ public class Prompt {
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
-            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 10 to exit");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 to run dynamic pruning \n - insert 10 to exit");
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
@@ -59,14 +59,14 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive","BM25");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive","BM25");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
@@ -79,6 +79,9 @@ public class Prompt {
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();
 //                evaluator.printResults();
+            } else if (userInput == 3) {
+                // call to dynamic pruning process
+
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();

@@ -16,6 +16,8 @@ public class Document {
     private String body;
     private int length;
     private String rawDocument;
+    private double DUB_bm25; // document upper bound for bm25
+    private double DUB_tfidf; // document upper bound for tfidf
 
     public Document(String rawDocument, int docID) {
         this.docID = docID;
@@ -68,6 +70,22 @@ public class Document {
 
     public void setLength(int length) {
         this.length = length;
+    }
+
+    public double getDUB_bm25() {
+        return DUB_bm25;
+    }
+
+    public void setDUB_bm25(double DUB_bm25) {
+        this.DUB_bm25 = DUB_bm25;
+    }
+
+    public double getDUB_tfidf() {
+        return DUB_tfidf;
+    }
+
+    public void setDUB_tfidf(double DUB_tfidf) {
+        this.DUB_tfidf = DUB_tfidf;
     }
 
     public static void saveDocumentsToDisk(ArrayList<Document> docs, int index) {
