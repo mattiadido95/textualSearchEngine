@@ -1942,5 +1942,35 @@
         "start_time": 1694445027093,
         "end_time": 1694445031437,
         "type": "load_documents"
+    },
+    {
+        "duration": 3408716,
+        "start_time": 1694516372062,
+        "end_time": 1694519780778,
+        "type": "spimi"
+    },
+    {
+        "duration": 1950,
+        "start_time": 1694519780834,
+        "end_time": 1694519782784,
+        "type": "merger"
+    },
+    {
+        "duration": 6098,
+        "start_time": 1694522229900,
+        "end_time": 1694522235998,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3936,
+        "start_time": 1694522236056,
+        "end_time": 1694522239992,
+        "type": "load_documents"
+    },
+    {
+        "duration": 0,
+        "start_time": 1694522263231,
+        "end_time": 1694522263231,
+        "type": "query"
     }
 ]

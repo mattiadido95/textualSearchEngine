@@ -41,8 +41,8 @@ public class Searcher {
         try (FileInputStream fileIn = new FileInputStream("data/index/documentInfo.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             N_docs = (int) in.readObject();
-            AVG_DOC_LENGTH = (double) in.readObject();
-            AVG_DOC_LENGTH = AVG_DOC_LENGTH / N_docs;
+            long totDocLength = (long) in.readObject();
+            AVG_DOC_LENGTH = totDocLength / N_docs;
             System.out.println(N_docs);
             System.out.println(AVG_DOC_LENGTH);
         } catch (Exception e) {
@@ -170,14 +170,13 @@ public class Searcher {
     }
 
     private double BM25(int tf, int df, int docLength, double avgDocLength) {
+        //TODO CONTROLLARE LA FORMULA
         double score = 0;
         double k1 = 1.2;
         double b = 0.75;
-        double k2 = 100;
-        double K = k1 * ((1 - b) + b * (docLength / avgDocLength));
-        double qf = 1;
-        double idf = Math.log((N_docs - df + 0.5) / (df + 0.5));
-        score = idf * ((k1 + 1) * tf / (K + tf)) * ((k2 + 1) * qf / (k2 + qf));
+        double B =  ((1 - b) + b * (docLength / avgDocLength));
+        double idf = Math.log((N_docs) / (df));
+        score = (tf / (k1 * B + tf)) * idf;
         return score;
     }
 

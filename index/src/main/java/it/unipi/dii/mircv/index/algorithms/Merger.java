@@ -99,12 +99,6 @@ public class Merger {
                 PostingList mergePostingList = new PostingList();
                 LexiconElem newLexiconElem = new LexiconElem();
 
-                if (term.equals("american")) {
-                    System.out.println("TEST");
-//                    System.out.println(mergePostingList);
-//                    System.out.println(blockCounter);
-                }
-
                 for (int i = 0; i < term_index.size(); i++) {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
                     LexiconElem lexiconElem = Lexicon.readEntry(readers, readOffset, term_index.get(i));
@@ -188,7 +182,6 @@ public class Merger {
         // rimuovi cartella lexicon
         dir = new File(INDEX_PATH + "/documents");
         dir.delete();
-
         log.getLog("End merging ...");
     }
 }

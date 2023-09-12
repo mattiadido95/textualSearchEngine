@@ -18,7 +18,7 @@ public class Spimi {
     private Logs log;
     private int indexCounter;
     private int documentCounter;
-    private int totDocLength;
+    private long totDocLength;
 
     public Spimi(String collection) {
         this.COLLECTION_PATH = collection;
