@@ -43,8 +43,6 @@ public class Searcher {
             N_docs = (int) in.readObject();
             long totDocLength = (long) in.readObject();
             AVG_DOC_LENGTH = totDocLength / N_docs;
-            System.out.println(N_docs);
-            System.out.println(AVG_DOC_LENGTH);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,9 +169,10 @@ public class Searcher {
 
     private double BM25(int tf, int df, int docLength, double avgDocLength) {
         //TODO CONTROLLARE LA FORMULA
-        double score = 0;
+        double score;
         double k1 = 1.2;
         double b = 0.75;
+
         double B =  ((1 - b) + b * (docLength / avgDocLength));
         double idf = Math.log((N_docs) / (df));
         score = (tf / (k1 * B + tf)) * idf;
