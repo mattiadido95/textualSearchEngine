@@ -23,6 +23,7 @@ public class Searcher {
     private ArrayList<Iterator<BlockDescriptor>> blockDescriptorIterators = null;
     private ArrayList<PostingList> postingLists = null;
     private String previousMode;
+    private String previousScoringFunction;
     private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
 
@@ -37,6 +38,7 @@ public class Searcher {
         this.postingLists = new ArrayList<>();
         this.previousQueryTerms = new ArrayList<>();
         this.previousMode = "";
+        this.previousScoringFunction = "";
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/documentInfo.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
@@ -48,34 +50,15 @@ public class Searcher {
         }
     }
 
-    // search min docID in the posting list iterator array
-//    private int getMinDocId(ArrayList<Iterator<Posting>> postingListIterators) {
-//        int min = Integer.MAX_VALUE;
-//        for (Iterator<Posting> postingListIterator : postingListIterators) {
-//            if (postingListIterator.hasNext()) {
-//                int id = postingListIterator.next().getDocID();
-//                if (id < min)
-//                    min = id;
-//            }
-//        }
-//        return min;
-//    }
-
-//    private ArrayList<BlockDescriptor> openBlocks(long firstBlockoffset, Integer blocksNumber) {
-//
-//        ArrayList<BlockDescriptor> blocks = new ArrayList<>();
-//        blocks = readBlockDescriptorList(firstBlockoffset, blocksNumber);
-//
-//        return blocks;
-//    }
-
     public void DAAT_block(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode, String scoringFunction) {
-        //TODO INTRODOTTO IL PARAMETRO SCORE PER LA SCORING FUNCTION quindi cambiare condizioni dell'if
-        if ((this.previousQueryTerms.equals(queryTerms) && this.previousMode.equals(mode))
-                || (this.previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1)) // same query as before
+//        if ((this.previousQueryTerms.equals(queryTerms) && this.previousMode.equals(mode) && this.previousScoringFunction.equals(scoringFunction))
+//                || (this.previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1 && this.previousScoringFunction.equals(scoringFunction)))) // same query as before
+        if ((this.previousQueryTerms.equals(queryTerms) &&
+                this.previousScoringFunction.equals(scoringFunction) &&
+                (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
             return;
         //process query and clear previous results
-        this.previousQueryTerms = queryTerms;
+        this.previousQueryTerms = new ArrayList<>(queryTerms);
         this.previousMode = mode;
         this.queryResults.clear();
 
@@ -97,7 +80,7 @@ public class Searcher {
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
-            }else{
+            } else {
                 // if term is not in lexicon add empty posting list
                 postingLists.add(null);
             }
@@ -116,9 +99,9 @@ public class Searcher {
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
 
-                if(scoringFunction.equals("TFIDF"))
+                if (scoringFunction.equals("TFIDF"))
                     scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
-                else if(scoringFunction.equals("BM25"))
+                else if (scoringFunction.equals("BM25"))
                     scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
                 term_counter++;
                 // get next posting from posting list with min docID
@@ -154,7 +137,7 @@ public class Searcher {
         }
 
         for (PostingList pi : postingLists) {
-            if(pi != null)
+            if (pi != null)
                 pi.closeList();
         }
         postingLists.clear();
@@ -174,7 +157,7 @@ public class Searcher {
         double k1 = 1.2;
         double b = 0.75;
 
-        double B =  ((1 - b) + b * (docLength / avgDocLength));
+        double B = ((1 - b) + b * (docLength / avgDocLength));
         double idf = Math.log((N_docs) / (df));
         score = (tf / (k1 * B + tf)) * idf;
         return score;
@@ -185,7 +168,7 @@ public class Searcher {
 
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
-            if(postList == null) // term not in lexicon
+            if (postList == null) // term not in lexicon
                 continue;
             if (postList.getActualPosting() == null) { //first lecture
                 if (postList.hasNext())

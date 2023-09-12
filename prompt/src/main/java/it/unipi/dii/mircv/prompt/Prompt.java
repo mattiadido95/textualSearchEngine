@@ -90,10 +90,7 @@ public class Prompt {
                 System.out.println("Wrong input, please insert 1 or 2");
             }
 
-
         }
-
-
     }
 }
 
