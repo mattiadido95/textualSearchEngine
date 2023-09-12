@@ -59,14 +59,14 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive","BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive");
+                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive","BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 

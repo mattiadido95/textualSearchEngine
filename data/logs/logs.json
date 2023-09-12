@@ -3862,5 +3862,47 @@
         "start_time": 1694528919723,
         "end_time": 1694529353029,
         "type": "Thread_1"
+    },
+    {
+        "duration": 4572,
+        "start_time": 1694529884800,
+        "end_time": 1694529889372,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3057,
+        "start_time": 1694529889447,
+        "end_time": 1694529892504,
+        "type": "load_documents"
+    },
+    {
+        "duration": 381,
+        "start_time": 1694529902669,
+        "end_time": 1694529903050,
+        "type": "query"
+    },
+    {
+        "duration": 367332,
+        "start_time": 1694529905831,
+        "end_time": 1694530273163,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 403162,
+        "start_time": 1694529905833,
+        "end_time": 1694530308995,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 410595,
+        "start_time": 1694529905833,
+        "end_time": 1694530316428,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 428790,
+        "start_time": 1694529905832,
+        "end_time": 1694530334622,
+        "type": "Thread_1"
     }
 ]
