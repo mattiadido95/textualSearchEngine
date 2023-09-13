@@ -99,6 +99,10 @@ public class Searcher {
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
+
+                // print posting list size
+//                System.out.println("Posting list size: " + postingList.getPostingListSize());
+
             }else{
                 // if term is not in lexicon add empty posting list
                 postingLists.add(null);
