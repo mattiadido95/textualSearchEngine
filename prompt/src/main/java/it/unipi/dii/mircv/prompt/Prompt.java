@@ -6,7 +6,6 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
 import java.util.ArrayList;
@@ -60,14 +59,14 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "disjunctive", "BM25");
+                searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT_block(queryTerms, lexicon, documents, n_results, "conjunctive", "BM25");
+                searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
@@ -92,6 +91,7 @@ public class Prompt {
             } else {
                 System.out.println("Wrong input, please insert 1 or 2");
             }
+
         }
     }
 }

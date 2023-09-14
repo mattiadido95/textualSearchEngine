@@ -78,6 +78,25 @@ public class LexiconElem {
                 '}';
     }
 
+    public int compareBM25(LexiconElem lexiconElem) {
+        if (this.TUB_bm25 > lexiconElem.getTUB_bm25()) {
+            return 1;
+        } else if (this.TUB_bm25 < lexiconElem.getTUB_bm25()) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    public int compareTFIDF(LexiconElem lexiconElem) {
+        if (this.TUB_tfidf > lexiconElem.getTUB_tfidf()) {
+            return 1;
+        } else if (this.TUB_tfidf < lexiconElem.getTUB_tfidf()) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 
     public Integer getBlocksNumber() {
         return this.numBlock;
