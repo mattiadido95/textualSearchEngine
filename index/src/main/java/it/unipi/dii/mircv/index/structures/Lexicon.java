@@ -27,7 +27,6 @@ public class Lexicon {
         return this.lexicon;
     }
 
-
     public void addLexiconElem(String term) {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {
@@ -57,6 +56,22 @@ public class Lexicon {
     public LexiconElem getLexiconElem(String term) {
         return this.lexicon.get(term);
     }
+
+    //sort lexicon by TUB in termElem
+    public static HashMap<String, LexiconElem> sortLexicon(HashMap<String,LexiconElem> lexicon, String scoringFunction){
+        HashMap<String, LexiconElem> sorted = new HashMap<>();
+        if(scoringFunction.equals("TF-IDF")){
+            sorted = lexicon.entrySet().stream()
+                    .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
+                    .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+        }else if(scoringFunction.equals("BM25")) {
+            sorted = lexicon.entrySet().stream()
+                    .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
+                    .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+        }
+        return sorted;
+    }
+
 
 //    public void sortLexicon() {
 //        /**

@@ -11,7 +11,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -125,7 +124,7 @@ public class EvaluatorMultiThread {
                     Query queryObj = new Query(queryText);
                     ArrayList<String> queryTerms = queryObj.getQueryTerms();
 
-                    this.thread_searcher.DAAT_block(queryTerms, this.thread_lexicon, this.thread_documents, this.thread_n_results, this.thread_mode,"BM25");
+                    this.thread_searcher.DAAT(queryTerms, this.thread_lexicon, this.thread_documents, this.thread_n_results, this.thread_mode,"BM25");
                     this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
 
                     for (int i = 0; i < this.thread_arrayQueryResults.size(); i++) {

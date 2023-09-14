@@ -108,6 +108,22 @@ public class PostingList {
             actualPosting = null;
     }
 
+    public void nextGEQ(int docId, Iterator<BlockDescriptor> firstBlock, int numBlocks){
+
+        while(docId > firstBlock.next().getMaxDocID() && numBlocks > 0){
+            firstBlock = ;
+            numBlocks--;
+        }
+        if(postingIterator.hasNext()){
+            actualPosting = postingIterator.next();
+            while(actualPosting.getDocID() < docId && postingIterator.hasNext()){
+                actualPosting = postingIterator.next();
+            }
+        }
+        else
+            actualPosting = null;
+    }
+
     public int getDocId(){
         return actualPosting.getDocID();
     }
