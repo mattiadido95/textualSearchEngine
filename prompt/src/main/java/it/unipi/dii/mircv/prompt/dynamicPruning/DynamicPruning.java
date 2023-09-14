@@ -19,24 +19,24 @@ public class DynamicPruning {
 
 
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents) {
-        this.searcher = new Searcher();
         this.documents = documents;
         this.lexicon = lexicon;
+        this.searcher = new Searcher(lexicon, documents);
         this.queryTerms = new ArrayList<>(this.lexicon.getLexiconKeys());
     }
 
     public void TUB_processing(String scoreFunction) {
-    // TODO da testare
+        // TODO da testare
 
 //        int counter = 0;
         for (String term : this.queryTerms) {
             ArrayList<String> faketerm = new ArrayList<>();
             faketerm.add(term); // used to call the search function, made for compatibility
             if (scoreFunction.equals("BM25")) {
-                this.searcher.DAAT_block(faketerm, this.lexicon, this.documents, 1, "disjunctive", "BM25");
+                this.searcher.DAAT(faketerm, 1, "disjunctive", "BM25");
                 this.lexicon.getLexiconElem(term).setTUB_bm25(this.searcher.getQueryResults().get(0).getScoring());
             } else if (scoreFunction.equals("TFIDF")) {
-                this.searcher.DAAT_block(faketerm, this.lexicon, this.documents, 1, "disjunctive", "TFIDF");
+                this.searcher.DAAT(faketerm, 1, "disjunctive", "TFIDF");
                 this.lexicon.getLexiconElem(term).setTUB_tfidf(this.searcher.getQueryResults().get(0).getScoring());
             } else {
                 System.out.println("Wrong score function");
@@ -55,7 +55,7 @@ public class DynamicPruning {
         this.lexicon.saveLexiconToDisk(-1);
     }
 
-    public void DUB_processing(String scoreFunctino){
+    public void DUB_processing(String scoreFunctino) {
 
     }
 }

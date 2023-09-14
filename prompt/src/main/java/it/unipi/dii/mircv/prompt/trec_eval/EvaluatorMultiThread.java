@@ -124,7 +124,7 @@ public class EvaluatorMultiThread {
                     Query queryObj = new Query(queryText);
                     ArrayList<String> queryTerms = queryObj.getQueryTerms();
 
-                    this.thread_searcher.DAAT(queryTerms, this.thread_lexicon, this.thread_documents, this.thread_n_results, this.thread_mode,"BM25");
+                    this.thread_searcher.DAAT(queryTerms,  this.thread_n_results, this.thread_mode,"BM25");
                     this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
 
                     for (int i = 0; i < this.thread_arrayQueryResults.size(); i++) {
@@ -159,7 +159,7 @@ public class EvaluatorMultiThread {
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
-            Searcher thread_searcher = new Searcher();
+            Searcher thread_searcher = new Searcher( this.lexicon, this.documents);
             executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main));
         }
         executorService.shutdown();

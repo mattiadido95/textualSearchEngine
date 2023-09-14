@@ -51,7 +51,7 @@ public class Evaluator {
                 query = new Query(queryText);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, mode,"BM25");
+                searcher.DAAT(queryTerms, n_results, mode,"BM25");
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
