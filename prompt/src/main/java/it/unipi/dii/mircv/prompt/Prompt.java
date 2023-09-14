@@ -34,7 +34,7 @@ public class Prompt {
         log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
-        Searcher searcher = new Searcher();
+        Searcher searcher = new Searcher(lexicon, documents);
 
         while (true) {
             System.out.println("--------------------------------------------------");
@@ -59,14 +59,14 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive", "BM25");
+                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive", "BM25");
+                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 

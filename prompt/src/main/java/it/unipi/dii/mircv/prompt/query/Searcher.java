@@ -29,13 +29,15 @@ public class Searcher {
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
 
-    public Searcher() {
+    public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
         this.queryResults = new ArrayList<>();
         this.postingLists = new ArrayList<>();
         this.previousQueryTerms = new ArrayList<>();
         this.blockDescriptorList = new ArrayList<>();
         this.previousMode = "";
         this.previousScoringFunction = "";
+        this.lexicon = lexicon;
+        this.documents = documents;
         //read number of docs from disk
         try (FileInputStream fileIn = new FileInputStream("data/index/documentInfo.bin");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
@@ -47,7 +49,7 @@ public class Searcher {
         }
     }
 
-    public void DAAT(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode, String scoringFunction) {
+    public void DAAT(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
 //        if ((this.previousQueryTerms.equals(queryTerms) && this.previousMode.equals(mode) && this.previousScoringFunction.equals(scoringFunction))
 //                || (this.previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1 && this.previousScoringFunction.equals(scoringFunction)))) // same query as before
         if ((this.previousQueryTerms.equals(queryTerms) &&
@@ -145,7 +147,7 @@ public class Searcher {
 
     }
 
-    public void maxScore(ArrayList<String> queryTerms, Lexicon lexicon, ArrayList<Document> documents, int K, String mode, String scoringFunction) {
+    public void maxScore(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
         if ((this.previousQueryTerms.equals(queryTerms) &&
                 this.previousScoringFunction.equals(scoringFunction) &&
                 (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
@@ -163,6 +165,7 @@ public class Searcher {
         int i = 0;
         int essential_index = 0;
         double current_threshold = 0, partial_score = 0, DUB = 0;
+        ArrayList<Integer> alreadyVisited = new ArrayList<>();
 
         //fai un sort su query terms in base a TUB
         HashMap<String, LexiconElem> queryTermsMap = new HashMap<>();
@@ -171,86 +174,27 @@ public class Searcher {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
             }
         }
-
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
-        //TODO controllare l'ordine serve ordine crescente
-        System.out.println(queryTermsMap);
+        //TODO controllare se fa l'ordine crescente
 
-        for (String term : queryTermsMap.keySet()) {
-            firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-            blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
-            //read all blocks
-            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
-            blockDescriptorList.get(i).openBlock();
-            blockDescriptorList.get(i).next();
-            //load first posting list for the term
-            PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset());
-            postingList.openList();
-            postingLists.add(postingList); // add postinglist of the term to postingListIterators
-            postingLists.get(i).next();
-            i++;
-        }
+        //initialize posting list for query terms
+        initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
 
         // finche ho essential posting list
         do {
             // get next docid to be processed
             int docid = postingLists.get(essential_index).getDocId();
+            alreadyVisited.add(docid);
 
-            if (scoringFunction.equals("TFIDF"))
-                partial_score += tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf());
-            else if (scoringFunction.equals("BM25"))
-                partial_score += BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+            computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
-            i = 1;
-            for (int j = essential_index + 1; j < postingLists.size(); j++) {
-                postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
-                if (postingLists.get(j).getDocId() != docid)
-                    continue;
-                if (scoringFunction.equals("TFIDF"))
-                    partial_score += tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf());
-                else if (scoringFunction.equals("BM25"))
-                    partial_score += BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
-            }
-            // calcolo DUB
-            DUB = partial_score;
-            for (int j = 0; j < essential_index; j++) {
-                if (scoringFunction.equals("TFIDF"))
-                    DUB += queryTermsMap.get(queryTerms.get(j)).getTUB_tfidf();
-                else if (scoringFunction.equals("BM25"))
-                    DUB += queryTermsMap.get(queryTerms.get(j)).getTUB_bm25();
-            }
+            DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
+
             //controllo se DUB > current_threshold
             if (DUB > current_threshold) {
-                //calcolare partial score di non essential
-                for (int j = essential_index - 1; j >= 0; j--) {
-                    postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
-
-                    if (scoringFunction.equals("TFIDF"))
-                        DUB -= queryTermsMap.get(queryTerms.get(j)).getTUB_tfidf();
-                    else if (scoringFunction.equals("BM25"))
-                        DUB -= queryTermsMap.get(queryTerms.get(j)).getTUB_bm25();
-
-                    if (postingLists.get(j).getDocId() != docid)
-                        continue;
-
-                    double result = 0;
-                    if (scoringFunction.equals("TFIDF")) {
-                        result = tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf());
-                        partial_score += result;
-                        DUB += result;
-                    } else if (scoringFunction.equals("BM25")) {
-                        result = BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
-                        partial_score += result;
-                        DUB += result;
-                    }
-
-                    if (DUB < current_threshold)
-                        break;
-                }
-
+                partial_score = computeDUB(essential_index, docid, scoringFunction, partial_score, DUB, current_threshold, blocksNumber, queryTermsMap);
             }
-
+            int new_essential_index = -1;
             if (partial_score > current_threshold) {
                 // Get document
                 Document document = documents.get(docid);
@@ -266,13 +210,119 @@ public class Searcher {
                         queryResults.remove(queryResults.size() - 1);
                     // Aggiorna current_threshold
                     current_threshold = queryResults.get(queryResults.size() - 1).getScoring();
+                    new_essential_index = compute_essential_index(queryTermsMap, scoringFunction, current_threshold);
                 }
             }
-            compute_essential_index(queryTermsMap, scoringFunction, current_threshold);
+
+            if (essential_index == new_essential_index && new_essential_index != -1) {
+                if (postingLists.get(essential_index).hasNext())
+                    postingLists.get(essential_index).next();
+                else {
+                    // posting list finita si va alla prossima posting list essential se esiste
+                    if (essential_index < postingLists.size() - 1) {
+                        essential_index++;
+                        initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
+                    } else
+                        essential_index = -1;
+                }
+            } else {
+                essential_index = new_essential_index;
+                initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
+            }
+
+
             //probabilmente va fatto un reset di tutti i posting list iterator e anche dei blocchi
         } while (essential_index != -1);
 
 
+    }
+
+
+    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
+        ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+        for (int j = essential_index - 1; j >= 0; j--) {
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+
+            if (scoringFunction.equals("TFIDF"))
+                DUB -= queryTermsMap.get(termList.get(j)).getTUB_tfidf();
+            else if (scoringFunction.equals("BM25"))
+                DUB -= queryTermsMap.get(termList.get(j)).getTUB_bm25();
+
+            if (postingLists.get(j).getDocId() != docid) // if docid not found in posting list
+                continue;
+
+            // docid found in posting list
+            double result = 0;
+            if (scoringFunction.equals("TFIDF")) {
+                result = tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf());
+                partial_score += result;
+                DUB += result;
+            } else if (scoringFunction.equals("BM25")) {
+                result = BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+                partial_score += result;
+                DUB += result;
+            }
+            if (DUB < current_threshold)
+                break;
+
+        }
+        return partial_score;
+    }
+
+    private double sumNonEssentialTUBs(int essential_index, double partial_score, String scoringFunction, HashMap<String, LexiconElem> queryTermsMap) {
+        // calcolo DUB
+        double DUB = partial_score;
+        ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+        for (int j = 0; j < essential_index; j++) {
+            if (scoringFunction.equals("TFIDF"))
+                DUB += queryTermsMap.get(termList.get(j)).getTUB_tfidf();
+            else if (scoringFunction.equals("BM25"))
+                DUB += queryTermsMap.get(termList.get(j)).getTUB_bm25();
+        }
+
+        return DUB;
+    }
+
+    private double computeEssentialPS(int essential_index, String scoringFunction, int docid, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
+        double partial_score = 0;
+        ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+        if (scoringFunction.equals("TFIDF"))
+            partial_score += tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf());
+        else if (scoringFunction.equals("BM25"))
+            partial_score += BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+
+        int i = 1;
+        for (int j = essential_index + 1; j < postingLists.size(); j++) {
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+            if (postingLists.get(j).getDocId() != docid)
+                continue;
+            if (scoringFunction.equals("TFIDF"))
+                partial_score += tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf());
+            else if (scoringFunction.equals("BM25"))
+                partial_score += BM25(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+        }
+
+        return partial_score;
+    }
+
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+        int i = 0;
+        long firstBlockOffset;
+        for (String term : queryTermsMap.keySet()) {
+            firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
+            blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
+            //read all blocks
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
+            blockDescriptorList.get(i).openBlock();
+            blockDescriptorList.get(i).next();
+            //load first posting list for the term
+            PostingList postingList = new PostingList();
+            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset());
+            postingList.openList();
+            postingLists.add(postingList); // add postinglist of the term to postingListIterators
+            postingLists.get(i).next();
+            i++;
+        }
     }
 
     private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
@@ -343,6 +393,7 @@ public class Searcher {
         }
         return min;
     }
+
 
     public void printResults(long time) {
         if (queryResults == null || queryResults.size() == 0) {
