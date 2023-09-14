@@ -101,27 +101,33 @@ public class PostingList {
         postingIterator = null;
     }
 
-    public void next(){
+    public Posting next(){
         if(postingIterator.hasNext())
             actualPosting = postingIterator.next();
         else
             actualPosting = null;
+        return actualPosting;
     }
 
-    public void nextGEQ(int docId, Iterator<BlockDescriptor> firstBlock, int numBlocks){
-
-        while(docId > firstBlock.next().getMaxDocID() && numBlocks > 0){
-            firstBlock = ;
+    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks){
+        bdl.openBlock();
+        // cerca il blocco che contiene il docId
+        while(numBlocks > 0 && docId > bdl.next().getMaxDocID()){
             numBlocks--;
         }
-        if(postingIterator.hasNext()){
-            actualPosting = postingIterator.next();
-            while(actualPosting.getDocID() < docId && postingIterator.hasNext()){
-                actualPosting = postingIterator.next();
-            }
+        // carica la relativa posting list
+        //controllo se postinglist caricata è quella del blocco di interesse
+        if(postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
+            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
+            this.openList();
+            this.next();
         }
-        else
-            actualPosting = null;
+        // scorri la posting list fino a trovare il docId
+        while(postingIterator.hasNext()){
+            if(postingIterator.next().getDocID() >= docId)
+                break;
+        }
+        return actualPosting;
     }
 
     public int getDocId(){

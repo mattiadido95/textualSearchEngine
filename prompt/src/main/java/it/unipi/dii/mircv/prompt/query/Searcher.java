@@ -157,8 +157,7 @@ public class Searcher {
         this.queryResults.clear();
 
         long firstBlockOffset;
-        int blocksNumber;
-        int minDocId;
+        ArrayList<Integer> blocksNumber = new ArrayList<>();
         ArrayList<Integer> indexes = new ArrayList<>();
         ArrayList<Double> scores = new ArrayList<>();
         int i = 0;
@@ -179,9 +178,9 @@ public class Searcher {
 
         for (String term : queryTermsMap.keySet()) {
             firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-            blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
+            blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
-            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber));
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();
             //load first posting list for the term
@@ -195,8 +194,9 @@ public class Searcher {
 
         // finche ho essential posting list
         do {
-            // get min docID from posting list iterators and indexes of posting list iterators with min docID
+            // get next docid to be processed
             int docid = postingLists.get(essential_index).getDocId();
+
             if (scoringFunction.equals("TFIDF"))
                 partial_score += tfidf(postingLists.get(essential_index).getFreq(), lexicon.getLexiconElem(queryTerms.get(essential_index)).getDf());
             else if (scoringFunction.equals("BM25"))
@@ -204,7 +204,7 @@ public class Searcher {
 
             i = 1;
             for (int j = essential_index + 1; j < postingLists.size(); j++) {
-                postingLists.get(j).nextGEQ(docid);
+                postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
                 if (postingLists.get(j).getDocId() != docid)
                     continue;
                 if (scoringFunction.equals("TFIDF"))
@@ -224,7 +224,7 @@ public class Searcher {
             if (DUB > current_threshold) {
                 //calcolare partial score di non essential
                 for (int j = essential_index - 1; j >= 0; j--) {
-                    postingLists.get(j).nextGEQ(docid);
+                    postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
 
                     if (scoringFunction.equals("TFIDF"))
                         DUB -= queryTermsMap.get(queryTerms.get(j)).getTUB_tfidf();
@@ -249,18 +249,27 @@ public class Searcher {
                         break;
                 }
 
-            } else {// il doc non è rilevante
-
             }
 
-            if(partial_score > current_threshold){
-                // inserimento in query result
-
+            if (partial_score > current_threshold) {
+                // Get document
+                Document document = documents.get(docid);
+                // Get document pid
+                String pid = document.getDocNo();
+                // Add pid to results
+                queryResults.add(new QueryResult(pid, partial_score));
+                // SE queryresult.size > k
+                if (queryResults.size() >= K) {
+                    Collections.sort(queryResults);
+                    if (queryResults.size() > K)
+                        // Rimuovi ultimo elemento
+                        queryResults.remove(queryResults.size() - 1);
+                    // Aggiorna current_threshold
+                    current_threshold = queryResults.get(queryResults.size() - 1).getScoring();
+                }
             }
-            // SE queryresult.size > k
-            // aggiornamento threshold
-
             compute_essential_index(queryTermsMap, scoringFunction, current_threshold);
+            //probabilmente va fatto un reset di tutti i posting list iterator e anche dei blocchi
         } while (essential_index != -1);
 
 

@@ -24,11 +24,12 @@ public class BlockDescriptorList {
         blockDescriptorIterator = null;
     }
 
-    public void next(){
+    public BlockDescriptor next(){
         if(blockDescriptorIterator.hasNext())
             actualBlockDescriptor = blockDescriptorIterator.next();
         else
             actualBlockDescriptor = null;
+        return actualBlockDescriptor;
     }
 
     public int getMaxDocID() {
