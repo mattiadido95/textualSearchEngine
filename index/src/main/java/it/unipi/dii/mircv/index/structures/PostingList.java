@@ -15,7 +15,6 @@ public class PostingList {
     private ArrayList<Posting> postings;
     private Iterator<Posting> postingIterator;
     private Posting actualPosting;
-    int size;
 
     Logs log = new Logs();
 
@@ -24,14 +23,12 @@ public class PostingList {
         postings.add(new Posting(doc.getDocID(), 1));
         postingIterator = null;
         actualPosting = null;
-        size = 1;
     }
 
     public PostingList() {
         postings = new ArrayList<>();
         postingIterator = null;
         actualPosting = null;
-        size = 0;
     }
 
     public ArrayList<Posting> getPostings() {
@@ -40,7 +37,6 @@ public class PostingList {
 
     public void mergePosting(PostingList postingList) {
         this.postings.addAll(postingList.getPostings());
-        this.size += postingList.getPostingListSize();
         log.getLog(this.postings);
     }
 
@@ -90,7 +86,6 @@ public class PostingList {
         // posting list doesn't contain the document, create new posting
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
-        this.size++;
     }
 
     public void openList(){
@@ -147,7 +142,7 @@ public class PostingList {
     }
 
     public int getPostingListSize() {
-        return this.size;
+        return this.getPostings().size();
     }
 
     public long savePostingListToDisk(int indexCounter) {
@@ -275,7 +270,6 @@ public class PostingList {
 
         //TODO rendere la funzione statica ed eliminare le due righe sottostanti oppure eliminare la return
         this.postings = result;
-        this.size = df;
 
         return result; // serve forse dopo per ricostruire l'indice
     }
