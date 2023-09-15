@@ -118,10 +118,10 @@ public class PostingList {
             this.next();
         }
         // scorri la posting list fino a trovare il docId
-        while (postingIterator.hasNext()) {
-            if (postingIterator.next().getDocID() >= docId)
-                break;
+        while(actualPosting.getDocID() < docId && postingIterator.hasNext()) {
+            actualPosting = postingIterator.next();
         }
+
         return actualPosting;
     }
 
