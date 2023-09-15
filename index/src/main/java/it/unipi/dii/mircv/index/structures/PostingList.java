@@ -88,52 +88,52 @@ public class PostingList {
         this.postings.add(newPosting); // add posting to posting list
     }
 
-    public void openList(){
+    public void openList() {
         postingIterator = postings.iterator();
     }
 
-    public void closeList(){
+    public void closeList() {
         postingIterator = null;
     }
 
-    public Posting next(){
-        if(postingIterator.hasNext())
+    public Posting next() {
+        if (postingIterator.hasNext())
             actualPosting = postingIterator.next();
         else
             actualPosting = null;
         return actualPosting;
     }
 
-    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks){
+    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks) {
         bdl.openBlock();
         // cerca il blocco che contiene il docId
-        while(numBlocks > 0 && docId > bdl.next().getMaxDocID()){
+        while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
             numBlocks--;
         }
         // carica la relativa posting list
         //controllo se postinglist caricata è quella del blocco di interesse
-        if(postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
+        if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
             this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
             this.openList();
             this.next();
         }
         // scorri la posting list fino a trovare il docId
-        while(postingIterator.hasNext()){
-            if(postingIterator.next().getDocID() >= docId)
+        while (postingIterator.hasNext()) {
+            if (postingIterator.next().getDocID() >= docId)
                 break;
         }
         return actualPosting;
     }
 
-    public int getDocId(){
+    public int getDocId() {
         return actualPosting.getDocID();
     }
 
-    public int getFreq(){
+    public int getFreq() {
         return actualPosting.getFreq();
     }
 
-    public boolean hasNext(){
+    public boolean hasNext() {
         return postingIterator.hasNext();
     }
 
@@ -156,22 +156,7 @@ public class PostingList {
         long offset = -1;
 
         try {
-//            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
-//            // Posizionati alla fine del file per l'aggiunta dei dati
-//            randomAccessFile.seek(randomAccessFile.length());
-//
-//            // Memorizza la posizione di inizio nel file
-//            offset = randomAccessFile.getFilePointer();
-////            System.out.println("Initial offset: " + offset); // Debug: Stampa l'offset
-//
-//            for (Posting posting : this.postings) {
-//                randomAccessFile.writeInt(posting.getDocID());
-//                randomAccessFile.writeInt(posting.getFreq());
-//            }
-
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
-//            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-//            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
             FileChannel fileChannel = fileOutputStream.getChannel();
 
             // Memorizza la posizione di inizio nel file
@@ -201,7 +186,6 @@ public class PostingList {
             // Chiudi le risorse
             fileChannel.close();
             fileOutputStream.close();
-//            bufferedOutputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -242,28 +226,7 @@ public class PostingList {
                 int freq = buffer.getInt();
                 result.add(new Posting(docID, freq));
             }
-
-//            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "r");
-//
-////            System.out.println("File path: " + filePath); // Debug: Stampa il percorso del file
-////            System.out.println("Offset: " + offset); // Debug: Stampa l'offset
-//
-//            // Posizionati nella posizione desiderata
-//            randomAccessFile.seek(offset);
-////            System.out.println("Size: " + df); // Debug: Stampa la dimensione della posting list
-//
-//            for(int i = 0; i < df; i++) {
-//                int docID = randomAccessFile.readInt();
-//                int freq = randomAccessFile.readInt();
-//                result.add(new Posting(docID, freq));
-//            }
-//
-//            randomAccessFile.close();
-//
-//
-////            System.out.println("Dimensione della PostingList: " + result.size());
-////            System.out.println("PostingList letta, docID e freq " + result.get(0).getDocID() + ", " + result.get(0).getFreq());
-        fileChannel.close();
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

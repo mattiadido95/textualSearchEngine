@@ -52,5 +52,89 @@
         "start_time": 1694788863847,
         "end_time": 1694788864114,
         "type": "load_documents"
+    },
+    {
+        "duration": 155891,
+        "start_time": 1694788972509,
+        "end_time": 1694789128400,
+        "type": "spimi"
+    },
+    {
+        "duration": 190846,
+        "start_time": 1694789129446,
+        "end_time": 1694789320292,
+        "type": "merger"
+    },
+    {
+        "duration": 495,
+        "start_time": 1694789401949,
+        "end_time": 1694789402444,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 193,
+        "start_time": 1694789402477,
+        "end_time": 1694789402670,
+        "type": "load_documents"
+    },
+    {
+        "duration": 0,
+        "start_time": 1694789416373,
+        "end_time": 1694789416373,
+        "type": "query"
+    },
+    {
+        "duration": 122711,
+        "start_time": 1694790171477,
+        "end_time": 1694790294188,
+        "type": "spimi"
+    },
+    {
+        "duration": 112695,
+        "start_time": 1694790294786,
+        "end_time": 1694790407481,
+        "type": "merger"
+    },
+    {
+        "duration": 330,
+        "start_time": 1694790839615,
+        "end_time": 1694790839945,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 153,
+        "start_time": 1694790839979,
+        "end_time": 1694790840132,
+        "type": "load_documents"
+    },
+    {
+        "duration": 238,
+        "start_time": 1694790930332,
+        "end_time": 1694790930570,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 86,
+        "start_time": 1694790930588,
+        "end_time": 1694790930674,
+        "type": "load_documents"
+    },
+    {
+        "duration": 0,
+        "start_time": 1694790939779,
+        "end_time": 1694790939779,
+        "type": "query"
+    },
+    {
+        "duration": 231,
+        "start_time": 1694790944376,
+        "end_time": 1694790944607,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 85,
+        "start_time": 1694790944626,
+        "end_time": 1694790944711,
+        "type": "load_documents"
     }
 ]
