@@ -184,7 +184,7 @@ public class Searcher {
             int docid = postingLists.get(essential_index).getDocId();
             alreadyVisited.add(docid);
 
-            computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
+            partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
             DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
 
