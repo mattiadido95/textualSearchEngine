@@ -27,6 +27,10 @@ public class Lexicon {
         return this.lexicon;
     }
 
+    public ArrayList<String> getLexiconKeys() {
+        return new ArrayList<>(this.lexicon.keySet());
+    }
+
     public void addLexiconElem(String term) {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {

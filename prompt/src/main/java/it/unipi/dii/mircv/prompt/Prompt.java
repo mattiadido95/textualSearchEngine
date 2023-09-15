@@ -3,6 +3,7 @@ package it.unipi.dii.mircv.prompt;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
+import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
@@ -33,7 +34,7 @@ public class Prompt {
         log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
-        Searcher searcher = new Searcher();
+        Searcher searcher = new Searcher(lexicon, documents);
 
         while (true) {
             System.out.println("--------------------------------------------------");
@@ -58,14 +59,18 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive", "BM25");
+                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+//                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive", "BM25");
+                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
+//                searcher.maxScore(queryTerms, n_results, "conjunctive", "BM25");
+
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
 
@@ -74,13 +79,15 @@ public class Prompt {
             } else if (userInput == 2) {
                 EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, n_results_eval, "disjunctive");
                 evaluatorMT.execute();
-
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();
 //                evaluator.printResults();
             } else if (userInput == 3) {
                 // call to dynamic pruning process
-
+                DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
+                dinamicPruning.TUB_processing("BM25");
+                lexicon = new Lexicon();
+                lexicon.readLexiconFromDisk(-1);
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();
