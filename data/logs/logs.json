@@ -4192,5 +4192,41 @@
         "start_time": 1694769556487,
         "end_time": 1694769561671,
         "type": "load_documents"
+    },
+    {
+        "duration": 125245,
+        "start_time": 1694769996336,
+        "end_time": 1694770121581,
+        "type": "spimi"
+    },
+    {
+        "duration": 121142,
+        "start_time": 1694770231145,
+        "end_time": 1694770352287,
+        "type": "spimi"
+    },
+    {
+        "duration": 114180,
+        "start_time": 1694770643294,
+        "end_time": 1694770757474,
+        "type": "spimi"
+    },
+    {
+        "duration": 129929,
+        "start_time": 1694771705877,
+        "end_time": 1694771835806,
+        "type": "spimi"
+    },
+    {
+        "duration": 126307,
+        "start_time": 1694771948305,
+        "end_time": 1694772074612,
+        "type": "spimi"
+    },
+    {
+        "duration": 111746,
+        "start_time": 1694772129293,
+        "end_time": 1694772241039,
+        "type": "spimi"
     }
 ]
