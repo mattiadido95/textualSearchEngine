@@ -200,7 +200,7 @@ public class PostingList {
 
             // Chiudi le risorse
             fileChannel.close();
-//            dataOutputStream.close();
+            fileOutputStream.close();
 //            bufferedOutputStream.close();
 
         } catch (Exception e) {
@@ -263,7 +263,7 @@ public class PostingList {
 //
 ////            System.out.println("Dimensione della PostingList: " + result.size());
 ////            System.out.println("PostingList letta, docID e freq " + result.get(0).getDocID() + ", " + result.get(0).getFreq());
-
+        fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

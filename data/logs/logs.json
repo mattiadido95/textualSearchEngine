@@ -4258,5 +4258,47 @@
         "start_time": 1694773894848,
         "end_time": 1694773894848,
         "type": "query"
+    },
+    {
+        "duration": 105460,
+        "start_time": 1694774509155,
+        "end_time": 1694774614615,
+        "type": "spimi"
+    },
+    {
+        "duration": 100782,
+        "start_time": 1694774724977,
+        "end_time": 1694774825759,
+        "type": "spimi"
+    },
+    {
+        "duration": 73158,
+        "start_time": 1694774934175,
+        "end_time": 1694775007333,
+        "type": "spimi"
+    },
+    {
+        "duration": 108944,
+        "start_time": 1694775187261,
+        "end_time": 1694775296205,
+        "type": "spimi"
+    },
+    {
+        "duration": 99098,
+        "start_time": 1694775296871,
+        "end_time": 1694775395969,
+        "type": "merger"
+    },
+    {
+        "duration": 119309,
+        "start_time": 1694775582442,
+        "end_time": 1694775701751,
+        "type": "spimi"
+    },
+    {
+        "duration": 171488,
+        "start_time": 1694775702467,
+        "end_time": 1694775873955,
+        "type": "merger"
     }
 ]
