@@ -127,7 +127,7 @@ public class Merger {
                             //salva inzio del block descriptor nel newLexiconElem
                             newLexiconElem.setOffset(blockDescriptorOffset);
                         blockCounter++;
-                    } else if ((mergePostingList.getPostingListSize() - (blockCounter * 10)) < NUMBER_OF_POSTING) {
+                    } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
                         //salva il block descriptor
                         blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
                         blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk();

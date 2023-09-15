@@ -156,11 +156,7 @@ public class Searcher {
         this.previousScoringFunction = scoringFunction;
         this.queryResults.clear();
 
-        long firstBlockOffset;
         ArrayList<Integer> blocksNumber = new ArrayList<>();
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Double> scores = new ArrayList<>();
-        int i = 0;
         int essential_index = 0;
         double current_threshold = 0, partial_score = 0, DUB = 0;
         ArrayList<Integer> alreadyVisited = new ArrayList<>();
@@ -172,9 +168,10 @@ public class Searcher {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
             }
         }
+        System.out.println(queryTermsMap);
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
         //TODO controllare se fa l'ordine crescente
-
+        System.out.println(queryTermsMap);
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
 

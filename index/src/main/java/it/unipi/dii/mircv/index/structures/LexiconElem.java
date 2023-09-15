@@ -77,6 +77,8 @@ public class LexiconElem {
                 ", cf=" + cf +
                 ", offset=" + offset +
                 ", numBlock=" + numBlock +
+                ", TUB_bm25=" + TUB_bm25 +
+                ", TUB_tfidf=" + TUB_tfidf +
                 '}';
     }
 
