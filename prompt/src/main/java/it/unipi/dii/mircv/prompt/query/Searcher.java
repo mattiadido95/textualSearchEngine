@@ -148,9 +148,7 @@ public class Searcher {
     }
 
     public void maxScore(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
-        if ((this.previousQueryTerms.equals(queryTerms) &&
-                this.previousScoringFunction.equals(scoringFunction) &&
-                (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
+        if ((this.previousQueryTerms.equals(queryTerms) && this.previousScoringFunction.equals(scoringFunction) && (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
             return;
         //process query and clear previous results
         this.previousQueryTerms = new ArrayList<>(queryTerms);
@@ -183,7 +181,7 @@ public class Searcher {
             int docid = postingLists.get(essential_index).getDocId();
             alreadyVisited.add(docid);
 
-            computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
+            partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
             DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
 

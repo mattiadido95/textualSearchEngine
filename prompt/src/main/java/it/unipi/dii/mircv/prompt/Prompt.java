@@ -68,7 +68,7 @@ public class Prompt {
                 System.out.println("conjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
+//                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
 //                searcher.maxScore(queryTerms, n_results, "conjunctive", "BM25");
 
                 end = System.currentTimeMillis();
@@ -86,6 +86,7 @@ public class Prompt {
                 // call to dynamic pruning process
                 DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
                 dinamicPruning.TUB_processing("BM25");
+                dinamicPruning.TUB_processing("TFIDF");
                 lexicon = new Lexicon();
                 lexicon.readLexiconFromDisk(-1);
             } else if (userInput == 10) {

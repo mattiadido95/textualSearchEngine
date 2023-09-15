@@ -7,6 +7,7 @@ import it.unipi.dii.mircv.index.structures.PostingList;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static it.unipi.dii.mircv.index.structures.BlockDescriptor.readFirstBlock;
@@ -52,6 +53,9 @@ public class DynamicPruning {
 //            }
 //            counter++;
         }
+        // delete lexicon.bin file
+        File file = new File("data/index/lexicon.bin");
+        file.delete();
         this.lexicon.saveLexiconToDisk(-1);
     }
 
