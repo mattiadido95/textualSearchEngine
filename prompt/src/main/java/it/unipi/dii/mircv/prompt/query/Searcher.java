@@ -5,10 +5,7 @@ import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class Searcher {
 
@@ -162,7 +159,7 @@ public class Searcher {
         ArrayList<Integer> alreadyVisited = new ArrayList<>();
 
         //fai un sort su query terms in base a TUB
-        HashMap<String, LexiconElem> queryTermsMap = new HashMap<>();
+        LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));

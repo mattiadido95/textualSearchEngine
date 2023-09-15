@@ -8,9 +8,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Lexicon {
@@ -62,16 +61,28 @@ public class Lexicon {
     }
 
     //sort lexicon by TUB in termElem
-    public static HashMap<String, LexiconElem> sortLexicon(HashMap<String,LexiconElem> lexicon, String scoringFunction){
-        HashMap<String, LexiconElem> sorted = new HashMap<>();
+    public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String,LexiconElem> lexicon, String scoringFunction){
+
+        // Ordina la lexicon per LexiconELem.TUB_bm25 in ordine decrescente
+        LinkedHashMap<String, LexiconElem> sorted = new LinkedHashMap<>();
         if(scoringFunction.equals("TF-IDF")){
             sorted = lexicon.entrySet().stream()
-                    .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
-                    .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+                .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {throw new AssertionError();},
+                        LinkedHashMap::new
+                ));
         }else if(scoringFunction.equals("BM25")) {
             sorted = lexicon.entrySet().stream()
-                    .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
-                    .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+                .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {throw new AssertionError();},
+                        LinkedHashMap::new
+                ));
         }
         return sorted;
     }
