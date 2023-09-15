@@ -59,8 +59,8 @@ public class Prompt {
                 System.out.println("disjunctive");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
-//                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+//                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
 
                 end = System.currentTimeMillis();
                 searcher.printResults(end - start);
