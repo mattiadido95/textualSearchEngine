@@ -110,7 +110,14 @@ public class Lexicon {
     }
 
     public void saveLexiconToDisk(int indexCounter) {
-        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+//        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+        String filePath;
+
+        if (indexCounter == -1){
+            filePath = "data/index/lexicon.bin";
+        }else {
+            filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
+        }
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
 
@@ -120,6 +127,11 @@ public class Lexicon {
                 randomAccessFile.writeInt(lexiconElem.getDf());
                 randomAccessFile.writeLong(lexiconElem.getCf());
                 randomAccessFile.writeLong(lexiconElem.getOffset());
+                if (indexCounter == -1) {
+                    randomAccessFile.writeInt(lexiconElem.getBlocksNumber());
+                    randomAccessFile.writeDouble(lexiconElem.getTUB_bm25());
+                    randomAccessFile.writeDouble(lexiconElem.getTUB_tfidf());
+                }
             }
 
 //            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
@@ -204,11 +216,15 @@ public class Lexicon {
                 long cf = dataInputStream.readLong();
                 long offset = dataInputStream.readLong();
                 int numblock = -1;
+                double tub_bm25 = -1;
+                double tub_tfidf = -1;
                 if (indexCounter == -1) {
                     numblock = dataInputStream.readInt();
+                    tub_bm25 = dataInputStream.readDouble();
+                    tub_tfidf = dataInputStream.readDouble();
                 }
                 // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-                LexiconElem lexiconElem = new LexiconElem(df, cf, offset, numblock);
+                LexiconElem lexiconElem = new LexiconElem(df, cf, offset, numblock, tub_bm25, tub_tfidf);
                 this.lexicon.put(term, lexiconElem);
             }
         } catch (Exception e) {
@@ -228,7 +244,7 @@ public class Lexicon {
 
         arrayOffset[i] = raf.getFilePointer();
         // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-        LexiconElem lexiconElem = new LexiconElem(df, cf, offset,-1);
+        LexiconElem lexiconElem = new LexiconElem(df, cf, offset,-1,-1,-1);
         return lexiconElem;
     }
 
@@ -238,6 +254,8 @@ public class Lexicon {
         raf.writeLong(cf);
         raf.writeLong(offset);
         raf.writeInt(numBlock);
+        raf.writeDouble(-1); // TUB_bm25
+        raf.writeDouble(-1); // TUB_tfidf
         return term;
     }
 

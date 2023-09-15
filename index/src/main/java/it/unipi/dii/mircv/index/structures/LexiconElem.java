@@ -16,11 +16,13 @@ public class LexiconElem {
         this.df = 0;
     }
 
-    public LexiconElem(int df, long cf, long offset, int numBlock) {
+    public LexiconElem(int df, long cf, long offset, int numBlock, double TUB_bm25, double TUB_tfidf) {
         this.df = df;
         this.cf = cf;
         this.offset = offset;
         this.numBlock = numBlock;
+        this.TUB_bm25 = TUB_bm25;
+        this.TUB_tfidf = TUB_tfidf;
     }
 
     public int getDf() {
