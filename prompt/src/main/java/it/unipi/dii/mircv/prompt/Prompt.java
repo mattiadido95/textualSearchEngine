@@ -34,8 +34,8 @@ public class Prompt {
         log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
-        Searcher searcher = new Searcher(lexicon, documents);
-
+        Searcher searcherDAAT = new Searcher(lexicon, documents);
+        Searcher searcherMAX = new Searcher(lexicon, documents);
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
@@ -56,28 +56,29 @@ public class Prompt {
                 Query query = new Query(queryInput);
                 ArrayList<String> queryTerms = query.getQueryTerms();
 
-                System.out.println("disjunctive");
+                System.out.println("DAAT");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-//                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
-                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+
 
                 end = System.currentTimeMillis();
-                searcher.printResults(end - start);
+                searcherDAAT.printResults(end - start);
 
-                System.out.println("conjunctive");
+                System.out.println("MaxScore");
                 start = System.currentTimeMillis();
+                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "BM25");
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
 //                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
 //                searcher.maxScore(queryTerms, n_results, "conjunctive", "BM25");
 
                 end = System.currentTimeMillis();
-                searcher.printResults(end - start);
+                searcherMAX.printResults(end - start);
 
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, n_results_eval, "disjunctive");
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcherDAAT, lexicon, documents, n_results_eval, "disjunctive");
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();
