@@ -280,5 +280,221 @@
         "start_time": 1694798567172,
         "end_time": 1694798567209,
         "type": "query"
+    },
+    {
+        "duration": 669,
+        "start_time": 1694855053032,
+        "end_time": 1694855053701,
+        "type": "spimi"
+    },
+    {
+        "duration": 779,
+        "start_time": 1694855053744,
+        "end_time": 1694855054523,
+        "type": "merger"
+    },
+    {
+        "duration": 549,
+        "start_time": 1694855139540,
+        "end_time": 1694855140089,
+        "type": "spimi"
+    },
+    {
+        "duration": 718,
+        "start_time": 1694855140133,
+        "end_time": 1694855140851,
+        "type": "merger"
+    },
+    {
+        "duration": 8,
+        "start_time": 1694855151184,
+        "end_time": 1694855151192,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694855151228,
+        "end_time": 1694855151232,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12,
+        "start_time": 1694855169899,
+        "end_time": 1694855169911,
+        "type": "query"
+    },
+    {
+        "duration": 13,
+        "start_time": 1694855184983,
+        "end_time": 1694855184996,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694855185076,
+        "end_time": 1694855185080,
+        "type": "load_documents"
+    },
+    {
+        "duration": 13,
+        "start_time": 1694855230590,
+        "end_time": 1694855230603,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 6,
+        "start_time": 1694855230687,
+        "end_time": 1694855230693,
+        "type": "load_documents"
+    },
+    {
+        "duration": 11,
+        "start_time": 1694856176319,
+        "end_time": 1694856176330,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 5,
+        "start_time": 1694856176412,
+        "end_time": 1694856176417,
+        "type": "load_documents"
+    },
+    {
+        "duration": 15,
+        "start_time": 1694856740323,
+        "end_time": 1694856740338,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3,
+        "start_time": 1694856740426,
+        "end_time": 1694856740429,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12,
+        "start_time": 1694858016930,
+        "end_time": 1694858016942,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694858017019,
+        "end_time": 1694858017023,
+        "type": "load_documents"
+    },
+    {
+        "duration": 10,
+        "start_time": 1694858143233,
+        "end_time": 1694858143243,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694858143328,
+        "end_time": 1694858143332,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12,
+        "start_time": 1694859393109,
+        "end_time": 1694859393121,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 5,
+        "start_time": 1694859393202,
+        "end_time": 1694859393207,
+        "type": "load_documents"
+    },
+    {
+        "duration": 41781,
+        "start_time": 1694859400105,
+        "end_time": 1694859441886,
+        "type": "query"
+    },
+    {
+        "duration": 14,
+        "start_time": 1694859557729,
+        "end_time": 1694859557743,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694859557829,
+        "end_time": 1694859557833,
+        "type": "load_documents"
+    },
+    {
+        "duration": 10,
+        "start_time": 1694859673747,
+        "end_time": 1694859673757,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 5,
+        "start_time": 1694859673842,
+        "end_time": 1694859673847,
+        "type": "load_documents"
+    },
+    {
+        "duration": 132159,
+        "start_time": 1694859681980,
+        "end_time": 1694859814139,
+        "type": "query"
+    },
+    {
+        "duration": 10,
+        "start_time": 1694859963641,
+        "end_time": 1694859963651,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694859963693,
+        "end_time": 1694859963697,
+        "type": "load_documents"
+    },
+    {
+        "duration": 27,
+        "start_time": 1694859997021,
+        "end_time": 1694859997048,
+        "type": "query"
+    },
+    {
+        "duration": 8,
+        "start_time": 1694860039411,
+        "end_time": 1694860039419,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3,
+        "start_time": 1694860039460,
+        "end_time": 1694860039463,
+        "type": "load_documents"
+    },
+    {
+        "duration": 26,
+        "start_time": 1694860045652,
+        "end_time": 1694860045678,
+        "type": "query"
+    },
+    {
+        "duration": 8,
+        "start_time": 1694860754408,
+        "end_time": 1694860754416,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4,
+        "start_time": 1694860754459,
+        "end_time": 1694860754463,
+        "type": "load_documents"
+    },
+    {
+        "duration": 26,
+        "start_time": 1694860762725,
+        "end_time": 1694860762751,
+        "type": "query"
     }
 ]

@@ -175,9 +175,12 @@ public class Searcher {
         // finche ho essential posting list
         do {
             // get next docid to be processed
-            //manca controllo se ho gia calcolato il docid
-
             int docid = postingLists.get(essential_index).getDocId();
+            if (alreadyVisited.contains(docid)) {
+                // check if docid is already processed, if yes go to next docid in posting list
+                postingLists.get(essential_index).next();
+                continue;
+            }
             alreadyVisited.add(docid);
 
             partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
@@ -210,28 +213,31 @@ public class Searcher {
             }
 
             if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
+                // TODO non controlliamo se ci sono altri blocchi da caricare di questa posting list
+                // usare un altro tipo di funzione per vedere se la lista è finita
                 if (postingLists.get(essential_index).hasNext())
                     postingLists.get(essential_index).next();
                 else {
                     // posting list finita si va alla prossima posting list essential se esiste
                     if (essential_index < postingLists.size() - 1) {
                         essential_index++;
+                        //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
+                        postingLists.clear();
                         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
                     } else
                         essential_index = -1;
                 }
             } else { // sono cambiati gli essential posting list
                 essential_index = new_essential_index;
+                //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
+                postingLists.clear();
                 initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
             }
-
-
             //probabilmente va fatto un reset di tutti i posting list iterator e anche dei blocchi
+
         } while (essential_index != -1);
 
-
     }
-
 
     private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
