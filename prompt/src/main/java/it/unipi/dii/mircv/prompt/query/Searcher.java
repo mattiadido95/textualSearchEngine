@@ -165,16 +165,18 @@ public class Searcher {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
             }
         }
-        System.out.println(queryTermsMap);
+//        System.out.println(queryTermsMap);
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
         //TODO controllare se fa l'ordine crescente
-        System.out.println(queryTermsMap);
+//        System.out.println(queryTermsMap);
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
 
         // finche ho essential posting list
         do {
             // get next docid to be processed
+            //manca controllo se ho gia calcolato il docid
+
             int docid = postingLists.get(essential_index).getDocId();
             alreadyVisited.add(docid);
 
@@ -186,7 +188,8 @@ public class Searcher {
             if (DUB > current_threshold) {
                 partial_score = computeDUB(essential_index, docid, scoringFunction, partial_score, DUB, current_threshold, blocksNumber, queryTermsMap);
             }
-            int new_essential_index = -1;
+
+            int new_essential_index = -2;
             if (partial_score > current_threshold) {
                 // Get document
                 Document document = documents.get(docid);
@@ -206,7 +209,7 @@ public class Searcher {
                 }
             }
 
-            if (essential_index == new_essential_index && new_essential_index != -1) {
+            if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
                 if (postingLists.get(essential_index).hasNext())
                     postingLists.get(essential_index).next();
                 else {
@@ -217,7 +220,7 @@ public class Searcher {
                     } else
                         essential_index = -1;
                 }
-            } else {
+            } else { // sono cambiati gli essential posting list
                 essential_index = new_essential_index;
                 initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
             }
