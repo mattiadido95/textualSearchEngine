@@ -32,6 +32,9 @@ public class BlockDescriptorList {
         return actualBlockDescriptor;
     }
 
+    public boolean hasNext(){
+        return blockDescriptorIterator.hasNext();
+    }
     public int getMaxDocID() {
         return actualBlockDescriptor.getMaxDocID();
     }

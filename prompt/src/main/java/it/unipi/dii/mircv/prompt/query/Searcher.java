@@ -165,10 +165,8 @@ public class Searcher {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
             }
         }
-//        System.out.println(queryTermsMap);
+
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
-        //TODO controllare se fa l'ordine crescente
-//        System.out.println(queryTermsMap);
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
 
@@ -212,31 +210,39 @@ public class Searcher {
                 }
             }
 
-            if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
-                // TODO non controlliamo se ci sono altri blocchi da caricare di questa posting list
-                // usare un altro tipo di funzione per vedere se la lista è finita
-                if (postingLists.get(essential_index).hasNext())
-                    postingLists.get(essential_index).next();
-                else {
-                    // posting list finita si va alla prossima posting list essential se esiste
-                    if (essential_index < postingLists.size() - 1) {
-                        essential_index++;
-                        //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
-                        postingLists.clear();
-                        initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
-                    } else
-                        essential_index = -1;
-                }
-            } else { // sono cambiati gli essential posting list
-                essential_index = new_essential_index;
-                //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
-                postingLists.clear();
-                initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
-            }
-            //probabilmente va fatto un reset di tutti i posting list iterator e anche dei blocchi
-
+            updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
         } while (essential_index != -1);
 
+    }
+
+
+    private int updateProcessingPost(ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists, int essential_index, int new_essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+        if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
+            if (postingLists.get(essential_index).hasNext()) // ho ancora post nella posting list attuale
+                postingLists.get(essential_index).next();
+            if (!postingLists.get(essential_index).hasNext() && blockDescriptorList.get(essential_index).hasNext()) { //devo caricare un altro blocco
+                blockDescriptorList.get(essential_index).next();
+                postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset());
+                postingLists.get(essential_index).openList();
+                postingLists.get(essential_index).next();
+            } else {
+                // posting list finita si va alla prossima posting list essential se esiste
+                if (essential_index < postingLists.size() - 1) {
+                    essential_index++;
+                    //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
+                    postingLists.clear();
+                    initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
+                } else
+                    essential_index = -1;
+            }
+        } else { // sono cambiati gli essential posting list
+            essential_index = new_essential_index;
+            //TODO troppo lenta cosi perche fa la clear e la ricarica con letture da disco, una volta caricate andrebbero solo riordinate
+            postingLists.clear();
+            initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
+        }
+        //probabilmente va fatto un reset di tutti i posting list iterator e anche dei blocchi
+        return essential_index;
     }
 
     private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
