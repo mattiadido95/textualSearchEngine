@@ -77,6 +77,9 @@ public class Searcher {
                 postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
+                //TODO SOLO PER DEBUG
+                System.out.println("Term: " + term + " postlist: " + postingList.getPostingListSize());
+
             } else {
                 // if term is not in lexicon add empty posting list
                 postingLists.add(null);
@@ -173,13 +176,20 @@ public class Searcher {
         // finche ho essential posting list
         do {
             // get next docid to be processed
+            int new_essential_index = -2;
             int docid = postingLists.get(essential_index).getDocId();
+            if (docid == 58514)
+                System.out.println("docid = Integer.MAX_VALUE");
             if (alreadyVisited.contains(docid)) {
-                // check if docid is already processed, if yes go to next docid in posting list
-                postingLists.get(essential_index).next();
-                continue;
+                essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
+                if (essential_index != -1)
+                    continue;
+                else
+                    break;
             }
             alreadyVisited.add(docid);
+
+            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
             partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
@@ -190,7 +200,6 @@ public class Searcher {
                 partial_score = computeDUB(essential_index, docid, scoringFunction, partial_score, DUB, current_threshold, blocksNumber, queryTermsMap);
             }
 
-            int new_essential_index = -2;
             if (partial_score > current_threshold) {
                 // Get document
                 Document document = documents.get(docid);
@@ -210,7 +219,8 @@ public class Searcher {
                 }
             }
 
-            updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
+            essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
+            Debug(docid, current_threshold, essential_index, queryTermsMap);
         } while (essential_index != -1);
 
     }
@@ -220,7 +230,7 @@ public class Searcher {
         if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
             if (postingLists.get(essential_index).hasNext()) // ho ancora post nella posting list attuale
                 postingLists.get(essential_index).next();
-            if (!postingLists.get(essential_index).hasNext() && blockDescriptorList.get(essential_index).hasNext()) { //devo caricare un altro blocco
+            else if (!postingLists.get(essential_index).hasNext() && blockDescriptorList.get(essential_index).hasNext()) { //devo caricare un altro blocco
                 blockDescriptorList.get(essential_index).next();
                 postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset());
                 postingLists.get(essential_index).openList();
@@ -320,6 +330,7 @@ public class Searcher {
             blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
             blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
+            DebugPostingList(blockDescriptorList.get(i), blocksNumber.get(i));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();
             //load first posting list for the term
@@ -336,7 +347,7 @@ public class Searcher {
         if (current_threshold == 0)
             return 0;
 
-        int essential_index = -1;
+        int essential_index = 0;
         double TUBsum = 0;
         boolean essential_postings_found = false;
         for (String term : queryTermsMap.keySet()) {
@@ -416,4 +427,32 @@ public class Searcher {
     public ArrayList<QueryResult> getQueryResults() {
         return this.queryResults;
     }
+
+    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap) {
+
+        System.out.println("------------------");
+        for (String term : queryTermsMap.keySet()) {
+            System.out.println(term + " " + queryTermsMap.get(term).getTUB_bm25());
+        }
+        System.out.println(docid + " " + current_threshold + " " + essential_index);
+        for (int i = 0; i < postingLists.size(); i++) {
+            System.out.println(postingLists.get(i));
+        }
+        System.out.println("------------------");
+    }
+
+    public void DebugPostingList(BlockDescriptorList bdl, int blocksNumber) {
+        System.out.println("------------------");
+        PostingList pl = new PostingList();
+        bdl.openBlock();
+        int sum = 0;
+        for (int i = 0; i < blocksNumber; i++) {
+            System.out.println("Block " + i);
+            bdl.next();
+            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
+            sum += pl.getPostingListSize();
+        }
+        System.out.println(sum);
+    }
+
 }

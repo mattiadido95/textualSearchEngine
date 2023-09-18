@@ -82,7 +82,7 @@ public class Spimi {
 
                 documentCounter++;
 
-                if (documentCounter % 10 == 0) {
+                if (documentCounter % 1000 == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
@@ -110,7 +110,7 @@ public class Spimi {
 //                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
 //                    System.out.println(documents1);
                     indexCounter += 1;
-                    if (documentCounter == 30)
+                    if (documentCounter == 10000)
                         break;
                 }
 
