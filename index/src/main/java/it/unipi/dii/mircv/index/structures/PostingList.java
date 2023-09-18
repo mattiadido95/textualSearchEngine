@@ -194,11 +194,6 @@ public class PostingList {
     }
 
     public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset, String filePath) {
-//        {
-//            filePath = "data/index/index.bin";
-//        }else if(indexCounter == -2) { // test folder
-//            filePath = "src/test/data/index.bin";
-//        }else {
         if (indexCounter != -1)
             filePath += indexCounter + ".bin";
 

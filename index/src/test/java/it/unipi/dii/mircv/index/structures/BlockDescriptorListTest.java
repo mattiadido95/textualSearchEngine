@@ -28,6 +28,9 @@ public class BlockDescriptorListTest {
         saveBlockPosting(pl, le);
     }
 
+    // TODO  cambiare il caricamento delle posting list prendendole dai file.bin generati da lexicontest e poi cambiare
+    //  il codice del test adenguando i valori da leggere come in postinglisttest
+
     @Test
     public void testBlockDescriptorListIterator() {
         PostingList pl = new PostingList();

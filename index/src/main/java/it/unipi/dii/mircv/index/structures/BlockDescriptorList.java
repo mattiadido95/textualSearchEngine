@@ -58,7 +58,7 @@ public class BlockDescriptorList {
             fileChannel.position(startOffset);
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(16);
 
             for (int i = 0; i < numBlocks; i++) {
                 buffer.clear();
