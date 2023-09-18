@@ -53,7 +53,12 @@ class PostingListTest {
         Lexicon lexicon = new Lexicon();
         lexicon.readLexiconFromDisk(-2);
 
-        LexiconElem le =  lexicon.getLexicon().get("cane");
+        LexiconElem le =  lexicon.getLexicon().get("gatto");
+        BlockDescriptorList bdl = new BlockDescriptorList(le.getOffset(), le.getBlocksNumber(), true);
+
+        PostingList pl = new PostingList();
+        Posting p = pl.nextGEQ(21, bdl, le.getBlocksNumber());
+        assertEquals(21, p.getDocID());
 
 
     }

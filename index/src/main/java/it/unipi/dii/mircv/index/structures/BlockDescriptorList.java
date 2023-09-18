@@ -16,25 +16,26 @@ public class BlockDescriptorList {
         blockDescriptors = readBlockDescriptorList(offset, numBlock, test);
     }
 
-    public void openBlock(){
+    public void openBlock() {
         blockDescriptorIterator = blockDescriptors.iterator();
     }
 
-    public void closeBlock(){
+    public void closeBlock() {
         blockDescriptorIterator = null;
     }
 
-    public BlockDescriptor next(){
-        if(blockDescriptorIterator.hasNext())
+    public BlockDescriptor next() {
+        if (blockDescriptorIterator.hasNext())
             actualBlockDescriptor = blockDescriptorIterator.next();
         else
             actualBlockDescriptor = null;
         return actualBlockDescriptor;
     }
 
-    public boolean hasNext(){
+    public boolean hasNext() {
         return blockDescriptorIterator.hasNext();
     }
+
     public int getMaxDocID() {
         return actualBlockDescriptor.getMaxDocID();
     }
@@ -42,6 +43,7 @@ public class BlockDescriptorList {
     public int getNumPosting() {
         return actualBlockDescriptor.getNumPosting();
     }
+
     public long getPostingListOffset() {
         return actualBlockDescriptor.getPostingListOffset();
     }
@@ -62,7 +64,7 @@ public class BlockDescriptorList {
             fileChannel.position(startOffset);
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(16);
 
             for (int i = 0; i < numBlocks; i++) {
                 buffer.clear();
