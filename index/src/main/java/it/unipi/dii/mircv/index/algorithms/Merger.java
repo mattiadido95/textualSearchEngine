@@ -110,35 +110,7 @@ public class Merger {
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                 }
 
-                // scrittura newPostingList nel file index
-                long postingOffsetStart = mergePostingList.savePostingListToDisk(-1);
-
-                //scorri la newPostingList e ogni NUMBER_OF_POSTING elementi salva il block descriptor
-                BlockDescriptor blockDescriptor;
-                int blockCounter = 0;
-                long blockDescriptorOffset;
-                for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
-                    if ((i + 1) % NUMBER_OF_POSTING == 0) {
-                        //salva il block descriptor
-                        blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
-                        postingOffsetStart += BLOCK_POSTING_LIST_SIZE;
-                        blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk();
-                        if (blockCounter == 0)
-                            //salva inzio del block descriptor nel newLexiconElem
-                            newLexiconElem.setOffset(blockDescriptorOffset);
-                        blockCounter++;
-                    } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
-                        //salva il block descriptor
-                        blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
-                        blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk();
-                        if (blockCounter == 0)
-                            //salva inzio del block descriptor nel newLexiconElem
-                            newLexiconElem.setOffset(blockDescriptorOffset);
-                        blockCounter++;
-                        break;
-                    }
-
-                }
+                int blockCounter = saveBlockPosting(mergePostingList,newLexiconElem);
 
                 //salvo il nuovo elemento lessico nel file lessico
                 Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset(), blockCounter);
@@ -183,6 +155,40 @@ public class Merger {
         dir = new File(INDEX_PATH + "/documents");
         dir.delete();
         log.getLog("End merging ...");
+    }
+
+    public static int saveBlockPosting(PostingList mergePostingList, LexiconElem newLexiconElem) {
+        // scrittura newPostingList nel file index
+        long postingOffsetStart = mergePostingList.savePostingListToDisk(-1);
+
+        //scorri la newPostingList e ogni NUMBER_OF_POSTING elementi salva il block descriptor
+        BlockDescriptor blockDescriptor;
+        int blockCounter = 0;
+        long blockDescriptorOffset;
+        for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
+            if ((i + 1) % NUMBER_OF_POSTING == 0) {
+                //salva il block descriptor
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
+                postingOffsetStart += BLOCK_POSTING_LIST_SIZE;
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(false);
+                if (blockCounter == 0)
+                    //salva inzio del block descriptor nel newLexiconElem
+                    newLexiconElem.setOffset(blockDescriptorOffset);
+                blockCounter++;
+            } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
+                //salva il block descriptor
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(false);
+                if (blockCounter == 0)
+                    //salva inzio del block descriptor nel newLexiconElem
+                    newLexiconElem.setOffset(blockDescriptorOffset);
+                blockCounter++;
+                break;
+            }
+
+        }
+        return blockCounter;
+
     }
 }
 
