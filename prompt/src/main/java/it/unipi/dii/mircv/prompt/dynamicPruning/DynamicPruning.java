@@ -17,7 +17,7 @@ public class DynamicPruning {
     private ArrayList<Document> documents;
     private Searcher searcher;
     private ArrayList<String> queryTerms;
-
+    private String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
 
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents) {
         this.documents = documents;
@@ -56,7 +56,7 @@ public class DynamicPruning {
         // delete lexicon.bin file
         File file = new File("data/index/lexicon.bin");
         file.delete();
-        this.lexicon.saveLexiconToDisk(-1);
+        this.lexicon.saveLexiconToDisk(-1,PARTIAL_LEXICON_PATH);
     }
 
     public void DUB_processing(String scoreFunctino) {

@@ -14,6 +14,7 @@ public class BlockDescriptorTest {
 
 
     private BlockDescriptor blockDescriptor;
+    private static final String BLOCK_DESCRIPTOR_PATH = "src/test/data/blockDescriptorTest.bin";
 
     @BeforeAll
     public void setUp() {
@@ -30,10 +31,10 @@ public class BlockDescriptorTest {
         blockDescriptor.setPostingListOffset(12345L);
 
         // Salva BlockDescriptor su disco e ottieni l'offset
-        long offset = blockDescriptor.saveBlockDescriptorToDisk(true);
+        long offset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
 
         // Leggi BlockDescriptor dal disco utilizzando l'offset
-        BlockDescriptor readBlockDescriptor = BlockDescriptor.readFirstBlock(offset,true);
+        BlockDescriptor readBlockDescriptor = BlockDescriptor.readFirstBlock(offset,BLOCK_DESCRIPTOR_PATH);
 
         // Verifica che i valori letti corrispondano ai valori impostati
         assertEquals(100, readBlockDescriptor.getMaxDocID());

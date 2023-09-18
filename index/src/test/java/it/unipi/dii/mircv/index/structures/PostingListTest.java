@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PostingListTest {
 
+    private static final String INDEX_PATH = "src/test/data/index.bin";
+
     @Test
     public void testPostingListReadWrite() {
         System.out.println("Test PostingList read/write");
@@ -21,7 +23,7 @@ class PostingListTest {
         postings.add(new Posting(3, 5));
 
         // Salvataggio della posting list su file
-        long startOffset = postingList.savePostingListToDisk(1);
+        long startOffset = postingList.savePostingListToDisk(1,INDEX_PATH);
 
         // Lettura della posting list da file
         ArrayList<Posting> loadedPostingList = postingList.readPostingList(1, 1,startOffset);

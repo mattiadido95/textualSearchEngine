@@ -145,15 +145,10 @@ public class PostingList {
         return this.getPostings().size();
     }
 
-    public long savePostingListToDisk(int indexCounter) {
-        String filePath;
-        if (indexCounter == -1) {
-            filePath = "data/index/index.bin";
-        }else if(indexCounter == -2) { // test folder
-            filePath = "src/test/data/index.bin";
-        }else {
-            filePath = "data/index/index_" + indexCounter + ".bin";
-        }
+    public long savePostingListToDisk(int indexCounter, String filePath) {
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
+
         long offset = -1;
 
         try {

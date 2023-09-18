@@ -25,6 +25,7 @@ public class Searcher {
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
+    private static final String BLOCK_DESCRIPTOR_PATH = "data/blockDescriptor.bin";
 
     public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
         this.queryResults = new ArrayList<>();
@@ -69,7 +70,7 @@ public class Searcher {
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset,false); // read first block descriptor, used because MaxScore is not implemented
+                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset,BLOCK_DESCRIPTOR_PATH); // read first block descriptor, used because MaxScore is not implemented
 //                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
                 // load total posting list for the term, used because MaxScore is not implemented
@@ -329,7 +330,7 @@ public class Searcher {
             firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
             blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
-            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i),BLOCK_DESCRIPTOR_PATH));
             DebugPostingList(blockDescriptorList.get(i), blocksNumber.get(i));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();

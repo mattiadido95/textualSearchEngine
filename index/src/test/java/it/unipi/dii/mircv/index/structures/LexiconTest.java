@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LexiconTest {
     Lexicon lexicon;
 
+    private static final String POSTING_LIST_PATH = "src/test/data/postingListTest.bin";
+
     @BeforeEach
     public void setUp() {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
@@ -18,7 +20,7 @@ public class LexiconTest {
 
     private void addLexiconElem(String term) {
         PostingList pl = createPostingList();
-        long offset = pl.savePostingListToDisk(-2);
+        long offset = pl.savePostingListToDisk(-1,POSTING_LIST_PATH);
         LexiconElem elem = new LexiconElem(pl.getPostingListSize(), 0, offset, 0, 0, 0);
         lexicon.getLexicon().put(term, elem);
     }

@@ -18,6 +18,7 @@ public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
+    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private static Logs log;
@@ -81,7 +82,7 @@ public class Index {
 //            System.out.println(lexiconElem);
 //            System.out.println(postingList);
         }
-        index.setDocuments(Document.readDocumentsFromDisk(-1));
+        index.setDocuments(Document.readDocumentsFromDisk(-1,PARTIAL_DOCUMENTS_PATH));
 //        System.out.println(index.getDocuments());
 
     }

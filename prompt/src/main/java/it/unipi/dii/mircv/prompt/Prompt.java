@@ -16,6 +16,7 @@ public class Prompt {
     private static int n_results = 10; // number of documents to return for a query
     private static int n_results_eval = 15; // number of documents to return for evaluation
 
+    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
     public static void main(String[] args) throws InterruptedException {
 
         Logs log = new Logs();
@@ -29,7 +30,7 @@ public class Prompt {
         log.addLog("load_lexicon", start, end);
 
         start = System.currentTimeMillis();
-        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1);
+        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1,PARTIAL_DOCUMENTS_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_documents", start, end);
 
