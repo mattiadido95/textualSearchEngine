@@ -5,14 +5,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LexiconTest {
-    Lexicon lexicon = new Lexicon();
+    Lexicon lexicon;
 
     @BeforeEach
     public void setUp() {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
-        lexicon.addLexiconElem("cane");
-        lexicon.addLexiconElem("gatto");
-        lexicon.addLexiconElem("topo");
+        lexicon = new Lexicon();
+        addLexiconElem("cane");
+        addLexiconElem("gatto");
+        addLexiconElem("topo");
     }
 
     private void addLexiconElem(String term) {
