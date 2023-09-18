@@ -149,8 +149,8 @@ public class PostingList {
         String filePath;
         if (indexCounter == -1) {
             filePath = "data/index/index.bin";
-        }else if(indexCounter == -2) {
-            filePath = "scr/data/index.bin";
+        }else if(indexCounter == -2) { // test folder
+            filePath = "scr/test/data/index.bin";
         }else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }

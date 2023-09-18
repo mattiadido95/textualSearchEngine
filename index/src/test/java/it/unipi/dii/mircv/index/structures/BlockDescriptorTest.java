@@ -43,10 +43,10 @@ public class BlockDescriptorTest {
 
     // Aggiungi altri test se necessario
 
-    @AfterAll
-    static void removeFile() {
-        Path path = Path.of("src/test/data/blockDescriptorTest.bin");
-        path.toFile().delete();
-    }
+//    @AfterAll
+//    static void removeFile() {
+//        Path path = Path.of("src/test/data/blockDescriptorTest.bin");
+//        path.toFile().delete();
+//    }
 
 }
