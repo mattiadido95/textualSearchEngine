@@ -329,7 +329,7 @@ public class Searcher {
             firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
             blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
-            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i)));
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i), false));
             DebugPostingList(blockDescriptorList.get(i), blocksNumber.get(i));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();

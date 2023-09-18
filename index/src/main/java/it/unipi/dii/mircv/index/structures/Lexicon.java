@@ -144,7 +144,7 @@ public class Lexicon {
                 randomAccessFile.writeInt(lexiconElem.getDf());
                 randomAccessFile.writeLong(lexiconElem.getCf());
                 randomAccessFile.writeLong(lexiconElem.getOffset());
-                if (indexCounter == -1) {
+                if (indexCounter == -1 || indexCounter == -2) {
                     randomAccessFile.writeInt(lexiconElem.getBlocksNumber());
                     randomAccessFile.writeDouble(lexiconElem.getTUB_bm25());
                     randomAccessFile.writeDouble(lexiconElem.getTUB_tfidf());
@@ -237,7 +237,7 @@ public class Lexicon {
                 int numblock = -1;
                 double tub_bm25 = -1;
                 double tub_tfidf = -1;
-                if (indexCounter == -1) {
+                if (indexCounter == -1 || indexCounter == -2) {
                     numblock = dataInputStream.readInt();
                     tub_bm25 = dataInputStream.readDouble();
                     tub_tfidf = dataInputStream.readDouble();

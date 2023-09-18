@@ -1,7 +1,9 @@
 package it.unipi.dii.mircv.index.structures;
 
+import it.unipi.dii.mircv.index.algorithms.Merger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Random;
@@ -11,31 +13,40 @@ import java.util.TreeMap;
 public class LexiconTest {
     Lexicon lexicon = new Lexicon();
 
+
     @BeforeEach
     public void setUp() {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
-        addLexiconElem("cane");
-        addLexiconElem("gatto");
-        addLexiconElem("topo");
+        addLexiconElem("cane"); // doc ID [0, 76]
+        addLexiconElem("gatto"); // doc ID [21, 76]
+        addLexiconElem("topo"); // doc ID [33, 76]
     }
 
     private void addLexiconElem(String term) {
-        PostingList pl = createPostinList();
-        long offset = pl.savePostingListToDisk(-2);
-        LexiconElem elem = new LexiconElem(pl.getPostingListSize(), 0, offset, 0, 0, 0);
+        PostingList pl = createPostinList(term);
+        LexiconElem elem = new LexiconElem(pl.getPostingListSize(), 0, 0, 0, 0, 0);
+        int blocks = Merger.saveBlockPosting(pl, elem, true);
+        elem.setNumBlock(blocks);
         lexicon.getLexicon().put(term, elem);
     }
 
-    private PostingList createPostinList() {
+    private PostingList createPostinList(String term) {
         PostingList pl = new PostingList();
-        Random random = new Random();
-        // Genera un numero casuale tra 0 (incluso) e 11 (escluso)
-        int num = random.nextInt(6);
-        int previous = 0;
-        for (int i = 0; i < 50 - num; i++) {
-            Posting p = new Posting(previous + random.nextInt(8) + 1, i % 6);
+        int init = -1;
+        switch (term) {
+            case "cane":
+                init = 0;
+                break;
+            case "gatto":
+                init = 21;
+                break;
+            case "topo":
+                init = 33;
+                break;
+        }
+        for (int i = init; i < 77; i++) {
+            Posting p = new Posting(i, i);
             pl.getPostings().add(p);
-            previous = p.getDocID();
         }
         return pl;
     }

@@ -12,36 +12,50 @@ class PostingListTest {
     public void testPostingListReadWrite() {
         System.out.println("Test PostingList read/write");
 
-        Document doc = new Document("1\tadcaj ndcanpd jnqpvjnap", 1);
+        Lexicon lexicon = new Lexicon();
+        lexicon.readLexiconFromDisk(-2);
 
-        PostingList postingList = new PostingList(doc);
-        ArrayList<Posting> postings = postingList.getPostings();
-        postings.add(new Posting(1, 3));
-        postings.add(new Posting(2, 2));
-        postings.add(new Posting(3, 5));
+        LexiconElem le =  lexicon.getLexicon().get("cane");
+        PostingList pl = new PostingList();
+        pl.readPostingList(-2, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), true).getPostingListOffset());
+        // assert that the posting list is read correctly
+        assertEquals(77, pl.getPostings().size());
+        for(int i = 0; i < 77; i++) {
+            assertEquals(i, pl.getPostings().get(i).getDocID());
+            assertEquals(i, pl.getPostings().get(i).getFreq());
+        }
 
-        // Salvataggio della posting list su file
-        long startOffset = postingList.savePostingListToDisk(1);
+        le =  lexicon.getLexicon().get("gatto");
+        pl = new PostingList();
+        pl.readPostingList(-2, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), true).getPostingListOffset());
+        // assert that the posting list is read correctly
+        assertEquals(56, pl.getPostings().size());
+        for(int i = 21; i < 77; i++) {
+            assertEquals(i, pl.getPostings().get(i-21).getDocID());
+            assertEquals(i, pl.getPostings().get(i-21).getFreq());
+        }
 
-        // Lettura della posting list da file
-        ArrayList<Posting> loadedPostingList = postingList.readPostingList(1, 1,startOffset);
+        le =  lexicon.getLexicon().get("topo");
+        pl = new PostingList();
+        pl.readPostingList(-2, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), true).getPostingListOffset());
+        // assert that the posting list is read correctly
+        assertEquals(44, pl.getPostings().size());
+        for(int i = 33; i < 77; i++) {
+            assertEquals(i, pl.getPostings().get(i-33).getDocID());
+            assertEquals(i, pl.getPostings().get(i-33).getFreq());
+        }
 
-        // Verifica che i dati siano stati letti correttamente
-        assertEquals(3, loadedPostingList.size());
-        assertEquals(1, loadedPostingList.get(0).getDocID());
-        assertEquals(2, loadedPostingList.get(1).getDocID());
-        assertEquals(3, loadedPostingList.get(2).getDocID());
 
-        // Puoi eseguire ulteriori verifiche sui dati letti, come le frequenze dei documenti, ecc.
     }
-
-
 
     @Test
-    void savePostingListToDisk() {
+    public void testNextGEQ(){
+        Lexicon lexicon = new Lexicon();
+        lexicon.readLexiconFromDisk(-2);
+
+        LexiconElem le =  lexicon.getLexicon().get("cane");
+
+
     }
 
-    @Test
-    void readPostingList() {
-    }
 }

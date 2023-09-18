@@ -53,6 +53,7 @@ public class BlockDescriptor {
         else
             filePath = "data/index/blockDescriptor.bin";
         long offset = -1;
+
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
@@ -92,7 +93,7 @@ public class BlockDescriptor {
     }
 
 
-    public static BlockDescriptor readFirstBlock(long offset,boolean testing) {
+    public static BlockDescriptor readFirstBlock(long offset, boolean testing) {
         String filePath;
         if (testing)
             filePath = "src/test/data/blockDescriptorTest.bin";

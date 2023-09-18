@@ -22,14 +22,14 @@ public class BlockDescriptorListTest {
         for (int i = 0; i < 26; i++) {
             pl.getPostings().add(new Posting(i, i));
         }
-        Merger.saveBlockPosting(pl, le);
+        Merger.saveBlockPosting(pl, le, true);
     }
 
     @Test
     public void testBlockDescriptorListIterator() {
         PostingList pl = new PostingList();
         int i = 0;
-        blockDescriptorList = new BlockDescriptorList(0,3);
+        blockDescriptorList = new BlockDescriptorList(0,3, true);
         // Test per verificare il funzionamento dell'iteratore di BlockDescriptorList
         blockDescriptorList.openBlock();
 

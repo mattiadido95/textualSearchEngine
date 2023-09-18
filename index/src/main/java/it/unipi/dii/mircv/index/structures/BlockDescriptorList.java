@@ -12,8 +12,8 @@ public class BlockDescriptorList {
     private BlockDescriptor actualBlockDescriptor;
 
 
-    public BlockDescriptorList(long offset, int numBlock) {
-        blockDescriptors = readBlockDescriptorList(offset, numBlock);
+    public BlockDescriptorList(long offset, int numBlock, boolean test) {
+        blockDescriptors = readBlockDescriptorList(offset, numBlock, test);
     }
 
     public void openBlock(){
@@ -46,9 +46,12 @@ public class BlockDescriptorList {
         return actualBlockDescriptor.getPostingListOffset();
     }
 
-    public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks) {
+    public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, boolean test) {
         String filePath;
-        filePath = "data/index/blockDescriptor.bin";
+        if (test)
+            filePath = "src/test/data/blockDescriptorTest.bin";
+        else
+            filePath = "data/index/blockDescriptor.bin";
 
         ArrayList<BlockDescriptor> result = new ArrayList<>();
 

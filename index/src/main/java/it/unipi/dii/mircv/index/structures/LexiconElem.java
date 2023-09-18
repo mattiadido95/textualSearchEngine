@@ -25,6 +25,10 @@ public class LexiconElem {
         this.TUB_tfidf = TUB_tfidf;
     }
 
+    public void setNumBlock(int numBlock) {
+        this.numBlock = numBlock;
+    }
+
     public int getDf() {
         return this.df;
     }

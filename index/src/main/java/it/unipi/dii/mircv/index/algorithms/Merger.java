@@ -110,7 +110,7 @@ public class Merger {
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                 }
 
-                int blockCounter = saveBlockPosting(mergePostingList,newLexiconElem);
+                int blockCounter = saveBlockPosting(mergePostingList, newLexiconElem, false);
 
                 //salvo il nuovo elemento lessico nel file lessico
                 Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset(), blockCounter);
@@ -157,9 +157,14 @@ public class Merger {
         log.getLog("End merging ...");
     }
 
-    public static int saveBlockPosting(PostingList mergePostingList, LexiconElem newLexiconElem) {
+    public static int saveBlockPosting(PostingList mergePostingList, LexiconElem newLexiconElem, boolean test) {
         // scrittura newPostingList nel file index
-        long postingOffsetStart = mergePostingList.savePostingListToDisk(-1);
+        long postingOffsetStart;
+        if (test) {
+            postingOffsetStart = mergePostingList.savePostingListToDisk(-2);
+        } else {
+            postingOffsetStart = mergePostingList.savePostingListToDisk(-1);
+        }
 
         //scorri la newPostingList e ogni NUMBER_OF_POSTING elementi salva il block descriptor
         BlockDescriptor blockDescriptor;
@@ -170,7 +175,7 @@ public class Merger {
                 //salva il block descriptor
                 blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
                 postingOffsetStart += BLOCK_POSTING_LIST_SIZE;
-                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(false);
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(test);
                 if (blockCounter == 0)
                     //salva inzio del block descriptor nel newLexiconElem
                     newLexiconElem.setOffset(blockDescriptorOffset);
@@ -178,7 +183,7 @@ public class Merger {
             } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
                 //salva il block descriptor
                 blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
-                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(false);
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(test);
                 if (blockCounter == 0)
                     //salva inzio del block descriptor nel newLexiconElem
                     newLexiconElem.setOffset(blockDescriptorOffset);
