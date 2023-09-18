@@ -25,7 +25,8 @@ public class Searcher {
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
-    private static final String BLOCK_DESCRIPTOR_PATH = "data/blockDescriptor.bin";
+    private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
+    private static final String INDEX_PATH = "data/index/index.bin";
 
     public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
         this.queryResults = new ArrayList<>();
@@ -75,7 +76,7 @@ public class Searcher {
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
                 // load total posting list for the term, used because MaxScore is not implemented
                 PostingList postingList = new PostingList();
-                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
+                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset(),INDEX_PATH);
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
                 //TODO SOLO PER DEBUG
@@ -233,7 +234,7 @@ public class Searcher {
                 postingLists.get(essential_index).next();
             else if (!postingLists.get(essential_index).hasNext() && blockDescriptorList.get(essential_index).hasNext()) { //devo caricare un altro blocco
                 blockDescriptorList.get(essential_index).next();
-                postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset());
+                postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset(),INDEX_PATH);
                 postingLists.get(essential_index).openList();
                 postingLists.get(essential_index).next();
             } else {
@@ -336,7 +337,7 @@ public class Searcher {
             blockDescriptorList.get(i).next();
             //load first posting list for the term
             PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset());
+            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset(),INDEX_PATH);
             postingList.openList();
             postingLists.add(postingList); // add postinglist of the term to postingListIterators
             postingLists.get(i).next();
@@ -450,7 +451,7 @@ public class Searcher {
         for (int i = 0; i < blocksNumber; i++) {
             System.out.println("Block " + i);
             bdl.next();
-            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
+            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),INDEX_PATH);
             sum += pl.getPostingListSize();
         }
         System.out.println(sum);

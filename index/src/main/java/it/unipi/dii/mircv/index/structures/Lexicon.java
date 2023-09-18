@@ -95,11 +95,9 @@ public class Lexicon {
     public void saveLexiconToDisk(int indexCounter, String filePath) {
 //        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
 
-        if (indexCounter == -1){
-            filePath = "data/index/lexicon.bin";
-        }else {
-            filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
-        }
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
+
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
 
@@ -116,76 +114,17 @@ public class Lexicon {
                 }
             }
 
-//            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-//            FileChannel fileChannel = fileOutputStream.getChannel();
-//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
-//
-//            int targetByteLength = 64; // Lunghezza in byte del termine
-//
-//            for (String term : lexicon.keySet()) {
-//                LexiconElem lexiconElem = lexicon.get(term);
-//
-//                buffer.clear();
-//
-//                // Scrivi i dati nel buffer
-////                byte[] termBytes = lexiconElem.getTerm().getBytes();
-//
-//                byte[] termBytes = encodeString(term, targetByteLength);
-//                buffer.putInt(termBytes.length);
-//                buffer.put(termBytes);
-//
-//                buffer.putInt(lexiconElem.getDf());
-//                buffer.putLong(lexiconElem.getCf());
-//                buffer.putLong(lexiconElem.getOffset());
-//
-//                buffer.flip();
-//
-//                // Scrivi il contenuto del buffer nel canale del file
-//                fileChannel.write(buffer);
-//            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void readLexiconFromDisk(int indexCounter) {
-        String filePath;
+    public void readLexiconFromDisk(int indexCounter, String filePath){
 
-        if (indexCounter == -1){
-            filePath = "data/index/lexicon.bin";
-        }else {
+        if (indexCounter != -1)
             filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
-        }
 
-//            FileChannel fileChannel = FileChannel.open(Path.of(filePath));
-//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
-//
-//            while (fileChannel.position() < fileChannel.size()) {
-//                buffer.clear();
-//
-//                int bytesRead = fileChannel.read(buffer);
-//
-//                if (bytesRead == -1) {
-//                    // Non ci sono abbastanza dati nel file
-//                    break;
-//                }
-//
-//                buffer.flip();
-//
-//                int termLength = buffer.getInt();
-//                byte[] termBytes = new byte[termLength];
-//                buffer.get(termBytes);
-////                String term = new String(termBytes);
-//                String term = decodeBytes(termBytes);
-//                int df = buffer.getInt();
-//                long cf = buffer.getLong();
-//                long offset = buffer.getLong();
-//
-//                // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-//                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
-//                this.lexicon.put(term, lexiconElem);
-//            }
+
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
              BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(randomAccessFile.getFD()))) {
 

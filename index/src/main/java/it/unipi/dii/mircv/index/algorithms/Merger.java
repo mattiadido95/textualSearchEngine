@@ -15,8 +15,10 @@ public class Merger {
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final int BLOCK_DESCRIPTOR_SIZE = (4 * 2 + 8); // 4 byte per docID, 4 byte per freq, 8 byte per offset
-    private static final String BLOCK_DESCRIPTOR_PATH = "data/blockDescriptor.bin";
+    private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
     private static final String FINAL_INDEX_PATH = "data/index/index.bin";
+    private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
+
     public Merger(String INDEX_PATH, int numberOfFiles) {
         this.INDEX_PATH = INDEX_PATH;
         this.log = new Logs();
@@ -25,7 +27,7 @@ public class Merger {
         //read all the terms from index files
         for (int i = 0; i < numberOfFiles; i++) {
             Lexicon lexicon = new Lexicon();
-            lexicon.readLexiconFromDisk(i);
+            lexicon.readLexiconFromDisk(i,PARTIAL_LEXICON_PATH);
 
             //get key from lexicon
             terms.add(new ArrayList<>(lexicon.getLexicon().keySet()));
@@ -104,7 +106,7 @@ public class Merger {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
                     LexiconElem lexiconElem = Lexicon.readEntry(readers, readOffset, term_index.get(i));
                     // recupero la posting list dal file index_i dove i è dato da term_index(i)
-                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset());
+                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index_");
                     //merge delle posting list
                     mergePostingList.mergePosting(newPostingList);
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge

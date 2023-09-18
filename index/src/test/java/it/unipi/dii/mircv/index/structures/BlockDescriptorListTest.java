@@ -16,7 +16,7 @@ public class BlockDescriptorListTest {
     private static final Integer NUMBER_OF_POSTING = 10;
     private static final Integer BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final String BLOCK_DESCRIPTOR_PATH = "src/test/data/blockDescriptorTest.bin";
-    private static final String POSTING_LIST_PATH = "src/test/data/postingListTest.bin";
+    private static final String POSTING_LIST_PATH = "src/test/data/indexTest.bin";
 
     @BeforeAll
     public static void setUp() {
@@ -41,7 +41,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor1 = blockDescriptorList.next();
         assertNotNull(blockDescriptor1);
         assertEquals(9, blockDescriptor1.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor1.getNumPosting(), blockDescriptor1.getPostingListOffset());
+        pl.readPostingList(-1, blockDescriptor1.getNumPosting(), blockDescriptor1.getPostingListOffset(),POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());
@@ -52,7 +52,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor2 = blockDescriptorList.next();
         assertNotNull(blockDescriptor2);
         assertEquals(19, blockDescriptor2.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor2.getNumPosting(), blockDescriptor2.getPostingListOffset());
+        pl.readPostingList(-1, blockDescriptor2.getNumPosting(), blockDescriptor2.getPostingListOffset(),POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());
@@ -62,7 +62,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor3 = blockDescriptorList.next();
         assertNotNull(blockDescriptor3);
         assertEquals(25, blockDescriptor3.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor3.getNumPosting(), blockDescriptor3.getPostingListOffset());
+        pl.readPostingList(-1, blockDescriptor3.getNumPosting(), blockDescriptor3.getPostingListOffset(),POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());

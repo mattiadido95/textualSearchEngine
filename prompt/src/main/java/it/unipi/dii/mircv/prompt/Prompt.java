@@ -15,8 +15,8 @@ import java.util.Scanner;
 public class Prompt {
     private static int n_results = 10; // number of documents to return for a query
     private static int n_results_eval = 15; // number of documents to return for evaluation
-
-    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
+    private static final String DOCUMENTS_PATH = "data/index/documents.bin";
+    private static final String LEXICON_PATH = "data/index/lexicon.bin";
     public static void main(String[] args) throws InterruptedException {
 
         Logs log = new Logs();
@@ -25,12 +25,12 @@ public class Prompt {
         // load main structure in memory
         Lexicon lexicon = new Lexicon();
         start = System.currentTimeMillis();
-        lexicon.readLexiconFromDisk(-1);
+        lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_lexicon", start, end);
 
         start = System.currentTimeMillis();
-        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1,PARTIAL_DOCUMENTS_PATH);
+        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_documents", start, end);
 
@@ -89,7 +89,7 @@ public class Prompt {
                 dinamicPruning.TUB_processing("BM25");
                 dinamicPruning.TUB_processing("TFIDF");
                 lexicon = new Lexicon();
-                lexicon.readLexiconFromDisk(-1);
+                lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();

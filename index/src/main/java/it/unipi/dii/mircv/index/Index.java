@@ -18,7 +18,8 @@ public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
-    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
+    private static final String LEXICON_PATH = "data/index/lexicon.bin";
+    private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private static Logs log;
@@ -72,17 +73,17 @@ public class Index {
         end = System.currentTimeMillis();
         log.addLog("merger", start, end);
 
-        index.getLexicon().readLexiconFromDisk(-1);
+        index.getLexicon().readLexiconFromDisk(-1,LEXICON_PATH);
         // per ogni chiave del lexicon, leggi il posting list dal file
         for (String key : index.getLexicon().getLexicon().keySet()) {
             //get lexicon elem
             LexiconElem lexiconElem = index.getLexicon().getLexiconElem(key);
             PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset());
+            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index.bin");
 //            System.out.println(lexiconElem);
 //            System.out.println(postingList);
         }
-        index.setDocuments(Document.readDocumentsFromDisk(-1,PARTIAL_DOCUMENTS_PATH));
+        index.setDocuments(Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH));
 //        System.out.println(index.getDocuments());
 
     }

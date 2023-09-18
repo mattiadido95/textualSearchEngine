@@ -48,6 +48,7 @@ public class BlockDescriptor {
 
     public long saveBlockDescriptorToDisk(String filePath) {
         long offset = -1;
+
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();

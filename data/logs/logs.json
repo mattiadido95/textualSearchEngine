@@ -916,5 +916,107 @@
         "start_time": 1694968269511,
         "end_time": 1694968269549,
         "type": "query"
+    },
+    {
+        "duration": 19564,
+        "start_time": 1695056470062,
+        "end_time": 1695056489626,
+        "type": "spimi"
+    },
+    {
+        "duration": 19536,
+        "start_time": 1695056489828,
+        "end_time": 1695056509364,
+        "type": "merger"
+    },
+    {
+        "duration": 21182,
+        "start_time": 1695056607620,
+        "end_time": 1695056628802,
+        "type": "spimi"
+    },
+    {
+        "duration": 20172,
+        "start_time": 1695056628978,
+        "end_time": 1695056649150,
+        "type": "merger"
+    },
+    {
+        "duration": 20150,
+        "start_time": 1695056722767,
+        "end_time": 1695056742917,
+        "type": "spimi"
+    },
+    {
+        "duration": 32140,
+        "start_time": 1695056743134,
+        "end_time": 1695056775274,
+        "type": "merger"
+    },
+    {
+        "duration": 30135,
+        "start_time": 1695056808737,
+        "end_time": 1695056838872,
+        "type": "spimi"
+    },
+    {
+        "duration": 31883,
+        "start_time": 1695056839083,
+        "end_time": 1695056870966,
+        "type": "merger"
+    },
+    {
+        "duration": 250,
+        "start_time": 1695056906392,
+        "end_time": 1695056906642,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 6,
+        "start_time": 1695056906706,
+        "end_time": 1695056906712,
+        "type": "load_documents"
+    },
+    {
+        "duration": 315,
+        "start_time": 1695056957262,
+        "end_time": 1695056957577,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 55,
+        "start_time": 1695056957672,
+        "end_time": 1695056957727,
+        "type": "load_documents"
+    },
+    {
+        "duration": 277,
+        "start_time": 1695057012066,
+        "end_time": 1695057012343,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 83,
+        "start_time": 1695057012497,
+        "end_time": 1695057012580,
+        "type": "load_documents"
+    },
+    {
+        "duration": 51,
+        "start_time": 1695057017906,
+        "end_time": 1695057017957,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1695057022859,
+        "end_time": 1695057022859,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1695057087839,
+        "end_time": 1695057087839,
+        "type": "query"
     }
 ]
