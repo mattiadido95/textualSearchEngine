@@ -1,43 +1,29 @@
 package it.unipi.dii.mircv.index.structures;
 
-import org.junit.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
-
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Random;
 
 import java.util.TreeMap;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LexiconTest {
-    private TreeMap<String, LexiconElem> lexicon;
+    Lexicon lexicon = new Lexicon();
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
-        this.lexicon = new TreeMap<>();
-    }
-
-    @Test
-    public void testLexicon() {
-//        new LexiconTest();
         addLexiconElem("cane");
         addLexiconElem("gatto");
         addLexiconElem("topo");
-    }
-
-    public LexiconTest() {
     }
 
     private void addLexiconElem(String term) {
         PostingList pl = createPostinList();
         long offset = pl.savePostingListToDisk(-2);
         LexiconElem elem = new LexiconElem(pl.getPostingListSize(), 0, offset, 0, 0, 0);
-        this.lexicon.put(term, elem);
+        lexicon.getLexicon().put(term, elem);
     }
 
     private PostingList createPostinList() {
@@ -54,5 +40,16 @@ public class LexiconTest {
         return pl;
     }
 
-
+    @Test
+    public void testAddLexiconElem() {
+        lexicon.saveLexiconToDisk(-2);
+        lexicon = new Lexicon();
+        lexicon.readLexiconFromDisk(-2);
+        // Test per verificare che l'aggiunta di elementi al lexicon funzioni correttamente
+        // Assicurati di implementare questa logica nel tuo Lexicon
+        // Verifica che gli elementi siano stati aggiunti correttamente al lexicon
+        assertTrue(lexicon.getLexicon().containsKey("cane"));
+        assertTrue(lexicon.getLexicon().containsKey("gatto"));
+        assertTrue(lexicon.getLexicon().containsKey("topo"));
+    }
 }

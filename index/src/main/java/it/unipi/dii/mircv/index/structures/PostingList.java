@@ -150,7 +150,7 @@ public class PostingList {
         if (indexCounter == -1) {
             filePath = "data/index/index.bin";
         }else if(indexCounter == -2) { // test folder
-            filePath = "scr/test/data/index.bin";
+            filePath = "src/test/data/index.bin";
         }else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
