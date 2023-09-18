@@ -148,9 +148,10 @@ public class PostingList {
     public long savePostingListToDisk(int indexCounter) {
         String filePath;
         if (indexCounter == -1) {
-            // TODO implementare scrittura postinglist merge
             filePath = "data/index/index.bin";
-        } else {
+        }else if(indexCounter == -2) {
+            filePath = "scr/data/index.bin";
+        }else {
             filePath = "data/index/index_" + indexCounter + ".bin";
         }
         long offset = -1;

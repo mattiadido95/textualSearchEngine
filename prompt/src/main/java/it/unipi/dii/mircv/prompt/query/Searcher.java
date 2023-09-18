@@ -69,7 +69,7 @@ public class Searcher {
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset); // read first block descriptor, used because MaxScore is not implemented
+                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset,false); // read first block descriptor, used because MaxScore is not implemented
 //                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
                 // load total posting list for the term, used because MaxScore is not implemented
