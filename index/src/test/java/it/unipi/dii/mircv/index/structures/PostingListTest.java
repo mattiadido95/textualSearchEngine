@@ -12,6 +12,7 @@ class PostingListTest {
     private static final String LEXICON_PATH = "src/test/data/lexicon.bin";
     private static final String BLOCK_DESCRIPTOR_PATH = "src/test/data/blockDescriptorTest.bin";
 
+    // HA UNA DIPENDENZA A LEXICONTEST, CHE DEVE ESSERE ESEGUITO PRIMA DI QUESTO TEST
     @Test
     public void testPostingListReadWrite() {
         System.out.println("Test PostingList read/write");
@@ -24,30 +25,45 @@ class PostingListTest {
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(),POSTING_LIST_PATH);
         // assert that the posting list is read correctly
         assertEquals(77, pl.getPostings().size());
-        for(int i = 0; i < 77; i++) {
-            assertEquals(i, pl.getPostings().get(i).getDocID());
-            assertEquals(i, pl.getPostings().get(i).getFreq());
+        pl.openList();
+        int i = 0;
+        while(pl.hasNext()){
+            pl.next();
+            assertEquals(i,pl.getDocId());
+            assertEquals(i,pl.getFreq());
+            i++;
         }
+        assertEquals(77 , i);
 
         le =  lexicon.getLexicon().get("gatto");
         pl = new PostingList();
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(),POSTING_LIST_PATH);
         // assert that the posting list is read correctly
         assertEquals(56, pl.getPostings().size());
-        for(int i = 21; i < 77; i++) {
-            assertEquals(i, pl.getPostings().get(i-21).getDocID());
-            assertEquals(i, pl.getPostings().get(i-21).getFreq());
+        pl.openList();
+        i = 21;
+        while(pl.hasNext()){
+            pl.next();
+            assertEquals(i,pl.getDocId());
+            assertEquals(i,pl.getFreq());
+            i++;
         }
+        assertEquals(77 , i);
 
         le =  lexicon.getLexicon().get("topo");
         pl = new PostingList();
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(),POSTING_LIST_PATH);
         // assert that the posting list is read correctly
         assertEquals(44, pl.getPostings().size());
-        for(int i = 33; i < 77; i++) {
-            assertEquals(i, pl.getPostings().get(i-33).getDocID());
-            assertEquals(i, pl.getPostings().get(i-33).getFreq());
+        pl.openList();
+        i = 33;
+        while(pl.hasNext()){
+            pl.next();
+            assertEquals(i,pl.getDocId());
+            assertEquals(i,pl.getFreq());
+            i++;
         }
+        assertEquals(77 , i);
 
 
     }
