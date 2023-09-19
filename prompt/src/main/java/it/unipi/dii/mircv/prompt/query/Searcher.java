@@ -260,7 +260,7 @@ public class Searcher {
     private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
         for (int j = essential_index - 1; j >= 0; j--) {
-            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j),INDEX_PATH);
 
             if (scoringFunction.equals("TFIDF"))
                 DUB -= queryTermsMap.get(termList.get(j)).getTUB_tfidf();
@@ -312,7 +312,7 @@ public class Searcher {
 
         int i = 1;
         for (int j = essential_index + 1; j < postingLists.size(); j++) {
-            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j),INDEX_PATH);
             if (postingLists.get(j).getDocId() != docid)
                 continue;
             if (scoringFunction.equals("TFIDF"))

@@ -106,16 +106,20 @@ public class PostingList {
         return actualPosting;
     }
 
-    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks) {
+    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks, String path) {
+        //todo inserire controllo se posting è null dove chiami nextGEQ
         bdl.openBlock();
         // cerca il blocco che contiene il docId
         while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
             numBlocks--;
         }
+        if(numBlocks == 0) { // non esiste il posting
+            return null;
+        }
         // carica la relativa posting list
         //controllo se postinglist caricata è quella del blocco di interesse
         if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
-            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),INDEX_PATH);
+            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),path);
             this.openList();
             this.next();
         }

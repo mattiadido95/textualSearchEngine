@@ -30,6 +30,10 @@ public class BlockDescriptorList {
             actualBlockDescriptor = null;
         return actualBlockDescriptor;
     }
+    //SOLO PER TEST
+    public void setMaxDocID(int maxDocID) {
+        actualBlockDescriptor.setMaxDocID(maxDocID);
+    }
 
     public boolean hasNext() {
         return blockDescriptorIterator.hasNext();
