@@ -46,12 +46,7 @@ public class BlockDescriptor {
         this.maxDocID = maxDocID;
     }
 
-    public long saveBlockDescriptorToDisk(boolean testing) {
-        String filePath;
-        if (testing)
-            filePath = "src/test/data/blockDescriptorTest.bin";
-        else
-            filePath = "data/index/blockDescriptor.bin";
+    public long saveBlockDescriptorToDisk(String filePath) {
         long offset = -1;
 
         try {
@@ -93,12 +88,7 @@ public class BlockDescriptor {
     }
 
 
-    public static BlockDescriptor readFirstBlock(long offset, boolean testing) {
-        String filePath;
-        if (testing)
-            filePath = "src/test/data/blockDescriptorTest.bin";
-        else
-            filePath = "data/index/blockDescriptor.bin";
+    public static BlockDescriptor readFirstBlock(long offset,String filePath) {
 
         BlockDescriptor result = new BlockDescriptor();
 

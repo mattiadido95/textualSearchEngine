@@ -88,8 +88,9 @@ public class Document {
         this.DUB_tfidf = DUB_tfidf;
     }
 
-    public static void saveDocumentsToDisk(ArrayList<Document> docs, int index) {
-        String filePath = "data/index/documents/documents_" + index + ".bin";
+    public static void saveDocumentsToDisk(ArrayList<Document> docs, int index, String filePath) {
+        if(index != -1)
+            filePath += index + ".bin";
 
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
@@ -137,13 +138,10 @@ public class Document {
         }
     }
 
-    public static ArrayList<Document> readDocumentsFromDisk(int index) {
-        String filePath;
+    public static ArrayList<Document> readDocumentsFromDisk(int index, String filePath){
 
-        if (index == -1) {
-            filePath = "data/index/documents.bin";
-        } else {
-            filePath = "data/index/documents/documents_" + index + ".bin";
+        if (index != -1) {
+            filePath += index + ".bin";
         }
 
         ArrayList<Document> documents = new ArrayList<>();

@@ -10,14 +10,12 @@ import it.unipi.dii.mircv.prompt.structure.QueryResult;
 import java.io.File;
 import java.util.ArrayList;
 
-import static it.unipi.dii.mircv.index.structures.BlockDescriptor.readFirstBlock;
-
 public class DynamicPruning {
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private Searcher searcher;
     private ArrayList<String> queryTerms;
-
+    private String LEXICON_PATH = "data/index/lexicon.bin";
 
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents) {
         this.documents = documents;
@@ -56,7 +54,7 @@ public class DynamicPruning {
         // delete lexicon.bin file
         File file = new File("data/index/lexicon.bin");
         file.delete();
-        this.lexicon.saveLexiconToDisk(-1);
+        this.lexicon.saveLexiconToDisk(-1,LEXICON_PATH);
     }
 
     public void DUB_processing(String scoreFunctino) {

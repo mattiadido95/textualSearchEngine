@@ -11,9 +11,8 @@ public class BlockDescriptorList {
     private Iterator<BlockDescriptor> blockDescriptorIterator;
     private BlockDescriptor actualBlockDescriptor;
 
-
-    public BlockDescriptorList(long offset, int numBlock, boolean test) {
-        blockDescriptors = readBlockDescriptorList(offset, numBlock, test);
+    public BlockDescriptorList(long offset, int numBlock, String filePath) {
+        blockDescriptors = readBlockDescriptorList(offset, numBlock, filePath);
     }
 
     public void openBlock() {
@@ -30,6 +29,10 @@ public class BlockDescriptorList {
         else
             actualBlockDescriptor = null;
         return actualBlockDescriptor;
+    }
+    //SOLO PER TEST
+    public void setMaxDocID(int maxDocID) {
+        actualBlockDescriptor.setMaxDocID(maxDocID);
     }
 
     public boolean hasNext() {
@@ -48,12 +51,7 @@ public class BlockDescriptorList {
         return actualBlockDescriptor.getPostingListOffset();
     }
 
-    public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, boolean test) {
-        String filePath;
-        if (test)
-            filePath = "src/test/data/blockDescriptorTest.bin";
-        else
-            filePath = "data/index/blockDescriptor.bin";
+    public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, String filePath) {
 
         ArrayList<BlockDescriptor> result = new ArrayList<>();
 

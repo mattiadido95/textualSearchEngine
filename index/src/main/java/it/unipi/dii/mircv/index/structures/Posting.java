@@ -15,6 +15,14 @@ public class Posting{
         this.freq = freq;
     }
 
+    @Override
+    public String toString() {
+        return "Posting{" +
+                "docID=" + docID +
+                ", freq=" + freq +
+                '}';
+    }
+
     public int getDocID() {
         return docID;
     }

@@ -16,6 +16,8 @@ public class PostingList {
     private Iterator<Posting> postingIterator;
     private Posting actualPosting;
 
+    private static final String INDEX_PATH = "data/index/index.bin";
+
     Logs log = new Logs();
 
     public PostingList(Document doc) {
@@ -104,16 +106,20 @@ public class PostingList {
         return actualPosting;
     }
 
-    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks) {
+    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks, String path) {
+        //todo inserire controllo se posting è null dove chiami nextGEQ
         bdl.openBlock();
         // cerca il blocco che contiene il docId
         while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
             numBlocks--;
         }
+        if(numBlocks == 0) { // non esiste il posting
+            return null;
+        }
         // carica la relativa posting list
         //controllo se postinglist caricata è quella del blocco di interesse
         if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
-            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
+            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),path);
             this.openList();
             this.next();
         }
@@ -145,15 +151,10 @@ public class PostingList {
         return this.getPostings().size();
     }
 
-    public long savePostingListToDisk(int indexCounter) {
-        String filePath;
-        if (indexCounter == -1) {
-            filePath = "data/index/index.bin";
-        }else if(indexCounter == -2) { // test folder
-            filePath = "src/test/data/index.bin";
-        }else {
-            filePath = "data/index/index_" + indexCounter + ".bin";
-        }
+    public long savePostingListToDisk(int indexCounter, String filePath) {
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
+
         long offset = -1;
 
         try {
@@ -196,15 +197,9 @@ public class PostingList {
 
     }
 
-    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
-        String filePath;
-        if (indexCounter == -1) {
-            filePath = "data/index/index.bin";
-        }else if(indexCounter == -2) { // test folder
-            filePath = "src/test/data/index.bin";
-        }else {
-            filePath = "data/index/index_" + indexCounter + ".bin";
-        }
+    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset, String filePath) {
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
 
         ArrayList<Posting> result = new ArrayList<>();
 

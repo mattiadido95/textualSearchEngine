@@ -25,6 +25,8 @@ public class Searcher {
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
     private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
+    private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
+    private static final String INDEX_PATH = "data/index/index.bin";
 
     public Searcher(Lexicon lexicon, ArrayList<Document> documents) {
         this.queryResults = new ArrayList<>();
@@ -69,12 +71,12 @@ public class Searcher {
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
-                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset,false); // read first block descriptor, used because MaxScore is not implemented
+                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset,BLOCK_DESCRIPTOR_PATH); // read first block descriptor, used because MaxScore is not implemented
 //                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
 //                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
                 // load total posting list for the term, used because MaxScore is not implemented
                 PostingList postingList = new PostingList();
-                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset());
+                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset(),INDEX_PATH);
                 postingList.openList();
                 postingLists.add(postingList); // add postinglist of the term to postingListIterators
                 //TODO SOLO PER DEBUG
@@ -232,7 +234,7 @@ public class Searcher {
                 postingLists.get(essential_index).next();
             else if (!postingLists.get(essential_index).hasNext() && blockDescriptorList.get(essential_index).hasNext()) { //devo caricare un altro blocco
                 blockDescriptorList.get(essential_index).next();
-                postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset());
+                postingLists.get(essential_index).readPostingList(-1, blockDescriptorList.get(essential_index).getNumPosting(), blockDescriptorList.get(essential_index).getPostingListOffset(),INDEX_PATH);
                 postingLists.get(essential_index).openList();
                 postingLists.get(essential_index).next();
             } else {
@@ -258,7 +260,7 @@ public class Searcher {
     private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
         for (int j = essential_index - 1; j >= 0; j--) {
-            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j),INDEX_PATH);
 
             if (scoringFunction.equals("TFIDF"))
                 DUB -= queryTermsMap.get(termList.get(j)).getTUB_tfidf();
@@ -310,7 +312,7 @@ public class Searcher {
 
         int i = 1;
         for (int j = essential_index + 1; j < postingLists.size(); j++) {
-            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j));
+            postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j),INDEX_PATH);
             if (postingLists.get(j).getDocId() != docid)
                 continue;
             if (scoringFunction.equals("TFIDF"))
@@ -329,13 +331,13 @@ public class Searcher {
             firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
             blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
-            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i), false));
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i),BLOCK_DESCRIPTOR_PATH));
             DebugPostingList(blockDescriptorList.get(i), blocksNumber.get(i));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();
             //load first posting list for the term
             PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset());
+            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset(),INDEX_PATH);
             postingList.openList();
             postingLists.add(postingList); // add postinglist of the term to postingListIterators
             postingLists.get(i).next();
@@ -449,7 +451,7 @@ public class Searcher {
         for (int i = 0; i < blocksNumber; i++) {
             System.out.println("Block " + i);
             bdl.next();
-            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset());
+            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),INDEX_PATH);
             sum += pl.getPostingListSize();
         }
         System.out.println(sum);

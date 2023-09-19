@@ -19,6 +19,11 @@ public class Spimi {
     private int indexCounter;
     private int documentCounter;
     private long totDocLength;
+    private static final String LEXICON_PATH = "data/index/lexicon/";
+    private static final String DOCUMENTS_PATH = "data/index/documents/";
+    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
+    private static final String INDEX_PATH = "data/index/";
+
 
     public Spimi(String collection) {
         this.COLLECTION_PATH = collection;
@@ -87,7 +92,7 @@ public class Spimi {
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
+                    Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     //TODO serve davvero fare la new
 //                    invertedIndex = new HashMap<>(); // create a new inverted index
