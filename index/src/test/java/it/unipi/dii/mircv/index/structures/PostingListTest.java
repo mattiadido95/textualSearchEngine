@@ -3,6 +3,7 @@ package it.unipi.dii.mircv.index.structures;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,7 +66,6 @@ class PostingListTest {
         }
         assertEquals(77 , i);
 
-
     }
 
     @Test
@@ -74,12 +74,39 @@ class PostingListTest {
         lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
 
         LexiconElem le =  lexicon.getLexicon().get("gatto");
-        BlockDescriptorList bdl = new BlockDescriptorList(le.getOffset(), le.getBlocksNumber(), BLOCK_DESCRIPTOR_PATH);
+        HashMap<String, LexiconElem> queryTermsMap = new HashMap<>();
+        queryTermsMap.put("gatto", le);
+        ArrayList<Integer> blocksNumber = new ArrayList<>();
+        blocksNumber.add(le.getBlocksNumber());
+        ArrayList<BlockDescriptorList> blockDescriptorList = new ArrayList<>();
+        ArrayList<PostingList> postingLists = new ArrayList<>();
 
-        PostingList pl = new PostingList();
-        Posting p = pl.nextGEQ(21, bdl, le.getBlocksNumber());
+        initializePostingListForQueryTerms(queryTermsMap,blocksNumber,lexicon,blockDescriptorList,postingLists);
+
+        PostingList pl = postingLists.get(0);
+        Posting p = pl.nextGEQ(21, blockDescriptorList.get(0), le.getBlocksNumber());
         assertEquals(21, p.getDocID());
 
+    }
+
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber, Lexicon lexicon, ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists) {
+        int i = 0;
+        long firstBlockOffset;
+        for (String term : queryTermsMap.keySet()) {
+            firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
+            blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
+            //read all blocks
+            blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i),BLOCK_DESCRIPTOR_PATH));
+            blockDescriptorList.get(i).openBlock();
+            blockDescriptorList.get(i).next();
+            //load first posting list for the term
+            PostingList postingList = new PostingList();
+            postingList.readPostingList(-1, blockDescriptorList.get(i).getNumPosting(), blockDescriptorList.get(i).getPostingListOffset(),POSTING_LIST_PATH);
+            postingList.openList();
+            postingLists.add(postingList); // add postinglist of the term to postingListIterators
+            postingLists.get(i).next();
+            i++;
+        }
     }
 
 }
