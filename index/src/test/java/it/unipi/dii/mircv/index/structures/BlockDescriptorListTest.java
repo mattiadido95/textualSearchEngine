@@ -44,7 +44,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor1 = blockDescriptorList.next();
         assertNotNull(blockDescriptor1);
         assertEquals(9, blockDescriptor1.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor1.getNumPosting(), blockDescriptor1.getPostingListOffset(),POSTING_LIST_PATH);
+        pl.readPostingList(-1, blockDescriptor1.getNumPosting(), blockDescriptor1.getPostingListOffset(), POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());
@@ -55,7 +55,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor2 = blockDescriptorList.next();
         assertNotNull(blockDescriptor2);
         assertEquals(19, blockDescriptor2.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor2.getNumPosting(), blockDescriptor2.getPostingListOffset(),POSTING_LIST_PATH);
+        pl.readPostingList(-1, blockDescriptor2.getNumPosting(), blockDescriptor2.getPostingListOffset(), POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());
@@ -65,7 +65,7 @@ public class BlockDescriptorListTest {
         BlockDescriptor blockDescriptor3 = blockDescriptorList.next();
         assertNotNull(blockDescriptor3);
         assertEquals(25, blockDescriptor3.getMaxDocID()); // Sostituisci con i valori corretti
-        pl.readPostingList(-1, blockDescriptor3.getNumPosting(), blockDescriptor3.getPostingListOffset(),POSTING_LIST_PATH);
+        pl.readPostingList(-1, blockDescriptor3.getNumPosting(), blockDescriptor3.getPostingListOffset(), POSTING_LIST_PATH);
 
         for (Posting p : pl.getPostings()) {
             assertEquals(i, p.getDocID());
@@ -82,7 +82,7 @@ public class BlockDescriptorListTest {
 
     public static int saveBlockPosting(PostingList mergePostingList, LexiconElem newLexiconElem) {
         // scrittura newPostingList nel file index
-        long postingOffsetStart = mergePostingList.savePostingListToDisk(-1,POSTING_LIST_PATH);
+        long postingOffsetStart = mergePostingList.savePostingListToDisk(-1, POSTING_LIST_PATH);
 
         //scorri la newPostingList e ogni NUMBER_OF_POSTING elementi salva il block descriptor
         BlockDescriptor blockDescriptor;
