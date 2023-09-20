@@ -53,7 +53,7 @@ public class daatMaxTest {
             searcherdaat.DAAT(terms, 10, "disjunctive", "TFIDF");
             searchermax.maxScore(terms, 10, "disjunctive", "TFIDF");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
-                System.out.println("Query: " + query);
+                System.out.println("Query: " + terms);
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
             }
