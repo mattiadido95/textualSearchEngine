@@ -1,35 +1,35 @@
-package it.unipi.dii.mircv.prompt.query;
+package it.unipi.dii.mircv.prompt;
 
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-
+import it.unipi.dii.mircv.prompt.query.Searcher;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class daatMaxTest {
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
-    private Lexicon lexicon;
-    private ArrayList<Document> documents;
-    private Searcher searcherdaat;
-    private Searcher searchermax;
+    private static Lexicon lexicon;
+    private static ArrayList<Document> documents;
+    private static Searcher searcherdaat;
+    private static Searcher searchermax;
 
-
-    @BeforeAll
-    public void setUp() {
+    public static void main(String[] args){
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
+        lexicon = new Lexicon();
         lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
         documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
-        Searcher searcherdaat = new Searcher(lexicon, documents);
-        Searcher searchermax = new Searcher(lexicon, documents);
+        searcherdaat = new Searcher(lexicon, documents);
+        searchermax = new Searcher(lexicon, documents);
+        queryTest();
     }
 
-    @Test
-    private void addLexiconElem() {
+    public static void queryTest() {
 
         ArrayList<ArrayList<String>> querys = new ArrayList<>();
 
@@ -58,7 +58,8 @@ public class daatMaxTest {
         for (ArrayList<String> query : querys) {
             searcherdaat.DAAT(query, 10, "disjunctive", "BM25");
             searchermax.maxScore(query, 10, "disjunctive", "BM25");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
+                System.out.println("Query: " + query);
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
             }
