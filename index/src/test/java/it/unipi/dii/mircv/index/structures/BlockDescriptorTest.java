@@ -34,7 +34,7 @@ public class BlockDescriptorTest {
         long offset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
 
         // Leggi BlockDescriptor dal disco utilizzando l'offset
-        BlockDescriptor readBlockDescriptor = BlockDescriptor.readFirstBlock(offset,BLOCK_DESCRIPTOR_PATH);
+        BlockDescriptor readBlockDescriptor = BlockDescriptor.readFirstBlock(offset, BLOCK_DESCRIPTOR_PATH);
 
         // Verifica che i valori letti corrispondano ai valori impostati
         assertEquals(100, readBlockDescriptor.getMaxDocID());

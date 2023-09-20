@@ -1018,5 +1018,125 @@
         "start_time": 1695057087839,
         "end_time": 1695057087839,
         "type": "query"
+    },
+    {
+        "duration": 330,
+        "start_time": 1695200668629,
+        "end_time": 1695200668959,
+        "type": "spimi"
+    },
+    {
+        "duration": 365,
+        "start_time": 1695200668987,
+        "end_time": 1695200669352,
+        "type": "merger"
+    },
+    {
+        "duration": 5,
+        "start_time": 1695200681410,
+        "end_time": 1695200681415,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 1,
+        "start_time": 1695200681441,
+        "end_time": 1695200681442,
+        "type": "load_documents"
+    },
+    {
+        "duration": 8,
+        "start_time": 1695200694172,
+        "end_time": 1695200694180,
+        "type": "query"
+    },
+    {
+        "duration": 4,
+        "start_time": 1695200768444,
+        "end_time": 1695200768448,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2,
+        "start_time": 1695200768473,
+        "end_time": 1695200768475,
+        "type": "load_documents"
+    },
+    {
+        "duration": 4,
+        "start_time": 1695200773794,
+        "end_time": 1695200773798,
+        "type": "query"
+    },
+    {
+        "duration": 4,
+        "start_time": 1695200960578,
+        "end_time": 1695200960582,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 1,
+        "start_time": 1695200960607,
+        "end_time": 1695200960608,
+        "type": "load_documents"
+    },
+    {
+        "duration": 4,
+        "start_time": 1695200967575,
+        "end_time": 1695200967579,
+        "type": "query"
+    },
+    {
+        "duration": 6,
+        "start_time": 1695201099684,
+        "end_time": 1695201099690,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 1,
+        "start_time": 1695201099713,
+        "end_time": 1695201099714,
+        "type": "load_documents"
+    },
+    {
+        "duration": 5,
+        "start_time": 1695201106826,
+        "end_time": 1695201106831,
+        "type": "query"
+    },
+    {
+        "duration": 1,
+        "start_time": 1695201165781,
+        "end_time": 1695201165782,
+        "type": "query"
+    },
+    {
+        "duration": 6775,
+        "start_time": 1695201209581,
+        "end_time": 1695201216356,
+        "type": "spimi"
+    },
+    {
+        "duration": 7472,
+        "start_time": 1695201216454,
+        "end_time": 1695201223926,
+        "type": "merger"
+    },
+    {
+        "duration": 43,
+        "start_time": 1695201229974,
+        "end_time": 1695201230017,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 14,
+        "start_time": 1695201230045,
+        "end_time": 1695201230059,
+        "type": "load_documents"
+    },
+    {
+        "duration": 38,
+        "start_time": 1695201247309,
+        "end_time": 1695201247347,
+        "type": "query"
     }
 ]

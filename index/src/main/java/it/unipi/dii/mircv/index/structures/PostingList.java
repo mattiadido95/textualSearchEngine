@@ -113,18 +113,18 @@ public class PostingList {
         while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
             numBlocks--;
         }
-        if(numBlocks == 0) { // non esiste il posting
+        if (numBlocks == 0) { // non esiste il posting
             return null;
         }
         // carica la relativa posting list
         //controllo se postinglist caricata è quella del blocco di interesse
         if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
-            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(),path);
+            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), path);
             this.openList();
             this.next();
         }
         // scorri la posting list fino a trovare il docId
-        while(actualPosting.getDocID() < docId && postingIterator.hasNext()) {
+        while (actualPosting.getDocID() < docId && postingIterator.hasNext()) {
             actualPosting = postingIterator.next();
         }
 

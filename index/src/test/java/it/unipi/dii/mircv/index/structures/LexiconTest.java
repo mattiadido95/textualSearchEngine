@@ -54,7 +54,7 @@ public class LexiconTest {
             Posting p = new Posting(i, i);
             pl.getPostings().add(p);
         }
-         pl.getPostings().add(new Posting(100,100));
+        pl.getPostings().add(new Posting(100, 100));
         return pl;
     }
 

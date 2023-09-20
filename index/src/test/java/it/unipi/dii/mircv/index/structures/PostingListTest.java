@@ -29,7 +29,7 @@ class PostingListTest {
         pl.openList();
         int i = 0;
         while (pl.hasNext()) {
-            if(i == 77)
+            if (i == 77)
                 break;
             pl.next();
             assertEquals(i, pl.getDocId());
@@ -46,7 +46,7 @@ class PostingListTest {
         pl.openList();
         i = 21;
         while (pl.hasNext()) {
-            if(i == 77)
+            if (i == 77)
                 break;
             pl.next();
             assertEquals(i, pl.getDocId());
@@ -63,7 +63,7 @@ class PostingListTest {
         pl.openList();
         i = 33;
         while (pl.hasNext()) {
-            if(i == 77)
+            if (i == 77)
                 break;
             pl.next();
             assertEquals(i, pl.getDocId());
@@ -98,22 +98,22 @@ class PostingListTest {
         // 60 61 62 63 64 65 66 67 68 69 blocco 6
         // 70 71 72 73 74 75 76  blocco 7
         PostingList pl = postingLists.get(0);
-        Posting p = pl.nextGEQ(0, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        Posting p = pl.nextGEQ(0, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(0, p.getDocID());
         assertEquals(0, pl.getDocId());
-        p = pl.nextGEQ(7, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        p = pl.nextGEQ(7, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(7, p.getDocID());
         assertEquals(7, pl.getDocId());
-        p = pl.nextGEQ(56, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        p = pl.nextGEQ(56, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(56, p.getDocID());
         assertEquals(56, pl.getDocId());
-        p = pl.nextGEQ(33, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        p = pl.nextGEQ(33, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(33, p.getDocID());
         assertEquals(33, pl.getDocId());
-        p = pl.nextGEQ(101, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        p = pl.nextGEQ(101, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(null, p);
 
-        p = pl.nextGEQ(99, blockDescriptorList.get(0), le.getBlocksNumber(),POSTING_LIST_PATH);
+        p = pl.nextGEQ(99, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
 
         assertEquals(100, p.getDocID());
         assertEquals(100, pl.getDocId());
