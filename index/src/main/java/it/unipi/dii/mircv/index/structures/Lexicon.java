@@ -65,7 +65,7 @@ public class Lexicon {
 
         // Ordina la lexicon per LexiconELem.TUB_bm25 in ordine decrescente
         LinkedHashMap<String, LexiconElem> sorted = new LinkedHashMap<>();
-        if(scoringFunction.equals("TF-IDF")){
+        if(scoringFunction.equals("TFIDF")){
             sorted = lexicon.entrySet().stream()
                 .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
                 .collect(Collectors.toMap(

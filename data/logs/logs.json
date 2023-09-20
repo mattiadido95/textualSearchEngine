@@ -1426,5 +1426,41 @@
         "start_time": 1695221646519,
         "end_time": 1695221646537,
         "type": "query"
+    },
+    {
+        "duration": 45,
+        "start_time": 1695222509292,
+        "end_time": 1695222509337,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 13,
+        "start_time": 1695222509367,
+        "end_time": 1695222509380,
+        "type": "load_documents"
+    },
+    {
+        "duration": 5,
+        "start_time": 1695222513232,
+        "end_time": 1695222513237,
+        "type": "query"
+    },
+    {
+        "duration": 45,
+        "start_time": 1695222549062,
+        "end_time": 1695222549107,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 13,
+        "start_time": 1695222549132,
+        "end_time": 1695222549145,
+        "type": "load_documents"
+    },
+    {
+        "duration": 5,
+        "start_time": 1695222553280,
+        "end_time": 1695222553285,
+        "type": "query"
     }
 ]
