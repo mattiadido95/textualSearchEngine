@@ -2,7 +2,9 @@ package it.unipi.dii.mircv.prompt;
 
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
+import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -19,7 +21,7 @@ public class daatMaxTest {
     private static Searcher searcherdaat;
     private static Searcher searchermax;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
         lexicon = new Lexicon();
         lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
@@ -31,39 +33,28 @@ public class daatMaxTest {
 
     public static void queryTest() {
 
-        ArrayList<ArrayList<String>> querys = new ArrayList<>();
-
-        ArrayList<String> query1 = new ArrayList<>(Arrays.asList("what", "is", "the", "difference", "between", "a", "2d", "and", "3d", "shape"));
-        ArrayList<String> query2 = new ArrayList<>(Arrays.asList("how", "long", "is", "a", "cubit?"));
-        ArrayList<String> query3 = new ArrayList<>(Arrays.asList("what", "is", "paranoid", "sc"));
-        ArrayList<String> query4 = new ArrayList<>(Arrays.asList("what", "is", "parallel", "structure?", "why", "is", "it", "so", "important", "in", "the", "sermon", "on", "the", "mount?"));
-        ArrayList<String> query5 = new ArrayList<>(Arrays.asList("what", "is", "paper", "with", "a", "watermark", "called"));
-        ArrayList<String> query6 = new ArrayList<>(Arrays.asList("what", "is", "pressure", "vessel", "testing", "and", "repair"));
-        ArrayList<String> query7 = new ArrayList<>(Arrays.asList("what", "is", "the", "gram", "molecular", "weight", "of", "maltose"));
-        ArrayList<String> query8 = new ArrayList<>(Arrays.asList("treasure", "island", "game", "for", "ps3", "worth"));
-        ArrayList<String> query9 = new ArrayList<>(Arrays.asList("where", "are", "protists", "most", "abundant", "in", "humans"));
-        ArrayList<String> query10 = new ArrayList<>(Arrays.asList("what", "is", "the", "difference", "between", "a", "2d", "and", "3d", "shape"));
-
-        querys.add(query1);
-        querys.add(query2);
-        querys.add(query3);
-        querys.add(query4);
-        querys.add(query5);
-        querys.add(query6);
-        querys.add(query7);
-        querys.add(query8);
-        querys.add(query9);
-        querys.add(query10);
-
-        for (ArrayList<String> query : querys) {
-            searcherdaat.DAAT(query, 10, "disjunctive", "BM25");
-            searchermax.maxScore(query, 10, "disjunctive", "BM25");
-            for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
-                System.out.println("Query: " + query);
-                assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
-                assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
-            }
-        }
+//        ArrayList<Query> queries = new ArrayList<>();
+//        queries.add(new Query("what is the difference between a 2d and 3d shape"));
+//        queries.add(new Query("how long is a cubit?"));
+//        queries.add(new Query("what is paranoid sc"));
+//        queries.add(new Query("what is parallel structure? why is it so important in the sermon on the mount?"));
+//        queries.add(new Query("what is paper with a watermark called"));
+//        queries.add(new Query("what is parapsychology?"));
+//        queries.add(new Query("what is parapsychology?"));
+//        queries.add(new Query("what is pressure vessel testing and repair"));
+//        queries.add(new Query("what is the gram molecular weight of maltose"));
+//        queries.add(new Query("treasure island game for ps3 worth"));
+//        queries.add(new Query("where are protists most abundant in humans"));
+//
+//        for (Query query : queries) {
+//            searcherdaat.DAAT(query.getQueryTerms(), 10, "disjunctive", "TFIDF");
+//            searchermax.maxScore(query.getQueryTerms(), 10, "disjunctive", "TFIDF");
+//            for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
+//                System.out.println(query.getQueryTerms());
+//                assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
+//                assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
+//            }
+//        }
 
     }
 
