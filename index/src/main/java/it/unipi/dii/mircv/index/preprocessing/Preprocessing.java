@@ -66,11 +66,12 @@ public class Preprocessing {
     public List<String> tokenization(String doc) {
         List<String> words = new ArrayList<>();
         doc = doc.toLowerCase();
-//        String regex = "\\s+|\\!|\"|\\#|\\$|\\%|\\&|\\'|\\(|\\)|\\*|\\+|"
-//                + "\\,|\\-|\\.|\\/|\\:|\\;|\\<|\\=|\\>|\\|\\?|\\@|\\[|"
-//                + "\\]|\\^|\\`|\\{|\\||\\}|\\~";
-        String regex = "[\\\\s!\\\"#$%&'()*+,-./:;<=>?@[\\\\]^_`{|}~]+";
+        String regex = "\\s+|\\!|\"|\\#|\\$|\\%|\\&|\\'|\\(|\\)|\\*|\\+|"
+                + "\\,|\\-|\\.|\\/|\\:|\\;|\\<|\\=|\\>|\\|\\?|\\@|\\[|"
+                + "\\]|\\^|\\`|\\{|\\||\\}|\\~";
+        String regex2 = "[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
         Pattern pattern = Pattern.compile(regex);
+        pattern = Pattern.compile(regex2);
         String[] tokens = pattern.split(doc);
         for (String token : tokens) {
             if (!token.isEmpty()) {
