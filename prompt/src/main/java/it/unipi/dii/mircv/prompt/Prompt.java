@@ -8,6 +8,7 @@ import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -18,6 +19,10 @@ public class Prompt {
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
     public static void main(String[] args) throws InterruptedException {
+
+        //delete file di log
+        File file = new File("data/logs/logs.json");
+        file.delete();
 
         Logs log = new Logs();
         long start, end;
@@ -60,7 +65,7 @@ public class Prompt {
                 System.out.println("DAAT");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "TFIDF");
 
 
                 end = System.currentTimeMillis();
@@ -68,7 +73,7 @@ public class Prompt {
 
                 System.out.println("MaxScore");
                 start = System.currentTimeMillis();
-                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "TFIDF");
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
 //                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
 

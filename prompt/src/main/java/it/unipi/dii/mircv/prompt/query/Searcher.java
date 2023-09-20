@@ -171,6 +171,9 @@ public class Searcher {
             }
         }
 
+        if(queryTermsMap.size() == 0)
+            return;
+
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
@@ -180,9 +183,7 @@ public class Searcher {
             // get next docid to be processed
             int new_essential_index = -2;
             int docid = postingLists.get(essential_index).getDocId();
-
-            if (docid == 2130)
-                System.out.println("debug matteo");
+//            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
@@ -193,7 +194,7 @@ public class Searcher {
             }
             alreadyVisited.add(docid);
 
-//            Debug(docid, current_threshold, essential_index, queryTermsMap);
+
 
             partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
