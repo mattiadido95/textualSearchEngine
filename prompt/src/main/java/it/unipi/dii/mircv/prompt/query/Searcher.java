@@ -181,8 +181,8 @@ public class Searcher {
             int new_essential_index = -2;
             int docid = postingLists.get(essential_index).getDocId();
 
-//            if (docid == 2130)
-//                System.out.println("debug matteo");
+            if (docid == 2130)
+                System.out.println("debug matteo");
 
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
@@ -233,7 +233,6 @@ public class Searcher {
         blockDescriptorList.clear();
         postingLists.clear();
     }
-
 
     private int updateProcessingPost(ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists, int essential_index, int new_essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
