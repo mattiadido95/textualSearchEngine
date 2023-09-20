@@ -234,7 +234,6 @@ public class Searcher {
         postingLists.clear();
     }
 
-
     private int updateProcessingPost(ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists, int essential_index, int new_essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         if (new_essential_index == -2 || essential_index == new_essential_index) { // non sono cambiati gli essential posting list
             if (postingLists.get(essential_index).hasNext()) // ho ancora post nella posting list attuale
@@ -468,3 +467,4 @@ public class Searcher {
     }
 
 }
+// what is the gram molecular weight of maltose
