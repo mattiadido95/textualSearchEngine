@@ -182,8 +182,13 @@ public class Searcher {
             // get next docid to be processed
             int new_essential_index = -2;
             int docid = postingLists.get(essential_index).getDocId();
-            if (docid == 58514)
-                System.out.println("docid = Integer.MAX_VALUE");
+
+//            if (docid == 4928 || docid == 4927 || docid == 3056)
+//                System.out.println("debug matteo");
+//
+//            if (docid == 3656 || docid == 2521 || docid == 3653)
+//                System.out.println("debug mattia");
+
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
                 if (essential_index != -1)
@@ -197,7 +202,10 @@ public class Searcher {
 
             partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
 
-            DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
+            if (current_threshold != 0)
+                DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
+            else
+                DUB = partial_score;
 
             //controllo se DUB > current_threshold
             if (DUB > current_threshold) {
