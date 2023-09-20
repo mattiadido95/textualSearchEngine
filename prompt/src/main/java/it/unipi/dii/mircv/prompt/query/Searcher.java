@@ -95,6 +95,8 @@ public class Searcher {
         minDocId = getNextDocId(indexes);
 
         do {
+            if(minDocId == 4928 || minDocId == 4927 || minDocId == 3056)
+                System.out.println("ciao");
             double document_score = 0;
             int term_counter = 0;
 
