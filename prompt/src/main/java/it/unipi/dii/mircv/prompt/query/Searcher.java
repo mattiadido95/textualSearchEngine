@@ -181,11 +181,8 @@ public class Searcher {
             int new_essential_index = -2;
             int docid = postingLists.get(essential_index).getDocId();
 
-//            if (docid == 4928 || docid == 4927 || docid == 3056)
+//            if (docid == 2130)
 //                System.out.println("debug matteo");
-//
-//            if (docid == 3656 || docid == 2521 || docid == 3653)
-//                System.out.println("debug mattia");
 
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
@@ -286,11 +283,11 @@ public class Searcher {
             // docid found in posting list
             double result = 0;
             if (scoringFunction.equals("TFIDF")) {
-                result = tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf());
+                result = tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf());
                 partial_score += result;
                 DUB += result;
             } else if (scoringFunction.equals("BM25")) {
-                result = BM25(p.getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+                result = BM25(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
                 partial_score += result;
                 DUB += result;
             }
@@ -330,9 +327,9 @@ public class Searcher {
             if (p == null || p.getDocID() != docid)
                 continue;
             if (scoringFunction.equals("TFIDF"))
-                partial_score += tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf());
+                partial_score += tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf());
             else if (scoringFunction.equals("BM25"))
-                partial_score += BM25(p.getFreq(), lexicon.getLexiconElem(termList.get(essential_index)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
+                partial_score += BM25(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
         }
 
         return partial_score;
@@ -427,7 +424,6 @@ public class Searcher {
         }
         return min;
     }
-
 
     public void printResults(long time) {
         if (queryResults == null || queryResults.size() == 0) {
