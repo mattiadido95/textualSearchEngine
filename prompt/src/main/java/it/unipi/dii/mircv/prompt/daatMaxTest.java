@@ -3,8 +3,9 @@ package it.unipi.dii.mircv.prompt;
 import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
+import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-
+import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -33,7 +34,7 @@ public class daatMaxTest {
 
     public static void queryTest() {
 
-        ArrayList<String> queries = new ArrayList<>(java.util.Arrays.asList(
+        ArrayList<String> queries = new ArrayList<>(Arrays.asList(
                 "what is the difference between a 2d and 3d shape",
                 "how long is a cubit?",
                 "what is paranoid sc",
@@ -47,8 +48,8 @@ public class daatMaxTest {
         ));
 
         for (String query : queries) {
-            Preprocessing preprocessing = new Preprocessing(query);
-            ArrayList<String> terms = (ArrayList<String>) preprocessing.tokens;
+            Query q = new Query(query);
+            ArrayList<String> terms = (ArrayList<String>) q.getQueryTerms();
             searcherdaat.DAAT(terms, 10, "disjunctive", "TFIDF");
             searchermax.maxScore(terms, 10, "disjunctive", "TFIDF");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
