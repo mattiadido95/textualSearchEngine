@@ -71,11 +71,16 @@ public class Preprocessing {
                 + "\\]|\\^|\\`|\\{|\\||\\}|\\~";
         String regex2 = "[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
         Pattern pattern = Pattern.compile(regex);
-        pattern = Pattern.compile(regex2);
+        Pattern pattern2 = Pattern.compile(regex2);
+
+
         String[] tokens = pattern.split(doc);
         for (String token : tokens) {
-            if (!token.isEmpty()) {
-                words.add(token);
+            String[] subTokens = pattern2.split(token);
+            for (String subToken : subTokens) {
+                if (!subToken.isEmpty()) {
+                    words.add(subToken);
+                }
             }
         }
         return words;
