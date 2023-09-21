@@ -67,6 +67,12 @@ public class Searcher {
         ArrayList<Integer> indexes = new ArrayList<>();
         ArrayList<Double> scores = new ArrayList<>();
 
+        if (mode.equals("conjunctive")) {
+            for (String term : queryTerms)
+                if (!lexicon.getLexicon().containsKey(term))
+                    return;
+        }
+
         // for each term in query get all block descriptors and add them to blockDescriptorIterators
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
@@ -85,33 +91,40 @@ public class Searcher {
             } else {
                 // if term is not in lexicon add empty posting list
                 postingLists.add(null);
+
             }
         }
 
         if (postingLists.size() == 0)
             return; // if no terms in query are in lexicon means that there are no results
 
-        // get min docID from posting list iterators and indexes of posting list iterators with min docID
-        minDocId = getNextDocId(indexes);
-
         do {
+            scores.clear();
+            indexes.clear();
+            // get min docID from posting list iterators and indexes of posting list iterators with min docID
+            minDocId = getNextDocId(indexes);
+
+            if (minDocId == Integer.MAX_VALUE)
+                break;
+
+            if (mode.equals("conjunctive") && indexes.size() != postingLists.size()) {
+                for (Integer i : indexes) {
+                    postingLists.get(i).next();
+                }
+                continue;
+            }
+
             double document_score = 0;
-            int term_counter = 0;
 
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
-
                 if (scoringFunction.equals("TFIDF"))
                     scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
                 else if (scoringFunction.equals("BM25"))
                     scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
-                term_counter++;
                 // get next posting from posting list with min docID
                 postingLists.get(i).next();
             }
-
-            if (mode.equals("conjunctive") && term_counter != queryTerms.size())
-                scores.clear();
 
             // Sum all the values of scores
             for (double score : scores) {
@@ -126,12 +139,7 @@ public class Searcher {
                 queryResults.add(new QueryResult(pid, document_score));
             }
 
-            scores.clear();
-            indexes.clear();
-
-            // get min docID from posting list iterators and indexes of posting list iterators with min docID
-            minDocId = getNextDocId(indexes);
-        } while (minDocId != Integer.MAX_VALUE);
+        } while (true);
 
         Collections.sort(queryResults);
         if (queryResults.size() > K) {
@@ -143,9 +151,6 @@ public class Searcher {
                 pi.closeList();
         }
         postingLists.clear();
-
-        if (postingLists.size() == 0)
-            return; // if no terms in query are in lexicon means that there are no results
 
     }
 
@@ -168,10 +173,12 @@ public class Searcher {
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
+            } else if (!lexicon.getLexicon().containsKey(term) && mode.equals("conjunctive")) {
+                return;
             }
         }
 
-        if(queryTermsMap.size() == 0)
+        if (queryTermsMap.size() == 0)
             return;
 
         queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
@@ -185,6 +192,8 @@ public class Searcher {
             int docid = postingLists.get(essential_index).getDocId();
 //            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
+            if(docid == 0)
+                System.out.println("docid = 0");
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
                 if (essential_index != -1)
@@ -194,9 +203,9 @@ public class Searcher {
             }
             alreadyVisited.add(docid);
 
+//            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
-
-            partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap); // compute partial score for docID into essential posting list
+            partial_score = computeEssentialPS(essential_index, scoringFunction, docid, blocksNumber, queryTermsMap, mode); // compute partial score for docID into essential posting list
 
             if (current_threshold != 0)
                 DUB = sumNonEssentialTUBs(essential_index, partial_score, scoringFunction, queryTermsMap);
@@ -205,7 +214,7 @@ public class Searcher {
 
             //controllo se DUB > current_threshold
             if (DUB > current_threshold) {
-                partial_score = computeDUB(essential_index, docid, scoringFunction, partial_score, DUB, current_threshold, blocksNumber, queryTermsMap);
+                partial_score = computeDUB(essential_index, docid, scoringFunction, partial_score, DUB, current_threshold, blocksNumber, queryTermsMap, mode);
             }
 
             if (partial_score > current_threshold) {
@@ -264,12 +273,15 @@ public class Searcher {
         return essential_index;
     }
 
-    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
+    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
         for (int j = essential_index - 1; j >= 0; j--) {
             Posting p = postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j), INDEX_PATH);
 
-            if (p == null) // nextGEQ return null if docid not found in posting list
+            // nextGEQ return null if docid not found in posting list
+            if (p == null && mode.equals("conjunctive"))
+                return 0;
+            else if(p == null)
                 continue;
 
             if (scoringFunction.equals("TFIDF"))
@@ -277,7 +289,10 @@ public class Searcher {
             else if (scoringFunction.equals("BM25"))
                 DUB -= queryTermsMap.get(termList.get(j)).getTUB_bm25();
 
-            if (p.getDocID() != docid) // nextGEQ return a posting with docid != docid
+            // nextGEQ return a posting with docid != docid
+            if (p.getDocID() != docid && mode.equals("conjunctive"))
+                return 0;
+            else if(p.getDocID() != docid)
                 continue;
 
             // docid found in posting list
@@ -312,7 +327,7 @@ public class Searcher {
         return DUB;
     }
 
-    private double computeEssentialPS(int essential_index, String scoringFunction, int docid, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
+    private double computeEssentialPS(int essential_index, String scoringFunction, int docid, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         double partial_score = 0;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
 
@@ -325,7 +340,10 @@ public class Searcher {
         for (int j = essential_index + 1; j < postingLists.size(); j++) {
             Posting p = postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j), INDEX_PATH);
             if (p == null || p.getDocID() != docid)
-                continue;
+                if (mode.equals("conjunctive"))
+                    return 0;
+                else
+                    continue;
             if (scoringFunction.equals("TFIDF"))
                 partial_score += tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf());
             else if (scoringFunction.equals("BM25"))
@@ -335,7 +353,8 @@ public class Searcher {
         return partial_score;
     }
 
-    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms
+            (HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
@@ -356,7 +375,8 @@ public class Searcher {
         }
     }
 
-    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
+    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction,
+                                        double current_threshold) {
         if (current_threshold == 0)
             return 0;
 
@@ -410,7 +430,7 @@ public class Searcher {
             if (postList.getActualPosting() == null) { //first lecture
                 if (postList.hasNext())
                     postList.next();
-                else
+                else // no more docs for this term
                     continue;
             }
 
@@ -440,7 +460,8 @@ public class Searcher {
         return this.queryResults;
     }
 
-    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap) {
+    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<
+            String, LexiconElem> queryTermsMap) {
 
         System.out.println("------------------");
         for (String term : queryTermsMap.keySet()) {

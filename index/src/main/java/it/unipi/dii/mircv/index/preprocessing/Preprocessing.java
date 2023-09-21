@@ -18,7 +18,7 @@ public class Preprocessing {
 
     public List<String> tokens = new ArrayList<>();
 
-    public Preprocessing(String query){
+    public Preprocessing(String query) {
         List<String> words = tokenization(query);
         words = removeNumbers(words); // Remove words that contain more than 4 digits
         words = removeWordstop(words); // Remove stopwords
@@ -31,9 +31,9 @@ public class Preprocessing {
         this.tokens = stemWords;
     }
 
-    public Preprocessing(String document,int docCounter){
+    public Preprocessing(String document, int docCounter) {
         // create new document
-        this.doc = new Document(document,docCounter);
+        this.doc = new Document(document, docCounter);
         List<String> words = tokenization(doc.getBody());
         words = removeNumbers(words); // Remove words that contain numbers
         words = removeWordstop(words); // Remove stopwords
@@ -63,19 +63,24 @@ public class Preprocessing {
         return words;
     }
 
-
-
     public List<String> tokenization(String doc) {
         List<String> words = new ArrayList<>();
         doc = doc.toLowerCase();
         String regex = "\\s+|\\!|\"|\\#|\\$|\\%|\\&|\\'|\\(|\\)|\\*|\\+|"
                 + "\\,|\\-|\\.|\\/|\\:|\\;|\\<|\\=|\\>|\\|\\?|\\@|\\[|"
                 + "\\]|\\^|\\`|\\{|\\||\\}|\\~";
+        String regex2 = "[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
         Pattern pattern = Pattern.compile(regex);
+        Pattern pattern2 = Pattern.compile(regex2);
+
+
         String[] tokens = pattern.split(doc);
         for (String token : tokens) {
-            if (!token.isEmpty()) {
-                words.add(token);
+            String[] subTokens = pattern2.split(token);
+            for (String subToken : subTokens) {
+                if (!subToken.isEmpty()) {
+                    words.add(subToken);
+                }
             }
         }
         return words;
@@ -104,7 +109,6 @@ public class Preprocessing {
         words.removeAll(stopwords);
         return words;
     }
-
 
 
     public Document getDoc() {
