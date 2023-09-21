@@ -191,8 +191,6 @@ public class Searcher {
             int docid = postingLists.get(essential_index).getDocId();
 //            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
-            if (docid == 0)
-                System.out.println("docid = 0");
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
                 if (essential_index != -1)

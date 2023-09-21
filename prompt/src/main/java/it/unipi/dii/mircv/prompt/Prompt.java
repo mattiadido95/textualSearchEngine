@@ -65,8 +65,8 @@ public class Prompt {
                 System.out.println("DAAT");
                 start = System.currentTimeMillis();
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
-//                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "TFIDF");
-                searcherDAAT.DAAT(queryTerms, n_results, "conjunctive", "TFIDF");
+                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "TFIDF");
+//                searcherDAAT.DAAT(queryTerms, n_results, "conjunctive", "TFIDF");
 
 
                 end = System.currentTimeMillis();
@@ -74,7 +74,7 @@ public class Prompt {
 
                 System.out.println("MaxScore");
                 start = System.currentTimeMillis();
-                searcherMAX.maxScore(queryTerms, n_results, "conjunctive", "TFIDF");
+                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "TFIDF");
 //                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
 //                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
 
