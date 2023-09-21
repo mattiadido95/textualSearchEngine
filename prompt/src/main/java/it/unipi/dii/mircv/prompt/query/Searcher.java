@@ -311,7 +311,7 @@ public class Searcher {
         return DUB;
     }
 
-    private double computeEssentialPS(int essential_index, String scoringFunction, int docid, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap) {
+    private double computeEssentialPS(int essential_index, String scoringFunction, int docid, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         double partial_score = 0;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
 
@@ -323,8 +323,12 @@ public class Searcher {
         int i = 1;
         for (int j = essential_index + 1; j < postingLists.size(); j++) {
             Posting p = postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j), INDEX_PATH);
-            if (p == null || p.getDocID() != docid)
+            if (p == null || p.getDocID() != docid) {
+                if (mode.equals("conjunctive")){
+                    return 0;
+                }
                 continue;
+            }
             if (scoringFunction.equals("TFIDF"))
                 partial_score += tfidf(p.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf());
             else if (scoringFunction.equals("BM25"))

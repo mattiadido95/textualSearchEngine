@@ -5,7 +5,9 @@ import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
+
 import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -49,7 +51,7 @@ public class daatMaxTest {
 
         for (String query : queries) {
             Query q = new Query(query);
-            ArrayList<String> terms = (ArrayList<String>) q.getQueryTerms();
+            ArrayList<String> terms = q.getQueryTerms();
             searcherdaat.DAAT(terms, 10, "disjunctive", "TFIDF");
             searchermax.maxScore(terms, 10, "disjunctive", "TFIDF");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
