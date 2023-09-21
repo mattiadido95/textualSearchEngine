@@ -43,6 +43,7 @@ public class daatMaxTest {
         queries.add(new Query("where are protists most abundant in humans"));
 
         for (Query query : queries) {
+            System.out.println(query.getQueryTerms());
             searcherdaat.DAAT(query.getQueryTerms(), 10, "disjunctive", "TFIDF");
             searchermax.maxScore(query.getQueryTerms(), 10, "disjunctive", "TFIDF");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {

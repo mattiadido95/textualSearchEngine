@@ -21,6 +21,8 @@ public class Searcher {
     private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
 
+    private static int initcounter = 0;
+
 
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
@@ -192,8 +194,6 @@ public class Searcher {
             int docid = postingLists.get(essential_index).getDocId();
 //            Debug(docid, current_threshold, essential_index, queryTermsMap);
 
-            if(docid == 0)
-                System.out.println("docid = 0");
             if (alreadyVisited.contains(docid)) {
                 essential_index = updateProcessingPost(blockDescriptorList, postingLists, essential_index, new_essential_index, queryTermsMap, blocksNumber);
                 if (essential_index != -1)
@@ -242,6 +242,7 @@ public class Searcher {
         Collections.sort(queryResults);
         blockDescriptorList.clear();
         postingLists.clear();
+        System.out.println("Counter: " + initcounter);
     }
 
     private int updateProcessingPost(ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists, int essential_index, int new_essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
@@ -355,6 +356,7 @@ public class Searcher {
 
     private void initializePostingListForQueryTerms
             (HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+        initcounter++;
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
