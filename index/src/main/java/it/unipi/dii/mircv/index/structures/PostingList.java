@@ -95,7 +95,12 @@ public class PostingList {
     }
 
     public void closeList() {
+        actualPosting = null;
         postingIterator = null;
+    }
+
+    public Iterator<Posting> getPostingIterator() {
+        return postingIterator;
     }
 
     public Posting next() {
