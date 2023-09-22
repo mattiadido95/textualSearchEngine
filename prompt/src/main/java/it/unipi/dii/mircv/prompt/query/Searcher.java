@@ -370,6 +370,7 @@ public class Searcher {
         // calcolo DUB
         double DUB = partial_score;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+
         for (int j = 0; j < essential_index; j++) {
             if (scoringFunction.equals("TFIDF"))
                 DUB += queryTermsMap.get(termList.get(j)).getTUB_tfidf();
@@ -406,8 +407,8 @@ public class Searcher {
         return partial_score;
     }
 
-    private void updatePosting(PostingList pl, int j) {
 
+    private void updatePosting(PostingList pl, int j) {
         if (pl.hasNext()) // ho ancora post nella posting list attuale
             pl.next();
         else if (!pl.hasNext() && blockDescriptorList.get(j).hasNext()) { //devo caricare un altro blocco
@@ -420,8 +421,7 @@ public class Searcher {
         }
     }
 
-    private void initializePostingListForQueryTerms
-            (HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
@@ -442,8 +442,7 @@ public class Searcher {
         }
     }
 
-    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction,
-                                        double current_threshold) {
+    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
         if (current_threshold == 0)
             return 0;
 
