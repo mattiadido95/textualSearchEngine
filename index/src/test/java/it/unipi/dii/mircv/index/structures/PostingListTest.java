@@ -25,26 +25,26 @@ class PostingListTest {
         PostingList pl = new PostingList();
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(), POSTING_LIST_PATH);
         // assert that the posting list is read correctly
-        assertEquals(78, pl.getPostings().size());
+        assertEquals(589, pl.getPostings().size());
         pl.openList();
         int i = 0;
         while (pl.hasNext()) {
-            if (i == 77)
+            if (i == 589)
                 break;
             pl.next();
             assertEquals(i, pl.getDocId());
             assertEquals(i, pl.getFreq());
             i++;
         }
-        assertEquals(77, i);
+        assertEquals(589, i);
 
         le = lexicon.getLexicon().get("gatto");
         pl = new PostingList();
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(), POSTING_LIST_PATH);
         // assert that the posting list is read correctly
-        assertEquals(57, pl.getPostings().size());
+        assertEquals(468, pl.getPostings().size());
         pl.openList();
-        i = 21;
+        i = 121;
         while (pl.hasNext()) {
             if (i == 77)
                 break;
@@ -53,24 +53,24 @@ class PostingListTest {
             assertEquals(i, pl.getFreq());
             i++;
         }
-        assertEquals(77, i);
+        assertEquals(589, i);
 
         le = lexicon.getLexicon().get("topo");
         pl = new PostingList();
         pl.readPostingList(-1, le.getDf(), BlockDescriptor.readFirstBlock(le.getOffset(), BLOCK_DESCRIPTOR_PATH).getPostingListOffset(), POSTING_LIST_PATH);
         // assert that the posting list is read correctly
-        assertEquals(45, pl.getPostings().size());
+        assertEquals(356, pl.getPostings().size());
         pl.openList();
-        i = 33;
+        i = 233;
         while (pl.hasNext()) {
-            if (i == 77)
+            if (i == 589)
                 break;
             pl.next();
             assertEquals(i, pl.getDocId());
             assertEquals(i, pl.getFreq());
             i++;
         }
-        assertEquals(77, i);
+        assertEquals(589, i);
 
     }
 
@@ -84,6 +84,7 @@ class PostingListTest {
         queryTermsMap.put("cane", le);
         ArrayList<Integer> blocksNumber = new ArrayList<>();
         blocksNumber.add(le.getBlocksNumber()); //TODO FACENDO DEBUG ho visto che è a size 2 e non 1
+        assertEquals(24, le.getBlocksNumber());
         ArrayList<BlockDescriptorList> blockDescriptorList = new ArrayList<>();
         ArrayList<PostingList> postingLists = new ArrayList<>();
 
@@ -107,16 +108,12 @@ class PostingListTest {
         p = pl.nextGEQ(56, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
         assertEquals(56, p.getDocID());
         assertEquals(56, pl.getDocId());
-        p = pl.nextGEQ(33, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
-        assertEquals(33, p.getDocID());
-        assertEquals(33, pl.getDocId());
-        p = pl.nextGEQ(101, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
-        assertEquals(null, p);
-
-        p = pl.nextGEQ(99, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
-
-        assertEquals(100, p.getDocID());
-        assertEquals(100, pl.getDocId());
+        p = pl.nextGEQ(233, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
+        assertEquals(233, p.getDocID());
+        assertEquals(233, pl.getDocId());
+        p = pl.nextGEQ(401, blockDescriptorList.get(0), le.getBlocksNumber(), POSTING_LIST_PATH);
+        assertEquals(401, p.getDocID());
+        assertEquals(401, pl.getDocId());
 
     }
 

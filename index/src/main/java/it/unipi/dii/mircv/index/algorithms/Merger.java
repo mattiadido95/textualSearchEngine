@@ -12,12 +12,13 @@ public class Merger {
     private int numberOfFiles;
     private Logs log;
     private ArrayList<ArrayList<String>> terms; // matrix of terms, each row is a list of terms and columns are the files
-    private static final int NUMBER_OF_POSTING = 10;
-    private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
+    //    private static final int NUMBER_OF_POSTING = 10;
+    private static final int POSTING_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq into one posting
     private static final int BLOCK_DESCRIPTOR_SIZE = (4 * 2 + 8); // 4 byte per docID, 4 byte per freq, 8 byte per offset
     private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
     private static final String FINAL_INDEX_PATH = "data/index/index.bin";
     private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
+
 
     public Merger(String INDEX_PATH, int numberOfFiles) {
         this.INDEX_PATH = INDEX_PATH;
@@ -27,7 +28,7 @@ public class Merger {
         //read all the terms from index files
         for (int i = 0; i < numberOfFiles; i++) {
             Lexicon lexicon = new Lexicon();
-            lexicon.readLexiconFromDisk(i,PARTIAL_LEXICON_PATH);
+            lexicon.readLexiconFromDisk(i, PARTIAL_LEXICON_PATH);
 
             //get key from lexicon
             terms.add(new ArrayList<>(lexicon.getLexicon().keySet()));
@@ -106,14 +107,14 @@ public class Merger {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
                     LexiconElem lexiconElem = Lexicon.readEntry(readers, readOffset, term_index.get(i));
                     // recupero la posting list dal file index_i dove i è dato da term_index(i)
-                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index_");
+                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset(), INDEX_PATH + "/index_");
                     //merge delle posting list
                     mergePostingList.mergePosting(newPostingList);
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
                     newLexiconElem.mergeLexiconElem(lexiconElem);
                 }
 
-                int blockCounter = saveBlockPosting(mergePostingList,newLexiconElem);
+                int blockCounter = saveBlockPosting(mergePostingList, newLexiconElem);
 
                 //salvo il nuovo elemento lessico nel file lessico
                 Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset(), blockCounter);
@@ -168,17 +169,21 @@ public class Merger {
         BlockDescriptor blockDescriptor;
         int blockCounter = 0;
         long blockDescriptorOffset;
+        int numBlocks = mergePostingList.getPostingListSize() > 1024 ? (int) Math.sqrt(mergePostingList.getPostingListSize()) : 1; // get number of block in which the posting list will be divided;
+        int numPostingInBlock = (int) Math.ceil(mergePostingList.getPostingListSize() / (double) numBlocks); // get number of posting in each block
+
+
         for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
-            if ((i + 1) % NUMBER_OF_POSTING == 0) {
+            if ((i + 1) % numPostingInBlock == 0) {
                 //salva il block descriptor
-                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
-                postingOffsetStart += BLOCK_POSTING_LIST_SIZE;
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - numPostingInBlock, i + 1));
+                postingOffsetStart += numPostingInBlock * POSTING_SIZE;
                 blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
                 if (blockCounter == 0)
                     //salva inzio del block descriptor nel newLexiconElem
                     newLexiconElem.setOffset(blockDescriptorOffset);
                 blockCounter++;
-            } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
+            } else if ((mergePostingList.getPostingListSize() - (blockCounter * numPostingInBlock)) < numPostingInBlock) {
                 //salva il block descriptor
                 blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
                 blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
@@ -188,10 +193,11 @@ public class Merger {
                 blockCounter++;
                 break;
             }
-
         }
-        return blockCounter;
-
+        if (blockCounter != numBlocks)
+            System.out.println("Error in saveBlockPosting: blockCounter != numBlocks");
+        return numBlocks;
     }
 }
+
 

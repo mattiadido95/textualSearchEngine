@@ -120,6 +120,7 @@ public class Searcher {
 //                // Get document pid
 //                String pid = document.getDocNo();
 //                // Add pid to results
+//                document_score = Math.round(document_score * 10e5) / 10e5;
 //                queryResults.add(new QueryResult(pid, document_score));
 //            }
 //
