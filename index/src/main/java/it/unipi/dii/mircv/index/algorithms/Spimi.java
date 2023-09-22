@@ -115,7 +115,7 @@ public class Spimi {
 //                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
 //                    System.out.println(documents1);
                     indexCounter += 1;
-//                    if (documentCounter == 10000)
+//                    if (documentCounter == 20000)
 //                        break;
                 }
 

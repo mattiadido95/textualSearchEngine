@@ -280,7 +280,7 @@ public class Searcher {
             // get next docid to be processed
             int new_essential_index = -2;
             int docid = getNextDocIdMAXSCORE(essential_index);
-//            System.out.println("docid: " + docid);
+
             if (docid == Integer.MAX_VALUE)
                 break;
 
@@ -403,11 +403,8 @@ public class Searcher {
         return partial_score;
     }
 
-//    [1]->[2][4]
-//    [2][6][8]
-//    [1][2][3]
-    private void updatePosting(PostingList pl, int j) {
 
+    private void updatePosting(PostingList pl, int j) {
         if (pl.hasNext()) // ho ancora post nella posting list attuale
             pl.next();
         else if (!pl.hasNext() && blockDescriptorList.get(j).hasNext()) { //devo caricare un altro blocco
@@ -420,8 +417,7 @@ public class Searcher {
         }
     }
 
-    private void initializePostingListForQueryTerms
-            (HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
@@ -442,8 +438,7 @@ public class Searcher {
         }
     }
 
-    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction,
-                                        double current_threshold) {
+    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
         if (current_threshold == 0)
             return 0;
 

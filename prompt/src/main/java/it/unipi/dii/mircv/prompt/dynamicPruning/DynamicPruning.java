@@ -1,11 +1,8 @@
 package it.unipi.dii.mircv.prompt.dynamicPruning;
 
-import it.unipi.dii.mircv.index.structures.BlockDescriptor;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
-import it.unipi.dii.mircv.index.structures.PostingList;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.structure.QueryResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +28,7 @@ public class DynamicPruning {
         for (String term : this.queryTerms) {
             ArrayList<String> faketerm = new ArrayList<>();
             faketerm.add(term); // used to call the search function, made for compatibility
+            System.out.println(term);
             if (scoreFunction.equals("BM25")) {
                 this.searcher.DAAT(faketerm, 1, "disjunctive", "BM25");
                 this.lexicon.getLexiconElem(term).setTUB_bm25(this.searcher.getQueryResults().get(0).getScoring());
@@ -40,6 +38,10 @@ public class DynamicPruning {
             } else {
                 System.out.println("Wrong score function");
                 return;
+            }
+            if (term.equals("war")){
+                System.out.println(this.lexicon.getLexiconElem(term).getTUB_bm25());
+                System.out.println(this.lexicon.getLexiconElem(term).getTUB_tfidf());
             }
 //            if (counter == 10) {
 //                System.out.println("TUB processing completed");
