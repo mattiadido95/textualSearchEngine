@@ -61,11 +61,13 @@ public class Searcher {
 //        ArrayList<Integer> indexes = new ArrayList<>();
 //        ArrayList<Double> scores = new ArrayList<>();
 //        ArrayList<Integer> blocksNumber = new ArrayList<>();
+//        ArrayList<String> queryTermsPresentInLexicon = new ArrayList<>();
 //
 //        LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
 //        for (String term : queryTerms) {
 //            if (lexicon.getLexicon().containsKey(term)) {
 //                queryTermsMap.put(term, lexicon.getLexiconElem(term));
+//                queryTermsPresentInLexicon.add(term);
 //            } else if (!lexicon.getLexicon().containsKey(term) && mode.equals("conjunctive")) {
 //                return;
 //            }
@@ -84,30 +86,32 @@ public class Searcher {
 //            scores.clear();
 //            indexes.clear();
 //            // get min docID from posting list iterators and indexes of posting list iterators with min docID
-//            minDocId = getNextDocIdDAAT(indexes);
+//            minDocId = getNextDocIdMAXSCORE(0);
 //
 //            if (minDocId == Integer.MAX_VALUE)
 //                break;
 //
-//            if (mode.equals("conjunctive") && indexes.size() != postingLists.size()) {
-//                for (Integer i : indexes) {
-//
-//                    //update posting list
-//                    updatePosting(postingLists.get(i), i);
-//                }
-//                continue;
-//            }
+////            if (mode.equals("conjunctive") && indexes.size() != postingLists.size()) {
+////                for (Integer i : indexes) {
+////
+////                    //update posting list
+////                    updatePosting(postingLists.get(i), i);
+////                }
+////                continue;
+////            }
 //
 //            double document_score = 0;
 //
-//            for (Integer i : indexes) {
+//            for (int i = 0; i < postingLists.size(); i++) {
 //                //calculate score for posting list with min docID
-//                if (scoringFunction.equals("TFIDF"))
-//                    scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
-//                else if (scoringFunction.equals("BM25"))
-//                    scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
-//                //update posting list
-//                updatePosting(postingLists.get(i), i);
+//                if(postingLists.get(i).getPostingIterator() != null) {
+//                    if (scoringFunction.equals("TFIDF"))
+//                        scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTermsPresentInLexicon.get(i)).getDf()));
+//                    else if (scoringFunction.equals("BM25"))
+//                        scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTermsPresentInLexicon.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
+//                    //update posting list
+//                    updatePosting(postingLists.get(i), i);
+//                }
 //            }
 //
 //            // Sum all the values of scores
@@ -549,7 +553,7 @@ public class Searcher {
         bdl.openBlock();
         int sum = 0;
         for (int i = 0; i < blocksNumber; i++) {
-            System.out.println("Block " + i);
+//            System.out.println("Block " + i);
             bdl.next();
             pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), INDEX_PATH);
             sum += pl.getPostingListSize();
