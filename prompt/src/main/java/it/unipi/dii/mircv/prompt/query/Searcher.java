@@ -20,9 +20,9 @@ public class Searcher {
     private String previousScoringFunction;
     private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
-    //    private static final int NUMBER_OF_POSTING = 10;
-//    private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
-//    private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
+    private static final int NUMBER_OF_POSTING = 10;
+    private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
+    private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
     private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
     private static final String INDEX_PATH = "data/index/index.bin";
 
@@ -46,8 +46,101 @@ public class Searcher {
         }
     }
 
+//    public void DAAT(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
+//        if ((this.previousQueryTerms.equals(queryTerms) &&
+//                this.previousScoringFunction.equals(scoringFunction) &&
+//                (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
+//            return;
+//        //process query and clear previous results
+//        this.previousQueryTerms = new ArrayList<>(queryTerms);
+//        this.previousMode = mode;
+//        this.previousScoringFunction = scoringFunction;
+//        this.queryResults.clear();
+//
+//        int minDocId;
+//        ArrayList<Integer> indexes = new ArrayList<>();
+//        ArrayList<Double> scores = new ArrayList<>();
+//        ArrayList<Integer> blocksNumber = new ArrayList<>();
+//
+//        LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
+//        for (String term : queryTerms) {
+//            if (lexicon.getLexicon().containsKey(term)) {
+//                queryTermsMap.put(term, lexicon.getLexiconElem(term));
+//            } else if (!lexicon.getLexicon().containsKey(term) && mode.equals("conjunctive")) {
+//                return;
+//            }
+//        }
+//
+//        if (queryTermsMap.size() == 0)
+//            return;
+//
+//        //initialize posting list for query terms
+//        initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
+//
+//        if (postingLists.size() == 0)
+//            return; // if no terms in query are in lexicon means that there are no results
+//
+//        do {
+//            scores.clear();
+//            indexes.clear();
+//            // get min docID from posting list iterators and indexes of posting list iterators with min docID
+//            minDocId = getNextDocIdDAAT(indexes);
+//
+//            if (minDocId == Integer.MAX_VALUE)
+//                break;
+//
+//            if (mode.equals("conjunctive") && indexes.size() != postingLists.size()) {
+//                for (Integer i : indexes) {
+//
+//                    //update posting list
+//                    updatePosting(postingLists.get(i), i);
+//                }
+//                continue;
+//            }
+//
+//            double document_score = 0;
+//
+//            for (Integer i : indexes) {
+//                //calculate score for posting list with min docID
+//                if (scoringFunction.equals("TFIDF"))
+//                    scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+//                else if (scoringFunction.equals("BM25"))
+//                    scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
+//                //update posting list
+//                updatePosting(postingLists.get(i), i);
+//            }
+//
+//            // Sum all the values of scores
+//            for (double score : scores) {
+//                document_score += score;
+//            }
+//            if (document_score > 0) {
+//                // Get document
+//                Document document = documents.get(minDocId);
+//                // Get document pid
+//                String pid = document.getDocNo();
+//                // Add pid to results
+//                document_score = Math.round(document_score * 10e5) / 10e5;
+//                queryResults.add(new QueryResult(pid, document_score));
+//            }
+//
+//        } while (true);
+//
+//        Collections.sort(queryResults);
+//        if (queryResults.size() > K) {
+//            queryResults = new ArrayList<>(queryResults.subList(0, K));
+//        }
+//
+//        postingLists.clear();
+//
+//    }
+
     public void DAAT(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
-        if ((this.previousQueryTerms.equals(queryTerms) && this.previousScoringFunction.equals(scoringFunction) && (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
+//        if ((this.previousQueryTerms.equals(queryTerms) && this.previousMode.equals(mode) && this.previousScoringFunction.equals(scoringFunction))
+//                || (this.previousQueryTerms.equals(queryTerms) && queryTerms.size() == 1 && this.previousScoringFunction.equals(scoringFunction)))) // same query as before
+        if ((this.previousQueryTerms.equals(queryTerms) &&
+                this.previousScoringFunction.equals(scoringFunction) &&
+                (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
             return;
         //process query and clear previous results
         this.previousQueryTerms = new ArrayList<>(queryTerms);
@@ -55,26 +148,39 @@ public class Searcher {
         this.previousScoringFunction = scoringFunction;
         this.queryResults.clear();
 
+        long firstBlockOffset;
+        int blocksNumber;
         int minDocId;
         ArrayList<Integer> indexes = new ArrayList<>();
         ArrayList<Double> scores = new ArrayList<>();
-        ArrayList<Integer> blocksNumber = new ArrayList<>();
 
-        LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
-        for (String term : queryTerms) {
-            if (lexicon.getLexicon().containsKey(term)) {
-                queryTermsMap.put(term, lexicon.getLexiconElem(term));
-            } else if (!lexicon.getLexicon().containsKey(term) && mode.equals("conjunctive")) {
-                return;
-            }
+        if (mode.equals("conjunctive")) {
+            for (String term : queryTerms)
+                if (!lexicon.getLexicon().containsKey(term))
+                    return;
         }
 
-        if (queryTermsMap.size() == 0)
-            return;
+        // for each term in query get all block descriptors and add them to blockDescriptorIterators
+        for (String term : queryTerms) {
+            if (lexicon.getLexicon().containsKey(term)) {
+                firstBlockOffset = lexicon.getLexiconElem(term).getOffset();
+                BlockDescriptor firstBlockDescriptor = BlockDescriptor.readFirstBlock(firstBlockOffset, BLOCK_DESCRIPTOR_PATH); // read first block descriptor, used because MaxScore is not implemented
+//                blocksNumber = lexicon.getLexiconElem(term).getBlocksNumber();
+//                blockDescriptorIterators.add(openBlocks(firstBlockOffset, blocksNumber).iterator());
+                // load total posting list for the term, used because MaxScore is not implemented
+                PostingList postingList = new PostingList();
+                postingList.readPostingList(-1, lexicon.getLexiconElem(term).getDf(), firstBlockDescriptor.getPostingListOffset(), INDEX_PATH);
+                postingList.openList();
+                postingLists.add(postingList); // add postinglist of the term to postingListIterators
+                //TODO SOLO PER DEBUG
+//                System.out.println("Term: " + term + " postlist: " + postingList.getPostingListSize());
 
-        //initialize posting list for query terms
-        initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
-        queryTerms = new ArrayList<>(queryTermsMap.keySet());
+            } else {
+                // if term is not in lexicon add empty posting list
+                postingLists.add(null);
+
+            }
+        }
 
         if (postingLists.size() == 0)
             return; // if no terms in query are in lexicon means that there are no results
@@ -83,14 +189,14 @@ public class Searcher {
             scores.clear();
             indexes.clear();
             // get min docID from posting list iterators and indexes of posting list iterators with min docID
-            minDocId = getNextDocIdDAAT(indexes);
+            minDocId = getNextDocId(indexes);
+
             if (minDocId == Integer.MAX_VALUE)
                 break;
 
             if (mode.equals("conjunctive") && indexes.size() != postingLists.size()) {
                 for (Integer i : indexes) {
-                    //update posting list
-                    updatePosting(postingLists.get(i), i);
+                    postingLists.get(i).next();
                 }
                 continue;
             }
@@ -99,12 +205,14 @@ public class Searcher {
 
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
+                double score = 0;
                 if (scoringFunction.equals("TFIDF"))
-                    scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf()));
+                    score = tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf());
                 else if (scoringFunction.equals("BM25"))
-                    scores.add(BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH));
-                //update posting list
-                updatePosting(postingLists.get(i), i);
+                    score = BM25(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTerms.get(i)).getDf(), documents.get(minDocId).getLength(), AVG_DOC_LENGTH);
+                // get next posting from posting list with min docID
+                scores.add(score);
+                postingLists.get(i).next();
             }
 
             // Sum all the values of scores
@@ -117,13 +225,20 @@ public class Searcher {
                 // Get document pid
                 String pid = document.getDocNo();
                 // Add pid to results
+                document_score = Math.round(document_score * 10e5) / 10e5;
                 queryResults.add(new QueryResult(pid, document_score));
             }
+
         } while (true);
 
         Collections.sort(queryResults);
         if (queryResults.size() > K) {
             queryResults = new ArrayList<>(queryResults.subList(0, K));
+        }
+
+        for (PostingList pi : postingLists) {
+            if (pi != null)
+                pi.closeList();
         }
         postingLists.clear();
 
@@ -165,6 +280,7 @@ public class Searcher {
             // get next docid to be processed
             int new_essential_index = -2;
             int docid = getNextDocIdMAXSCORE(essential_index);
+//            System.out.println("docid: " + docid);
             if (docid == Integer.MAX_VALUE)
                 break;
 
@@ -185,6 +301,7 @@ public class Searcher {
                 // Get document pid
                 String pid = document.getDocNo();
                 // Add pid to results
+                partial_score = Math.round(partial_score * 10e5) / 10e5;
                 queryResults.add(new QueryResult(pid, partial_score));
                 // SE queryresult.size > k
                 if (queryResults.size() >= K) {
@@ -263,22 +380,26 @@ public class Searcher {
     private double computeEssentialPS(int essential_index, String scoringFunction, int docid, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         double partial_score = 0;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+        boolean notFound = false;
+
 
         for (int j = essential_index; j < postingLists.size(); j++) {
             PostingList pl = postingLists.get(j);
-            if (pl.getPostingIterator() == null || pl.getDocId() != docid)
+            if (pl.getPostingIterator() == null || pl.getDocId() != docid) {
                 if (mode.equals("conjunctive"))
-                    return 0;
-                else
-                    continue;
+                    notFound = true;
+                continue;
+            }
             if (scoringFunction.equals("TFIDF"))
                 partial_score += tfidf(pl.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf());
             else if (scoringFunction.equals("BM25"))
                 partial_score += BM25(pl.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
             //update posting list
+
             updatePosting(pl, j);
         }
-
+        if (notFound)
+            return 0;
         return partial_score;
     }
 
@@ -299,7 +420,8 @@ public class Searcher {
         }
     }
 
-    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms
+            (HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
@@ -320,7 +442,8 @@ public class Searcher {
         }
     }
 
-    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
+    private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction,
+                                        double current_threshold) {
         if (current_threshold == 0)
             return 0;
 
@@ -411,32 +534,60 @@ public class Searcher {
         return this.queryResults;
     }
 
-//    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap) {
-//
-//        System.out.println("------------------");
-//        for (String term : queryTermsMap.keySet()) {
-//            System.out.println(term + " " + queryTermsMap.get(term).getTUB_bm25());
-//        }
-//        System.out.println(docid + " " + current_threshold + " " + essential_index);
-//        for (int i = 0; i < postingLists.size(); i++) {
-//            System.out.println(postingLists.get(i));
-//        }
-//        System.out.println("------------------");
-//    }
+    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<
+            String, LexiconElem> queryTermsMap) {
 
-//    public void DebugPostingList(BlockDescriptorList bdl, int blocksNumber) {
-//        System.out.println("------------------");
-//        PostingList pl = new PostingList();
-//        bdl.openBlock();
-//        int sum = 0;
-//        for (int i = 0; i < blocksNumber; i++) {
-//            System.out.println("Block " + i);
-//            bdl.next();
-//            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), INDEX_PATH);
-//            sum += pl.getPostingListSize();
-//        }
-//        System.out.println(sum);
-//    }
+        System.out.println("------------------");
+        for (String term : queryTermsMap.keySet()) {
+            System.out.println(term + " " + queryTermsMap.get(term).getTUB_bm25());
+        }
+        System.out.println(docid + " " + current_threshold + " " + essential_index);
+        for (int i = 0; i < postingLists.size(); i++) {
+            System.out.println(postingLists.get(i));
+        }
+        System.out.println("------------------");
+    }
+
+    public void DebugPostingList(BlockDescriptorList bdl, int blocksNumber) {
+        System.out.println("------------------");
+        PostingList pl = new PostingList();
+        bdl.openBlock();
+        int sum = 0;
+        for (int i = 0; i < blocksNumber; i++) {
+            System.out.println("Block " + i);
+            bdl.next();
+            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), INDEX_PATH);
+            sum += pl.getPostingListSize();
+        }
+        System.out.println(sum);
+    }
+
+    private int getNextDocId(ArrayList<Integer> indexes) {
+        int min = Integer.MAX_VALUE;
+
+        for (int i = 0; i < postingLists.size(); i++) {
+            PostingList postList = postingLists.get(i);
+            if (postList == null) // term not in lexicon
+                continue;
+            if (postList.getActualPosting() == null) { //first lecture
+                if (postList.hasNext())
+                    postList.next();
+                else // no more docs for this term
+                    continue;
+            }
+
+            if (postList.getDocId() < min) {
+                indexes.clear();
+                min = postList.getDocId();
+                indexes.add(i);
+            } else if (postList.getDocId() == min) {
+                indexes.add(i);
+            }
+        }
+        return min;
+    }
 
 }
-// gram maltos molecular weight introduction 1project manhattan bomb war civil japan
+
+
+// gram maltos molecular weight introduction project manhattan bomb war civil japan
