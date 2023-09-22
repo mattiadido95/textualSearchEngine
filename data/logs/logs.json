@@ -22,5 +22,11 @@
         "start_time": 1695397932990,
         "end_time": 1695397933406,
         "type": "query"
+    },
+    {
+        "duration": 1196,
+        "start_time": 1695398028542,
+        "end_time": 1695398029738,
+        "type": "query"
     }
 ]
