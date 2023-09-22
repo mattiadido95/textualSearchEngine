@@ -12,8 +12,8 @@ import java.util.TreeMap;
 
 public class LexiconTest {
     Lexicon lexicon;
-    private static final Integer NUMBER_OF_POSTING = 10;
-    private static final Integer BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
+    private static final int POSTING_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq into one posting
+    private static final int BLOCK_DESCRIPTOR_SIZE = (4 * 2 + 8); // 4 byte per docID, 4 byte per freq, 8 byte per offset
     private static final String POSTING_LIST_PATH = "src/test/data/postingListTest.bin";
     private static final String BLOCK_DESCRIPTOR_PATH = "src/test/data/blockDescriptorTest.bin";
     private static final String LEXICON_PATH = "src/test/data/lexicon.bin";
@@ -22,9 +22,9 @@ public class LexiconTest {
     public void setUp() {
         // Inizializza l'oggetto BlockDescriptor qui, se necessario
         lexicon = new Lexicon();
-        addLexiconElem("cane"); // doc ID [0, 76]
-        addLexiconElem("gatto"); // doc ID [21, 76]
-        addLexiconElem("topo"); // doc ID [33, 76]
+        addLexiconElem("cane"); // doc ID [0, 588]
+        addLexiconElem("gatto"); // doc ID [121, 588]
+        addLexiconElem("topo"); // doc ID [233, 588]
     }
 
     private void addLexiconElem(String term) {
@@ -44,17 +44,17 @@ public class LexiconTest {
                 init = 0;
                 break;
             case "gatto":
-                init = 21;
+                init = 121;
                 break;
             case "topo":
-                init = 33;
+                init = 233;
                 break;
         }
-        for (int i = init; i < 77; i++) {
+        for (int i = init; i < 589; i++) {
             Posting p = new Posting(i, i);
             pl.getPostings().add(p);
         }
-        pl.getPostings().add(new Posting(100, 100));
+//        pl.getPostings().add(new Posting(100, 100));
         return pl;
     }
 
@@ -79,17 +79,20 @@ public class LexiconTest {
         BlockDescriptor blockDescriptor;
         int blockCounter = 0;
         long blockDescriptorOffset;
+        int numBlocks = mergePostingList.getPostingListSize() > 200 ? (int) Math.sqrt(mergePostingList.getPostingListSize()) : 1; // get number of block in which the posting list will be divided;
+        int numPostingInBlock = (int) Math.ceil(mergePostingList.getPostingListSize() / (double) numBlocks); // get number of posting in each block
+
         for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
-            if ((i + 1) % NUMBER_OF_POSTING == 0) {
+            if ((i + 1) % numPostingInBlock == 0) {
                 //salva il block descriptor
-                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - NUMBER_OF_POSTING, i + 1));
-                postingOffsetStart += BLOCK_POSTING_LIST_SIZE;
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - numPostingInBlock, i + 1));
+                postingOffsetStart += numPostingInBlock * POSTING_SIZE;
                 blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
                 if (blockCounter == 0)
                     //salva inzio del block descriptor nel newLexiconElem
                     newLexiconElem.setOffset(blockDescriptorOffset);
                 blockCounter++;
-            } else if ((mergePostingList.getPostingListSize() - (blockCounter * NUMBER_OF_POSTING)) < NUMBER_OF_POSTING) {
+            } else if ((mergePostingList.getPostingListSize() - (blockCounter * numPostingInBlock)) < numPostingInBlock) {
                 //salva il block descriptor
                 blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
                 blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
@@ -99,9 +102,12 @@ public class LexiconTest {
                 blockCounter++;
                 break;
             }
-
         }
-        return blockCounter;
+
+        if (blockCounter != numBlocks)
+            System.out.println("Error in saveBlockPosting: blockCounter != numBlocks");
+
+        return numBlocks;
 
     }
 }

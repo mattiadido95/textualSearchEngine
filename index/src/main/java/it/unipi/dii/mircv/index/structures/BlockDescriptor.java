@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BlockDescriptor {
     private int maxDocID;
-    private int numPosting; // number of posting in the block
+    private int numPosting; // number of posting in the block, is dynamic
     private long postingListOffset;
 
     public BlockDescriptor(long postingOffsetStart, List<Posting> subList) {
@@ -86,7 +86,6 @@ public class BlockDescriptor {
         return offset;
 
     }
-
 
     public static BlockDescriptor readFirstBlock(long offset,String filePath) {
 
