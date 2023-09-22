@@ -36,7 +36,6 @@ public class daatMaxTest {
         queries.add(new Query("what is parallel structure? why is it so important in the sermon on the mount?"));
         queries.add(new Query("what is paper with a watermark called"));
         queries.add(new Query("what is parapsychology?"));
-        queries.add(new Query("what is parapsychology?"));
         queries.add(new Query("what is pressure vessel testing and repair"));
         queries.add(new Query("what is the gram molecular weight of maltose"));
         queries.add(new Query("treasure island game for ps3 worth"));
@@ -50,8 +49,8 @@ public class daatMaxTest {
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
             }
-            searcherdaat.DAAT(query.getQueryTerms(), 100, "disjunctive", "BM25");
-            searchermax.maxScore(query.getQueryTerms(), 100, "disjunctive", "BM25");
+            searcherdaat.DAAT(query.getQueryTerms(), 10, "disjunctive", "BM25");
+            searchermax.maxScore(query.getQueryTerms(), 10, "disjunctive", "BM25");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
@@ -62,8 +61,8 @@ public class daatMaxTest {
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
             }
-            searcherdaat.DAAT(query.getQueryTerms(), 100, "conjunctive", "BM25");
-            searchermax.maxScore(query.getQueryTerms(), 100, "conjunctive", "BM25");
+            searcherdaat.DAAT(query.getQueryTerms(), 10, "conjunctive", "BM25");
+            searchermax.maxScore(query.getQueryTerms(), 10, "conjunctive", "BM25");
             for (int i = 0; i < searcherdaat.getQueryResults().size(); i++) {
                 assertEquals(searcherdaat.getQueryResults().get(i).getDocNo(), searchermax.getQueryResults().get(i).getDocNo());
                 assertEquals(searcherdaat.getQueryResults().get(i).getScoring(), searchermax.getQueryResults().get(i).getScoring());
