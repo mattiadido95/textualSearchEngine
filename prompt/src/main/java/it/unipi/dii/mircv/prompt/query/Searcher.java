@@ -21,6 +21,8 @@ public class Searcher {
     private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
 
+    private static int initcounter = 0;
+
 
     private static final int NUMBER_OF_POSTING = 10;
     private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
@@ -91,6 +93,7 @@ public class Searcher {
             } else {
                 // if term is not in lexicon add empty posting list
                 postingLists.add(null);
+
             }
         }
 
@@ -239,6 +242,7 @@ public class Searcher {
         Collections.sort(queryResults);
         blockDescriptorList.clear();
         postingLists.clear();
+        System.out.println("Counter: " + initcounter);
     }
 
     private int updateProcessingPost(ArrayList<BlockDescriptorList> blockDescriptorList, ArrayList<PostingList> postingLists, int essential_index, int new_essential_index, LinkedHashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
@@ -351,6 +355,7 @@ public class Searcher {
     }
 
     private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+        initcounter++;
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
