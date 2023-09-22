@@ -1,38 +1,26 @@
 [
     {
-        "duration": 4449,
-        "start_time": 1695390689201,
-        "end_time": 1695390693650,
+        "duration": 3956,
+        "start_time": 1695397910190,
+        "end_time": 1695397914146,
         "type": "load_lexicon"
     },
     {
-        "duration": 3845,
-        "start_time": 1695390693664,
-        "end_time": 1695390697509,
+        "duration": 3677,
+        "start_time": 1695397914207,
+        "end_time": 1695397917884,
         "type": "load_documents"
     },
     {
-        "duration": 13,
-        "start_time": 1695390712231,
-        "end_time": 1695390712244,
+        "duration": 0,
+        "start_time": 1695397923001,
+        "end_time": 1695397923001,
         "type": "query"
     },
     {
-        "duration": 1,
-        "start_time": 1695390750292,
-        "end_time": 1695390750293,
-        "type": "query"
-    },
-    {
-        "duration": 1267,
-        "start_time": 1695390792754,
-        "end_time": 1695390794021,
-        "type": "query"
-    },
-    {
-        "duration": 2,
-        "start_time": 1695390818622,
-        "end_time": 1695390818624,
+        "duration": 416,
+        "start_time": 1695397932990,
+        "end_time": 1695397933406,
         "type": "query"
     }
 ]
