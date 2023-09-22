@@ -20,6 +20,9 @@ public class MemoryManager {
     private Logs log = new Logs();
 
     private String filePath = "data/index/invertedIndex.txt";
+    private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
+    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
+    private static final String PARTIAL_INDEX_PATH = "data/index/index_";
 
     public MemoryManager() {
         setFreeMemoryPercentage();
@@ -63,9 +66,9 @@ public class MemoryManager {
 
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
-            int df = lexicon.getLexicon().get(term).getDf(); // get df of term
+//            int df = lexicon.getLexicon().get(term).getDf(); // get df of term
             PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
-            long offset = postingList.savePostingListToDisk(indexCounter); // save posting list to disk and get offset of file
+            long offset = postingList.savePostingListToDisk(indexCounter,PARTIAL_INDEX_PATH); // save posting list to disk and get offset of file
             lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
 
 //            PostingList readedPostingList = new PostingList();
@@ -76,13 +79,13 @@ public class MemoryManager {
 //            System.out.println("Posting list saved to disk: " + postingList.toString());
 //            System.out.println("**************************************");
         }
-        log.getLog("End index saving to disk");
+//        log.getLog("End index saving to disk");
 
-        lexicon.saveLexiconToDisk(indexCounter); // save lexicon to disk
+        lexicon.saveLexiconToDisk(indexCounter,PARTIAL_LEXICON_PATH); // save lexicon to disk
         lexicon.getLexicon().clear(); // clear lexicon
 //        lexicon.readLexiconFromDisk(indexCounter); // read lexicon from disk
 
-        log.getLog("End lexicon saving to disk");
+//        log.getLog("End lexicon saving to disk");
 
 //        System.out.println("**********CHECKING LEXICON*********");
 //        System.out.println("Lexicon saved to disk: " + lexicon.toString());

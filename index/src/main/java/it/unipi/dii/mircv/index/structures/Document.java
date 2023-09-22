@@ -16,6 +16,8 @@ public class Document {
     private String body;
     private int length;
     private String rawDocument;
+    private double DUB_bm25; // document upper bound for bm25
+    private double DUB_tfidf; // document upper bound for tfidf
 
     public Document(String rawDocument, int docID) {
         this.docID = docID;
@@ -70,8 +72,25 @@ public class Document {
         this.length = length;
     }
 
-    public static void saveDocumentsToDisk(ArrayList<Document> docs, int index) {
-        String filePath = "data/index/documents/documents_" + index + ".bin";
+    public double getDUB_bm25() {
+        return DUB_bm25;
+    }
+
+    public void setDUB_bm25(double DUB_bm25) {
+        this.DUB_bm25 = DUB_bm25;
+    }
+
+    public double getDUB_tfidf() {
+        return DUB_tfidf;
+    }
+
+    public void setDUB_tfidf(double DUB_tfidf) {
+        this.DUB_tfidf = DUB_tfidf;
+    }
+
+    public static void saveDocumentsToDisk(ArrayList<Document> docs, int index, String filePath) {
+        if(index != -1)
+            filePath += index + ".bin";
 
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
@@ -97,7 +116,8 @@ public class Document {
                 buffer.putInt(doc.getLength());
 
                 // Se il buffer è pieno, scrivi il suo contenuto sul file
-                if (!buffer.hasRemaining()) {
+                //if (!buffer.hasRemaining()) {
+                if (buffer.remaining() < (paddedDocNoBytes.length + 4 + 4)) {
                     buffer.flip();
                     fileChannel.write(buffer);
                     buffer.clear();
@@ -118,15 +138,11 @@ public class Document {
         }
     }
 
-    public static ArrayList<Document> readDocumentsFromDisk(int index) {
-        String filePath;
+    public static ArrayList<Document> readDocumentsFromDisk(int index, String filePath){
 
-        if(index == -1){
-            filePath = "data/index/documents.bin";
-        }else{
-            filePath = "data/index/documents/documents_" + index + ".bin";
+        if (index != -1) {
+            filePath += index + ".bin";
         }
-
 
         ArrayList<Document> documents = new ArrayList<>();
 
@@ -135,15 +151,12 @@ public class Document {
             FileChannel fileChannel = fileInputStream.getChannel();
 
             // Creare un buffer ByteBuffer per migliorare le prestazioni di lettura
-            ByteBuffer buffer = ByteBuffer.allocate(DOCNO_LENGTH + 4 + 4);
+            ByteBuffer buffer = ByteBuffer.allocate(1024); // Usiamo un buffer di 1024 byte
 
-            // Leggi i dati dal file in blocchi di 1024 byte
             while (fileChannel.read(buffer) > 0) {
-                //TODO controlla flip
                 buffer.flip();
 
-                // Leggi i dati dal buffer
-                while (buffer.hasRemaining()) {
+                while (buffer.remaining() >= (DOCNO_LENGTH + 4 + 4)) {
                     Document doc = new Document();
                     doc.docID = buffer.getInt();
 
@@ -156,11 +169,12 @@ public class Document {
                     documents.add(doc);
                 }
 
-                buffer.clear();
+                buffer.compact();
             }
 
             // Chiudi le risorse
             fileChannel.close();
+            fileInputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();

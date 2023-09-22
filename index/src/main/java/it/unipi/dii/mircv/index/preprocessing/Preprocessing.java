@@ -18,8 +18,9 @@ public class Preprocessing {
 
     public List<String> tokens = new ArrayList<>();
 
-    public Preprocessing(String query){
+    public Preprocessing(String query) {
         List<String> words = tokenization(query);
+        words = removeNumbers(words); // Remove words that contain more than 4 digits
         words = removeWordstop(words); // Remove stopwords
         PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
         List<String> stemWords = new ArrayList<>();
@@ -30,11 +31,11 @@ public class Preprocessing {
         this.tokens = stemWords;
     }
 
-    public Preprocessing(String document,int docCounter){
+    public Preprocessing(String document, int docCounter) {
         // create new document
-        this.doc = new Document(document,docCounter);
+        this.doc = new Document(document, docCounter);
         List<String> words = tokenization(doc.getBody());
-        this.doc.setLength(words.size());
+        words = removeNumbers(words); // Remove words that contain numbers
         words = removeWordstop(words); // Remove stopwords
         PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
         List<String> stemWords = new ArrayList<>();
@@ -42,46 +43,25 @@ public class Preprocessing {
             String stem = porterStemmer.stemWord(word);
             stemWords.add(stem);
         }
+        this.doc.setLength(stemWords.size());
         this.tokens = stemWords;
     }
 
-//    public Preprocessing() {
-//        index = new HashMap<>();
-//        try {
-//            BufferedReader reader = new BufferedReader(new FileReader(""));
-//            String line;
-//            int c = 0;
-//            while ((line = reader.readLine()) != null) {
-//                List<String> words = tokenization(line); // Tokenization
-//                String id = words.get(0);
-//                words.remove(0);
-//                words = removeWordstop(words); // Remove stopwords
-//                PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
-//                List<String> stemWords = new ArrayList<>();
-//                for (String word : words) {
-//                    String stem = porterStemmer.stemWord(word);
-//                    stemWords.add(stem);
-//                }
-//                buildIndex(id, stemWords); // Build index
-//
-////                c++;
-////                if (c == 200000) {
-//                for (Map.Entry<String, Map<String, Integer>> entry : index.entrySet()) {
-//                    System.out.print(entry.getKey() + ": ");
-//                    Map<String, Integer> inMap = entry.getValue();
-//                    for (Map.Entry<String, Integer> innerEntry : inMap.entrySet()) {
-//                        System.out.print("(" + innerEntry.getKey() + "," + innerEntry.getValue() + "),");
-//                    }
-//                    System.out.println();
-//                }
-////                    break;
-////                }
-//            }
-//            reader.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    // function to remove all words that contain more than 4 digits
+    public List<String> removeNumbers(List<String> words) {
+        List<Integer> indexList = new ArrayList<>();
+        for (int i = 0; i < words.size(); i++) {
+            String word = words.get(i);
+            if (word.matches(".*\\d.*")) {
+                indexList.add(i);
+            }
+        }
+        Collections.reverse(indexList);
+        for (int index : indexList) {
+            words.remove(index);
+        }
+        return words;
+    }
 
     public List<String> tokenization(String doc) {
         List<String> words = new ArrayList<>();
@@ -89,11 +69,18 @@ public class Preprocessing {
         String regex = "\\s+|\\!|\"|\\#|\\$|\\%|\\&|\\'|\\(|\\)|\\*|\\+|"
                 + "\\,|\\-|\\.|\\/|\\:|\\;|\\<|\\=|\\>|\\|\\?|\\@|\\[|"
                 + "\\]|\\^|\\`|\\{|\\||\\}|\\~";
+        String regex2 = "[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
         Pattern pattern = Pattern.compile(regex);
+        Pattern pattern2 = Pattern.compile(regex2);
+
+
         String[] tokens = pattern.split(doc);
         for (String token : tokens) {
-            if (!token.isEmpty()) {
-                words.add(token);
+            String[] subTokens = pattern2.split(token);
+            for (String subToken : subTokens) {
+                if (!subToken.isEmpty()) {
+                    words.add(subToken);
+                }
             }
         }
         return words;
@@ -122,26 +109,6 @@ public class Preprocessing {
         words.removeAll(stopwords);
         return words;
     }
-//
-//    private void buildIndex(String id, List<String> words) {
-//        Map<String, Integer> postingList;
-//        int frequency;
-//        for (String word : words) {
-//            if (index.containsKey(word)) {
-//                postingList = index.get(word);
-//                if (postingList.containsKey(id)) {
-//                    frequency = postingList.get(id) + 1;
-//                } else {
-//                    frequency = 1;
-//                }
-//            } else {
-//                postingList = new HashMap<>();
-//                frequency = 1;
-//            }
-//            postingList.put(id, frequency);
-//            index.put(word, postingList);
-//        }
-//    }
 
 
     public Document getDoc() {

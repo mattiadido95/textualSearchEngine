@@ -4,6 +4,8 @@ import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,10 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Spimi {
-
     private String COLLECTION_PATH;
+
     private Logs log;
     private int indexCounter;
+    private int documentCounter;
+    private long totDocLength;
+    private static final String LEXICON_PATH = "data/index/lexicon/";
+    private static final String DOCUMENTS_PATH = "data/index/documents/";
+    private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
+    private static final String INDEX_PATH = "data/index/";
+
 
     public Spimi(String collection) {
         this.COLLECTION_PATH = collection;
@@ -34,7 +43,7 @@ public class Spimi {
         return indexCounter;
     }
 
-    public void execute() {
+    public void execute() throws IOException {
 
         log.getLog("Start indexing ...");
 
@@ -44,14 +53,20 @@ public class Spimi {
 
         log.getLog("Deleted old index files ...");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"))) {// open buffer to read documents
+
+        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
+        tarArchiveInputStream.getNextEntry();
+
+
+        // open buffer to read documents
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"))) {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
 
             String line; // start reading document by document
 
-            int documentCounter = 0;
+            totDocLength = 0;
 
             while ((line = br.readLine()) != null) {
 
@@ -62,6 +77,7 @@ public class Spimi {
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents
+                totDocLength += document.getLength();
 
                 for (String token : tokens) {
                     lexicon.addLexiconElem(token); // add token to the lexicon
@@ -74,68 +90,50 @@ public class Spimi {
                 if (documentCounter % 250000 == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
-                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
-                    indexCounter += 1;
-                    //log.getLog(manageMemory); // print memory status after clearing memory
-
-                    // TODO VA FATTA LA SORT DEI TERMINI prima di salvare su disco (forse non serve piu)
-                }
-
-                if (documentCounter % 10 == 0) {
-                    // TODO TESTING dei primi 30 documenti -> 3 file diversi
-                    log.getLog("Processed: " + documentCounter + " documents");
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
-                    Document.saveDocumentsToDisk(documents, indexCounter); // save documents to disk
+                    Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     //TODO serve davvero fare la new
-                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    //read Structures from disk
-                    lexicon.readLexiconFromDisk(indexCounter);
-                    // per ogni chiave del lexicon, leggi il posting list dal file
-                    for (String key : lexicon.getLexicon().keySet()) {
-                        //get lexicon elem
-                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
-                        PostingList postingList = new PostingList();
-                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
-                        System.out.println(lexiconElem);
-                        System.out.println(postingList);
-                    }
+//                    //read Structures from disk
+//                    lexicon.readLexiconFromDisk(indexCounter);
+//                    // per ogni chiave del lexicon, leggi il posting list dal file
+//                    for (String key : lexicon.getLexicon().keySet()) {
+//                        //get lexicon elem
+//                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
+//                        PostingList postingList = new PostingList();
+//                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
+//                        System.out.println(lexiconElem);
+//                        System.out.println(postingList);
+//                    }
                     // clear per sicurezza
-                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    invertedIndex = new HashMap<>(); // create a new inverted index
+//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+//                    invertedIndex = new HashMap<>(); // create a new inverted index
 
-                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
-                    System.out.println(documents1);
+//                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
+//                    System.out.println(documents1);
                     indexCounter += 1;
-                    if (documentCounter == 100)
-                        break;
+//                    if (documentCounter == 20000)
+//                        break;
                 }
 
-//                if (documentCounter % 500000 == 0) {
-//                    log.getLog(invertedIndex);
-//                    log.getLog(lexicon);
-//                    log.getLog("Processed: " + documentCounter + " documents");
-//                }
 
-                // TODO FARE MERGE INDICI E VOCABOLARIO
             }
             //save into disk documentCounter
-            FileOutputStream fileOut = new FileOutputStream("data/index/numberOfDocs.bin");
+            FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(documentCounter);
+            out.writeObject(totDocLength);
             out.close();
             fileOut.close();
+            tarArchiveInputStream.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        log.getLog("Indexing completed ...");
     }
 
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {

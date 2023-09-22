@@ -1,66 +1,110 @@
 package it.unipi.dii.mircv.prompt;
 
-
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
+import it.unipi.dii.mircv.index.utility.Logs;
+import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.structure.QueryResult;
+import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
-import javax.print.Doc;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Prompt {
-
     private static int n_results = 10; // number of documents to return for a query
+    private static int n_results_eval = 15; // number of documents to return for evaluation
+    private static final String DOCUMENTS_PATH = "data/index/documents.bin";
+    private static final String LEXICON_PATH = "data/index/lexicon.bin";
+    public static void main(String[] args) throws InterruptedException {
 
-    public static void main(String[] args) {
+        //delete file di log
+        File file = new File("data/logs/logs.json");
+        file.delete();
 
+        Logs log = new Logs();
+        long start, end;
+        System.out.println("Loading index ...");
         // load main structure in memory
         Lexicon lexicon = new Lexicon();
-        lexicon.readLexiconFromDisk(-1);
-        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1);
+        start = System.currentTimeMillis();
+        lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
+        end = System.currentTimeMillis();
+        log.addLog("load_lexicon", start, end);
 
-        System.out.println("Insert your query ...");
+        start = System.currentTimeMillis();
+        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH);
+        end = System.currentTimeMillis();
+        log.addLog("load_documents", start, end);
+
         Scanner scanner = new Scanner(System.in);
-        String userInput = scanner.nextLine();
-        scanner.close();
-
-        Query query = new Query(userInput);
-        ArrayList<String> queryTerms = query.getQueryTerms();
-
-//        // print query terms
-//        System.out.println("User Query terms:");
-//        for (String term : queryTerms) {
-//            System.out.println(term);
-//        }
-
-//        Searcher searcher = new Searcher(lexicon, documents);
-        Searcher searcher = new Searcher();
-        ArrayList<String> pid_results = searcher.search(queryTerms, lexicon, documents);
-
-        if (pid_results.size() != 0) {
-            System.out.println("PID results:");
-            for (String pid : pid_results) {
-                System.out.println(pid);
+        Searcher searcherDAAT = new Searcher(lexicon, documents);
+        Searcher searcherMAX = new Searcher(lexicon, documents);
+        while (true) {
+            System.out.println("--------------------------------------------------");
+            System.out.println("Welcome to the search engine!");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 to run dynamic pruning \n - insert 10 to exit");
+            int userInput = 0;
+            try {
+                userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
+            } catch (InputMismatchException e) {
+                System.out.println("Wrong input");
+                scanner.nextLine(); // to consume the \n character left by nextInt()
+                continue;
             }
-        } else {
-            System.out.println("No results found");
+            scanner.nextLine(); // to consume the \n character left by nextInt()
+            if (userInput == 1) {
+                System.out.println("Insert your query ...");
+                String queryInput = scanner.nextLine();
+
+                Query query = new Query(queryInput);
+                ArrayList<String> queryTerms = query.getQueryTerms();
+
+                System.out.println("DAAT");
+                start = System.currentTimeMillis();
+//                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
+                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+//                searcherDAAT.DAAT(queryTerms, n_results, "conjunctive", "TFIDF");
+
+                end = System.currentTimeMillis();
+                searcherDAAT.printResults(end - start);
+
+                System.out.println("MaxScore");
+                start = System.currentTimeMillis();
+                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+//                searcherMAX.maxScore(queryTerms, n_results, "conjunctive", "TFIDF");
+//                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
+//                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
+
+                end = System.currentTimeMillis();
+                searcherMAX.printResults(end - start);
+
+                log.addLog("query", start, end);
+
+            } else if (userInput == 2) {
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcherDAAT, lexicon, documents, n_results_eval, "disjunctive");
+                evaluatorMT.execute();
+//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
+//                evaluator.execute();
+//                evaluator.printResults();
+            } else if (userInput == 3) {
+                // call to dynamic pruning process
+                DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
+                dinamicPruning.TUB_processing("BM25");
+                dinamicPruning.TUB_processing("TFIDF");
+                lexicon = new Lexicon();
+                lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
+            } else if (userInput == 10) {
+                System.out.println("Bye!");
+                scanner.close();
+                break;
+            } else {
+                System.out.println("Wrong input, please insert 1 or 2");
+            }
+
         }
-
-        System.out.println("disjunctive");
-        ArrayList<QueryResult> results;
-        searcher.DAAT(queryTerms, lexicon, documents, n_results, "disjunctive");
-        results = searcher.getQueryResults();
-        System.out.println(results);
-
-        System.out.println("conjunctive");
-        searcher.DAAT(queryTerms, lexicon, documents, n_results, "conjunctive");
-        results = searcher.getQueryResults();
-        System.out.println(results);
-
     }
 }
+

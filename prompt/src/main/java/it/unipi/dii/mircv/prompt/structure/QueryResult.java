@@ -9,6 +9,22 @@ public class QueryResult implements Comparable<QueryResult>{
         this.scoring = scoring;
     }
 
+    public String getDocNo() {
+        return docNo;
+    }
+
+    public void setDocNo(String docNo) {
+        this.docNo = docNo;
+    }
+
+    public double getScoring() {
+        return scoring;
+    }
+
+    public void setScoring(double scoring) {
+        this.scoring = scoring;
+    }
+
     @Override
     public String toString() {
         return "QueryResult{" +

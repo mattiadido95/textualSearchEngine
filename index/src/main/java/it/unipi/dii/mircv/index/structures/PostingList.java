@@ -8,27 +8,42 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PostingList {
     private ArrayList<Posting> postings;
-    int size;
+    private Iterator<Posting> postingIterator;
+    private Posting actualPosting;
+
+    private static final String INDEX_PATH = "data/index/index.bin";
 
     Logs log = new Logs();
 
     public PostingList(Document doc) {
         postings = new ArrayList<>();
         postings.add(new Posting(doc.getDocID(), 1));
-        size = 1;
+        postingIterator = null;
+        actualPosting = null;
     }
 
     public PostingList() {
         postings = new ArrayList<>();
-        size = 0;
+        postingIterator = null;
+        actualPosting = null;
     }
 
     public ArrayList<Posting> getPostings() {
         return postings;
+    }
+
+    public void mergePosting(PostingList postingList) {
+        this.postings.addAll(postingList.getPostings());
+        log.getLog(this.postings);
+    }
+
+    public Posting getActualPosting() {
+        return actualPosting;
     }
 
     @Override
@@ -47,8 +62,6 @@ public class PostingList {
             }
         }
         output.append("]\n");
-        //System.out.println(output);
-        //System.out.println("**************************************");
         return output.toString();
     }
 
@@ -75,40 +88,82 @@ public class PostingList {
         // posting list doesn't contain the document, create new posting
         Posting newPosting = new Posting(doc.getDocID(), 1); // create new posting
         this.postings.add(newPosting); // add posting to posting list
-        this.size++;
+    }
+
+    public void openList() {
+        postingIterator = postings.iterator();
+    }
+
+    public void closeList() {
+        actualPosting = null;
+        postingIterator = null;
+    }
+
+    public Iterator<Posting> getPostingIterator() {
+        return postingIterator;
+    }
+
+    public Posting next() {
+        if (postingIterator.hasNext())
+            actualPosting = postingIterator.next();
+        else
+            actualPosting = null;
+        return actualPosting;
+    }
+
+    public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks, String path) {
+        //todo inserire controllo se posting è null dove chiami nextGEQ
+        bdl.openBlock();
+        // cerca il blocco che contiene il docId
+        while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
+            numBlocks--;
+        }
+        if (numBlocks == 0) { // non esiste il posting
+            return null;
+        }
+        // carica la relativa posting list
+        //controllo se postinglist caricata è quella del blocco di interesse
+        if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
+            this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), path);
+            this.openList();
+            this.next();
+        }
+        // scorri la posting list fino a trovare il docId
+        while (actualPosting.getDocID() < docId && postingIterator.hasNext()) {
+            actualPosting = postingIterator.next();
+        }
+
+        return actualPosting;
+    }
+
+    public int getDocId() {
+        return actualPosting.getDocID();
+    }
+
+    public int getFreq() {
+        return actualPosting.getFreq();
+    }
+
+    public boolean hasNext() {
+        return postingIterator.hasNext();
+    }
+
+    public int getMinDocId() {
+        return this.postings.get(0).getDocID();
     }
 
     public int getPostingListSize() {
-        return this.size;
+        return this.getPostings().size();
     }
 
-    public long savePostingListToDisk(int indexCounter) {
-        String filePath;
-        if (indexCounter == -1) {
-            // TODO implementare scrittura postinglist merge
-            filePath = "data/index/index.bin";
-        } else {
-            filePath = "data/index/index_" + indexCounter + ".bin";
-        }
+    public long savePostingListToDisk(int indexCounter, String filePath) {
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
+
         long offset = -1;
 
         try {
-//            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
-//            // Posizionati alla fine del file per l'aggiunta dei dati
-//            randomAccessFile.seek(randomAccessFile.length());
-//
-//            // Memorizza la posizione di inizio nel file
-//            offset = randomAccessFile.getFilePointer();
-////            System.out.println("Initial offset: " + offset); // Debug: Stampa l'offset
-//
-//            for (Posting posting : this.postings) {
-//                randomAccessFile.writeInt(posting.getDocID());
-//                randomAccessFile.writeInt(posting.getFreq());
-//            }
-
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
-//            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-//            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
             FileChannel fileChannel = fileOutputStream.getChannel();
 
             // Memorizza la posizione di inizio nel file
@@ -137,8 +192,7 @@ public class PostingList {
 
             // Chiudi le risorse
             fileChannel.close();
-//            dataOutputStream.close();
-//            bufferedOutputStream.close();
+            fileOutputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,13 +202,9 @@ public class PostingList {
 
     }
 
-    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset) {
-        String filePath;
-        if (indexCounter == -1) {
-            filePath = "data/index/index.bin";
-        } else {
-            filePath = "data/index/index_" + indexCounter + ".bin";
-        }
+    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset, String filePath) {
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
 
         ArrayList<Posting> result = new ArrayList<>();
 
@@ -179,35 +229,13 @@ public class PostingList {
                 int freq = buffer.getInt();
                 result.add(new Posting(docID, freq));
             }
-
-//            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "r");
-//
-////            System.out.println("File path: " + filePath); // Debug: Stampa il percorso del file
-////            System.out.println("Offset: " + offset); // Debug: Stampa l'offset
-//
-//            // Posizionati nella posizione desiderata
-//            randomAccessFile.seek(offset);
-////            System.out.println("Size: " + df); // Debug: Stampa la dimensione della posting list
-//
-//            for(int i = 0; i < df; i++) {
-//                int docID = randomAccessFile.readInt();
-//                int freq = randomAccessFile.readInt();
-//                result.add(new Posting(docID, freq));
-//            }
-//
-//            randomAccessFile.close();
-//
-//
-////            System.out.println("Dimensione della PostingList: " + result.size());
-////            System.out.println("PostingList letta, docID e freq " + result.get(0).getDocID() + ", " + result.get(0).getFreq());
-
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //TODO rendere la funzione statica ed eliminare le due righe sottostanti oppure eliminare la return
         this.postings = result;
-        this.size = df;
 
         return result; // serve forse dopo per ricostruire l'indice
     }

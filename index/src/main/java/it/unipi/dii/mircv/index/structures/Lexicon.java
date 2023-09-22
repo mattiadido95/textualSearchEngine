@@ -8,13 +8,12 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Lexicon {
-    //TODO cambiare in treeMap
+
     TreeMap<String, LexiconElem> lexicon;
 
     Logs log = new Logs();
@@ -27,8 +26,8 @@ public class Lexicon {
         return this.lexicon;
     }
 
-    public void addLexiconElem(LexiconElem lexiconElem) {
-        this.lexicon.put(lexiconElem.getTerm(), lexiconElem);
+    public ArrayList<String> getLexiconKeys() {
+        return new ArrayList<>(this.lexicon.keySet());
     }
 
     public void addLexiconElem(String term) {
@@ -38,7 +37,7 @@ public class Lexicon {
             lexiconElem.incrementCf();
         } else {
             // lexicon does not contain the term
-            LexiconElem lexiconElem = new LexiconElem(term);
+            LexiconElem lexiconElem = new LexiconElem();
             lexiconElem.incrementCf();
             this.lexicon.put(term, lexiconElem);
         }
@@ -61,40 +60,44 @@ public class Lexicon {
         return this.lexicon.get(term);
     }
 
-//    public void sortLexicon() {
-//        /**
-//         * this.lexicon: Questo fa riferimento a una mappa chiamata lexicon nell'oggetto corrente (presumibilmente una variabile di istanza nella classe).
-//         * .entrySet().stream(): Converti la mappa in uno stream di oggetti Map.Entry, che rappresentano le coppie chiave-valore della mappa.
-//         * .sorted((e1, e2) -> e1.getValue().getTerm().compareTo(e2.getValue().getTerm())): Ordini gli elementi dello stream in base al valore dell'oggetto Lexicon associato alla chiave. La funzione di comparazione prende due oggetti Map.Entry (e quindi coppie chiave-valore) e confronta i termini (getTerm()) degli oggetti Lexicon associati ai rispettivi valori.
-//         * .collect(...): Raccogli gli elementi ordinati in una nuova mappa.
-//         * HashMap::new: Fornisce un costruttore di HashMap per creare una nuova mappa.
-//         * (m, e) -> m.put(e.getKey(), e.getValue()): Definisce come mettere gli elementi nella mappa di destinazione durante la raccolta. Per ogni elemento nell'stream, mette la coppia chiave-valore nell'oggetto HashMap di destinazione (m).
-//         * HashMap::putAll: Combinare le mappe. Questo passo consente di inserire tutte le coppie chiave-valore dalla mappa raccolta nell'oggetto this.lexicon originale.
-//         */
-//        this.lexicon = this.lexicon.entrySet().stream()
-//                .sorted((e1, e2) -> e1.getValue().getTerm().compareTo(e2.getValue().getTerm()))
-//                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
-//    }
+    //sort lexicon by TUB in termElem
+    public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String,LexiconElem> lexicon, String scoringFunction){
+
+        // Ordina la lexicon per LexiconELem.TUB_bm25 in ordine decrescente
+        LinkedHashMap<String, LexiconElem> sorted = new LinkedHashMap<>();
+        if(scoringFunction.equals("TFIDF")){
+            sorted = lexicon.entrySet().stream()
+                .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {throw new AssertionError();},
+                        LinkedHashMap::new
+                ));
+        }else if(scoringFunction.equals("BM25")) {
+            sorted = lexicon.entrySet().stream()
+                .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {throw new AssertionError();},
+                        LinkedHashMap::new
+                ));
+        }
+        return sorted;
+    }
+
 
     public void setDf(String term, int newDf) {
         this.lexicon.get(term).setDf(newDf);
     }
 
-    public static byte[] encodeString(String input, int targetByteLength) {
-        byte[] inputBytes = input.getBytes(StandardCharsets.UTF_8);
-        byte[] encodedBytes = new byte[targetByteLength];
+    public void saveLexiconToDisk(int indexCounter, String filePath) {
+//        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
 
-        System.arraycopy(inputBytes, 0, encodedBytes, 0, Math.min(inputBytes.length, targetByteLength));
+        if (indexCounter != -1)
+            filePath += indexCounter + ".bin";
 
-        return encodedBytes;
-    }
-
-    public static String decodeBytes(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8).trim();
-    }
-
-    public void saveLexiconToDisk(int indexCounter) {
-        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
 
@@ -104,94 +107,47 @@ public class Lexicon {
                 randomAccessFile.writeInt(lexiconElem.getDf());
                 randomAccessFile.writeLong(lexiconElem.getCf());
                 randomAccessFile.writeLong(lexiconElem.getOffset());
+                if (indexCounter == -1) {
+                    randomAccessFile.writeInt(lexiconElem.getBlocksNumber());
+                    randomAccessFile.writeDouble(lexiconElem.getTUB_bm25());
+                    randomAccessFile.writeDouble(lexiconElem.getTUB_tfidf());
+                }
             }
-
-//            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-//            FileChannel fileChannel = fileOutputStream.getChannel();
-//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
-//
-//            int targetByteLength = 64; // Lunghezza in byte del termine
-//
-//            for (String term : lexicon.keySet()) {
-//                LexiconElem lexiconElem = lexicon.get(term);
-//
-//                buffer.clear();
-//
-//                // Scrivi i dati nel buffer
-////                byte[] termBytes = lexiconElem.getTerm().getBytes();
-//
-//                byte[] termBytes = encodeString(term, targetByteLength);
-//                buffer.putInt(termBytes.length);
-//                buffer.put(termBytes);
-//
-//                buffer.putInt(lexiconElem.getDf());
-//                buffer.putLong(lexiconElem.getCf());
-//                buffer.putLong(lexiconElem.getOffset());
-//
-//                buffer.flip();
-//
-//                // Scrivi il contenuto del buffer nel canale del file
-//                fileChannel.write(buffer);
-//            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void readLexiconFromDisk(int indexCounter) {
-        String filePath;
+    public void readLexiconFromDisk(int indexCounter, String filePath){
 
-        if (indexCounter == -1){
-            filePath = "data/index/lexicon.bin";
-        }else {
+        if (indexCounter != -1)
             filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
-        }
 
-        try {
 
-//            FileChannel fileChannel = FileChannel.open(Path.of(filePath));
-//            ByteBuffer buffer = ByteBuffer.allocate(1008); // Dimensione del buffer
-//
-//            while (fileChannel.position() < fileChannel.size()) {
-//                buffer.clear();
-//
-//                int bytesRead = fileChannel.read(buffer);
-//
-//                if (bytesRead == -1) {
-//                    // Non ci sono abbastanza dati nel file
-//                    break;
-//                }
-//
-//                buffer.flip();
-//
-//                int termLength = buffer.getInt();
-//                byte[] termBytes = new byte[termLength];
-//                buffer.get(termBytes);
-////                String term = new String(termBytes);
-//                String term = decodeBytes(termBytes);
-//                int df = buffer.getInt();
-//                long cf = buffer.getLong();
-//                long offset = buffer.getLong();
-//
-//                // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-//                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
-//                this.lexicon.put(term, lexiconElem);
-//            }
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(randomAccessFile.getFD()))) {
 
-            RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+            DataInputStream dataInputStream = new DataInputStream(bufferedInputStream);
 
-            while (randomAccessFile.getFilePointer() < randomAccessFile.length()) {
-                String term = randomAccessFile.readUTF();
-                int df = randomAccessFile.readInt();
-                long cf = randomAccessFile.readLong();
-                long offset = randomAccessFile.readLong();
 
+            while (dataInputStream.available() > 0) {
+                String term = dataInputStream.readUTF();
+                int df = dataInputStream.readInt();
+                long cf = dataInputStream.readLong();
+                long offset = dataInputStream.readLong();
+                int numblock = -1;
+                double tub_bm25 = -1;
+                double tub_tfidf = -1;
+                if (indexCounter == -1) {
+                    numblock = dataInputStream.readInt();
+                    tub_bm25 = dataInputStream.readDouble();
+                    tub_tfidf = dataInputStream.readDouble();
+                }
                 // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-                LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+                LexiconElem lexiconElem = new LexiconElem(df, cf, offset, numblock, tub_bm25, tub_tfidf);
                 this.lexicon.put(term, lexiconElem);
             }
-            randomAccessFile.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -202,22 +158,25 @@ public class Lexicon {
         RandomAccessFile raf = araf.get(i);
         raf.seek(arrayOffset[i]);
 
-        String term = raf.readUTF();
+        raf.readUTF();
         int df = raf.readInt();
         long cf = raf.readLong();
         long offset = raf.readLong();
 
         arrayOffset[i] = raf.getFilePointer();
         // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-        LexiconElem lexiconElem = new LexiconElem(term, df, cf, offset);
+        LexiconElem lexiconElem = new LexiconElem(df, cf, offset,-1,-1,-1);
         return lexiconElem;
     }
 
-    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset) throws IOException {
+    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset, int numBlock) throws IOException {
         raf.writeUTF(term);
         raf.writeInt(df);
         raf.writeLong(cf);
         raf.writeLong(offset);
+        raf.writeInt(numBlock);
+        raf.writeDouble(-1); // TUB_bm25
+        raf.writeDouble(-1); // TUB_tfidf
         return term;
     }
 

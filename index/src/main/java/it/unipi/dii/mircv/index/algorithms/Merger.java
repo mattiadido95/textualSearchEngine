@@ -4,11 +4,7 @@ import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.TreeMap;
 
 public class Merger {
 
@@ -16,6 +12,13 @@ public class Merger {
     private int numberOfFiles;
     private Logs log;
     private ArrayList<ArrayList<String>> terms; // matrix of terms, each row is a list of terms and columns are the files
+    //    private static final int NUMBER_OF_POSTING = 10;
+    private static final int POSTING_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq into one posting
+    private static final int BLOCK_DESCRIPTOR_SIZE = (4 * 2 + 8); // 4 byte per docID, 4 byte per freq, 8 byte per offset
+    private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
+    private static final String FINAL_INDEX_PATH = "data/index/index.bin";
+    private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
+
 
     public Merger(String INDEX_PATH, int numberOfFiles) {
         this.INDEX_PATH = INDEX_PATH;
@@ -25,7 +28,7 @@ public class Merger {
         //read all the terms from index files
         for (int i = 0; i < numberOfFiles; i++) {
             Lexicon lexicon = new Lexicon();
-            lexicon.readLexiconFromDisk(i);
+            lexicon.readLexiconFromDisk(i, PARTIAL_LEXICON_PATH);
 
             //get key from lexicon
             terms.add(new ArrayList<>(lexicon.getLexicon().keySet()));
@@ -42,6 +45,8 @@ public class Merger {
         return result;
     }
 
+    // return the smallest term and remove it from the list
+    // file_index contains the index of the files that have the smallest term
     private String nextTerm(ArrayList<Integer> file_index) {
         String smallestTerm = null;
 
@@ -71,16 +76,15 @@ public class Merger {
     }
 
     public void execute() {
-        // TODO implement merge algorithm
         log.getLog("Start merging ...");
         //load in memory first file index_0
         ArrayList<Integer> term_index = new ArrayList<>(); // lista degli indici dei file che hanno il termine più piccolo
         ArrayList<String> lexiconFiles = new ArrayList<>(); // Lista dei file da unire
 
         for (int i = 0; i < numberOfFiles; i++) {
-            lexiconFiles.add(INDEX_PATH + "/lexicon/lexicon_" + i + ".bin");
+            lexiconFiles.add(INDEX_PATH + "/lexicon/lexicon_" + i + ".bin"); // utf-8,int,long,long
         }
-        String lexiconFinal = INDEX_PATH + "/lexicon.bin"; // File di output
+        String lexiconFinal = INDEX_PATH + "/lexicon.bin"; // File di output // utf-8,int,long,long,int
 
         long[] readOffset = new long[numberOfFiles]; // offset dei file di lettura
 
@@ -96,26 +100,24 @@ public class Merger {
 
             while (term != null) {
                 PostingList newPostingList = new PostingList();
-                LexiconElem newLexiconElem = new LexiconElem(term);
+                PostingList mergePostingList = new PostingList();
+                LexiconElem newLexiconElem = new LexiconElem();
 
                 for (int i = 0; i < term_index.size(); i++) {
                     // farsi ritornare un lexiconElem fare il merge delle posting list e scrivere il risultato nel file index
                     LexiconElem lexiconElem = Lexicon.readEntry(readers, readOffset, term_index.get(i));
                     // recupero la posting list dal file index_i dove i è dato da term_index(i)
-                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset());
+                    newPostingList.readPostingList(term_index.get(i), lexiconElem.getDf(), lexiconElem.getOffset(), INDEX_PATH + "/index_");
+                    //merge delle posting list
+                    mergePostingList.mergePosting(newPostingList);
                     //aggiorno il newLexiconElem con i dati di lexiconElem appena letto per merge
                     newLexiconElem.mergeLexiconElem(lexiconElem);
-                    // scrittura newPostingList nel file index
-                    if(i == 0) {
-                        long offset = newPostingList.savePostingListToDisk(-1); // TODO c'è la scrittura solo per postinglist parziali non per il file totale
-                        //aggiorno il newLexiconElem con l'offset della posting list appena scritta
-                        newLexiconElem.setOffset(offset);
-                    } else {
-                        newPostingList.savePostingListToDisk(-1);
-                    }
                 }
+
+                int blockCounter = saveBlockPosting(mergePostingList, newLexiconElem);
+
                 //salvo il nuovo elemento lessico nel file lessico
-                Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset());
+                Lexicon.writeEntry(writer, term, newLexiconElem.getDf(), newLexiconElem.getCf(), newLexiconElem.getOffset(), blockCounter);
                 term = this.nextTerm(term_index);
             }
             // chiudi tutti i file
@@ -156,6 +158,46 @@ public class Merger {
         // rimuovi cartella lexicon
         dir = new File(INDEX_PATH + "/documents");
         dir.delete();
+        log.getLog("End merging ...");
+    }
+
+    public static int saveBlockPosting(PostingList mergePostingList, LexiconElem newLexiconElem) {
+        // scrittura newPostingList nel file index
+        long postingOffsetStart = mergePostingList.savePostingListToDisk(-1, FINAL_INDEX_PATH);
+
+        //scorri la newPostingList e ogni NUMBER_OF_POSTING elementi salva il block descriptor
+        BlockDescriptor blockDescriptor;
+        int blockCounter = 0;
+        long blockDescriptorOffset;
+        int numBlocks = mergePostingList.getPostingListSize() > 1024 ? (int) Math.sqrt(mergePostingList.getPostingListSize()) : 1; // get number of block in which the posting list will be divided;
+        int numPostingInBlock = (int) Math.ceil(mergePostingList.getPostingListSize() / (double) numBlocks); // get number of posting in each block
+
+
+        for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
+            if ((i + 1) % numPostingInBlock == 0) {
+                //salva il block descriptor
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i + 1 - numPostingInBlock, i + 1));
+                postingOffsetStart += numPostingInBlock * POSTING_SIZE;
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
+                if (blockCounter == 0)
+                    //salva inzio del block descriptor nel newLexiconElem
+                    newLexiconElem.setOffset(blockDescriptorOffset);
+                blockCounter++;
+            } else if ((mergePostingList.getPostingListSize() - (blockCounter * numPostingInBlock)) < numPostingInBlock) {
+                //salva il block descriptor
+                blockDescriptor = new BlockDescriptor(postingOffsetStart, mergePostingList.getPostings().subList(i, mergePostingList.getPostingListSize()));
+                blockDescriptorOffset = blockDescriptor.saveBlockDescriptorToDisk(BLOCK_DESCRIPTOR_PATH);
+                if (blockCounter == 0)
+                    //salva inzio del block descriptor nel newLexiconElem
+                    newLexiconElem.setOffset(blockDescriptorOffset);
+                blockCounter++;
+                break;
+            }
+        }
+        if (blockCounter != numBlocks)
+            System.out.println("Error in saveBlockPosting: blockCounter != numBlocks");
+        return numBlocks;
     }
 }
+
 
