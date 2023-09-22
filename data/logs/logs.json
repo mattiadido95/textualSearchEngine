@@ -46,5 +46,11 @@
         "start_time": 1695389952904,
         "end_time": 1695389952904,
         "type": "query"
+    },
+    {
+        "duration": 275,
+        "start_time": 1695390825552,
+        "end_time": 1695390825827,
+        "type": "query"
     }
 ]

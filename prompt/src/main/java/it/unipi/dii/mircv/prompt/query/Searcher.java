@@ -249,6 +249,7 @@ public class Searcher {
         // calcolo DUB
         double DUB = partial_score;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+
         for (int j = 0; j < essential_index; j++) {
             if (scoringFunction.equals("TFIDF"))
                 DUB += queryTermsMap.get(termList.get(j)).getTUB_tfidf();
@@ -281,6 +282,9 @@ public class Searcher {
         return partial_score;
     }
 
+//    [1]->[2][4]
+//    [2][6][8]
+//    [1][2][3]
     private void updatePosting(PostingList pl, int j) {
 
         if (pl.hasNext()) // ho ancora post nella posting list attuale
