@@ -44,13 +44,14 @@ public class Spimi {
         deleteFiles("data/index/documents/", "bin");
         log.getLog("Deleted old index files ...");
 
-
-        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
-        tarArchiveInputStream.getNextEntry();
+        TarArchiveInputStream tarArchiveInputStream = null;
         // open buffer to read documents
         try {
             BufferedReader br;
+
             if (compressed_reading) {
+                tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
+                tarArchiveInputStream.getNextEntry();
                 br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"));
             } else {
                 br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));

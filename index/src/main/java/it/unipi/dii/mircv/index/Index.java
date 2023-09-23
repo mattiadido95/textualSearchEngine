@@ -52,7 +52,7 @@ public class Index {
         if (compressed_reading)
             COLLECTION_PATH = "data/collection/collection.tar.gz";
         else
-            COLLECTION_PATH = "data/collection/collection.tsv";
+            COLLECTION_PATH = "data/collection/collectionTest.tsv";
 
         Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();

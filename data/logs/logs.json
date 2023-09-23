@@ -82,5 +82,17 @@
         "start_time": 1695484188854,
         "end_time": 1695484188856,
         "type": "load_documents"
+    },
+    {
+        "duration": 95,
+        "start_time": 1695489379959,
+        "end_time": 1695489380054,
+        "type": "spimi"
+    },
+    {
+        "duration": 65,
+        "start_time": 1695489380069,
+        "end_time": 1695489380134,
+        "type": "merger"
     }
 ]
