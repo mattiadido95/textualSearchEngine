@@ -15,8 +15,6 @@ import java.util.List;
 
 public class Index {
     //https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020
-    private static final String COLLECTION_PATH = "data/collection/collection.tsv";
-    private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
@@ -49,8 +47,14 @@ public class Index {
         boolean[] options = processOptions(args);
         boolean compressed_reading = options[0];
         boolean porterStemmer = options[1];
+        String COLLECTION_PATH;
 
-        Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH, porterStemmer, compressed_reading);
+        if (compressed_reading)
+            COLLECTION_PATH = "data/collection/collection.tar.gz";
+        else
+            COLLECTION_PATH = "data/collection/collection.tsv";
+
+        Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
