@@ -15,9 +15,6 @@ public class PostingList {
     private ArrayList<Posting> postings;
     private Iterator<Posting> postingIterator;
     private Posting actualPosting;
-
-    private static final String INDEX_PATH = "data/index/index.bin";
-
     Logs log = new Logs();
 
     public PostingList(Document doc) {
@@ -42,10 +39,6 @@ public class PostingList {
         log.getLog(this.postings);
     }
 
-    public Posting getActualPosting() {
-        return actualPosting;
-    }
-
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
@@ -54,9 +47,7 @@ public class PostingList {
             Posting posting = postings.get(i);
             int docID = posting.getDocID();
             int freq = posting.getFreq();
-
             output.append("(").append(docID).append(", ").append(freq).append(")");
-
             if (i < postings.size() - 1) {
                 output.append(" -> ");
             }
@@ -132,7 +123,6 @@ public class PostingList {
         while (actualPosting.getDocID() < docId && postingIterator.hasNext()) {
             actualPosting = postingIterator.next();
         }
-
         return actualPosting;
     }
 
@@ -165,17 +155,14 @@ public class PostingList {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
-
             // Memorizza la posizione di inizio nel file
             offset = fileChannel.position();
-
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             for (Posting posting : this.postings) {
                 buffer.putInt(posting.getDocID());
                 buffer.putInt(posting.getFreq());
-
                 // Se il buffer è pieno, scrivi il suo contenuto sul file
                 if (!buffer.hasRemaining()) {
                     buffer.flip();
@@ -183,26 +170,21 @@ public class PostingList {
                     buffer.clear();
                 }
             }
-
             // Scrivi eventuali dati rimanenti nel buffer sul file
             if (buffer.position() > 0) {
                 buffer.flip();
                 fileChannel.write(buffer);
             }
-
             // Chiudi le risorse
             fileChannel.close();
             fileOutputStream.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return offset;
-
     }
 
-    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset, String filePath) {
+    public void readPostingList(int indexCounter, int df, long offset, String filePath) {
         if (indexCounter != -1)
             filePath += indexCounter + ".bin";
 
@@ -211,19 +193,15 @@ public class PostingList {
         try {
             FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
             ByteBuffer buffer = ByteBuffer.allocate(8); // Buffer per leggere due interi
-
             // Posizionati nella posizione desiderata
             fileChannel.position(offset);
-
             for (int i = 0; i < df; i++) {
                 buffer.clear();
                 int bytesRead = fileChannel.read(buffer);
-
                 if (bytesRead == -1) {
                     // Non ci sono abbastanza dati nel file
                     break;
                 }
-
                 buffer.flip();
                 int docID = buffer.getInt();
                 int freq = buffer.getInt();
@@ -233,12 +211,7 @@ public class PostingList {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //TODO rendere la funzione statica ed eliminare le due righe sottostanti oppure eliminare la return
         this.postings = result;
-
-        return result; // serve forse dopo per ricostruire l'indice
     }
-
 
 }

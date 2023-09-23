@@ -42,6 +42,7 @@ public class Prompt {
         Scanner scanner = new Scanner(System.in);
         Searcher searcherDAAT = new Searcher(lexicon, documents);
         Searcher searcherMAX = new Searcher(lexicon, documents);
+
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
@@ -64,23 +65,16 @@ public class Prompt {
 
                 System.out.println("DAAT");
                 start = System.currentTimeMillis();
-//                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "disjunctive");
                 searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "BM25");
-//                searcherDAAT.DAAT(queryTerms, n_results, "conjunctive", "TFIDF");
-
                 end = System.currentTimeMillis();
                 searcherDAAT.printResults(end - start);
+                log.addLog("query", start, end);
 
                 System.out.println("MaxScore");
                 start = System.currentTimeMillis();
                 searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "BM25");
-//                searcherMAX.maxScore(queryTerms, n_results, "conjunctive", "TFIDF");
-//                searcher.DAAT_disk(queryTerms, lexicon, documents, n_results, "conjunctive");
-//                searcher.DAAT(queryTerms, n_results, "conjunctive", "BM25");
-
                 end = System.currentTimeMillis();
                 searcherMAX.printResults(end - start);
-
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
@@ -88,7 +82,6 @@ public class Prompt {
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();
-//                evaluator.printResults();
             } else if (userInput == 3) {
                 // call to dynamic pruning process
                 DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
@@ -103,7 +96,6 @@ public class Prompt {
             } else {
                 System.out.println("Wrong input, please insert 1 or 2");
             }
-
         }
     }
 }

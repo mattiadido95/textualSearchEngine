@@ -7,18 +7,14 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Merger {
-
     private String INDEX_PATH;
     private int numberOfFiles;
     private Logs log;
     private ArrayList<ArrayList<String>> terms; // matrix of terms, each row is a list of terms and columns are the files
-    //    private static final int NUMBER_OF_POSTING = 10;
     private static final int POSTING_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq into one posting
-    private static final int BLOCK_DESCRIPTOR_SIZE = (4 * 2 + 8); // 4 byte per docID, 4 byte per freq, 8 byte per offset
     private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
     private static final String FINAL_INDEX_PATH = "data/index/index.bin";
     private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
-
 
     public Merger(String INDEX_PATH, int numberOfFiles) {
         this.INDEX_PATH = INDEX_PATH;
@@ -29,7 +25,6 @@ public class Merger {
         for (int i = 0; i < numberOfFiles; i++) {
             Lexicon lexicon = new Lexicon();
             lexicon.readLexiconFromDisk(i, PARTIAL_LEXICON_PATH);
-
             //get key from lexicon
             terms.add(new ArrayList<>(lexicon.getLexicon().keySet()));
         }
@@ -171,7 +166,6 @@ public class Merger {
         long blockDescriptorOffset;
         int numBlocks = mergePostingList.getPostingListSize() > 1024 ? (int) Math.sqrt(mergePostingList.getPostingListSize()) : 1; // get number of block in which the posting list will be divided;
         int numPostingInBlock = (int) Math.ceil(mergePostingList.getPostingListSize() / (double) numBlocks); // get number of posting in each block
-
 
         for (int i = 0; i < mergePostingList.getPostingListSize(); i++) {
             if ((i + 1) % numPostingInBlock == 0) {

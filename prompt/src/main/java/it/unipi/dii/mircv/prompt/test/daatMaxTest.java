@@ -1,4 +1,4 @@
-package it.unipi.dii.mircv.prompt;
+package it.unipi.dii.mircv.prompt.test;
 
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;

@@ -18,12 +18,8 @@ public class Index {
     private static final String COLLECTION_PATH = "data/collection/collection.tsv";
     private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
-    private static final String LEXICON_PATH = "data/index/lexicon.bin";
-    private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
-    private static Logs log;
-
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
@@ -45,47 +41,20 @@ public class Index {
         this.documents = documents;
     }
 
-    public static String convertMillisecondsToHMmSs(long milliseconds) {
-        long seconds = milliseconds / 1000;
-        long hours = seconds / 3600;
-        seconds = seconds % 3600;
-        long minutes = seconds / 60;
-        seconds = seconds % 60;
-
-        return hours + "h " + minutes + "m " + seconds + "s";
-    }
-
     public static void main(String[] args) throws IOException {
-
         Logs log = new Logs();
         long start, end;
 
-        Index index = new Index();
         Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
         log.addLog("spimi", start, end);
-//        System.out.println(spimi.getIndexCounter());
         Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
         start = System.currentTimeMillis();
         merger.execute();
         end = System.currentTimeMillis();
         log.addLog("merger", start, end);
-
-        index.getLexicon().readLexiconFromDisk(-1,LEXICON_PATH);
-        // per ogni chiave del lexicon, leggi il posting list dal file
-        for (String key : index.getLexicon().getLexicon().keySet()) {
-            //get lexicon elem
-            LexiconElem lexiconElem = index.getLexicon().getLexiconElem(key);
-            PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index.bin");
-//            System.out.println(lexiconElem);
-//            System.out.println(postingList);
-        }
-        index.setDocuments(Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH));
-//        System.out.println(index.getDocuments());
-
     }
 }
 

@@ -1,12 +1,7 @@
 package it.unipi.dii.mircv.index.structures;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 public class Posting{
-
     private int docID;
     private int freq;
 

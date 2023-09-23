@@ -15,31 +15,17 @@ import java.util.List;
 
 public class Spimi {
     private String COLLECTION_PATH;
-
     private Logs log;
     private int indexCounter;
     private int documentCounter;
     private long totDocLength;
-    private static final String LEXICON_PATH = "data/index/lexicon/";
-    private static final String DOCUMENTS_PATH = "data/index/documents/";
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final String INDEX_PATH = "data/index/";
-
     private static final int MAX_DOC_PER_FILE = 250000;
-
 
     public Spimi(String collection) {
         this.COLLECTION_PATH = collection;
         this.log = new Logs();// create a log object to print log messages
         this.indexCounter = 0;
-    }
-
-    public String getCOLLECTION_PATH() {
-        return COLLECTION_PATH;
-    }
-
-    public Logs getLog() {
-        return log;
     }
 
     public int getIndexCounter() {
@@ -53,13 +39,11 @@ public class Spimi {
         deleteFiles("data/index/", "bin");
         deleteFiles("data/index/lexicon/", "bin");
         deleteFiles("data/index/documents/", "bin");
-
         log.getLog("Deleted old index files ...");
 
 
         TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
         tarArchiveInputStream.getNextEntry();
-
 
         // open buffer to read documents
         try (BufferedReader br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"))) {
@@ -69,13 +53,8 @@ public class Spimi {
             MemoryManager manageMemory = new MemoryManager();
 
             String line; // start reading document by document
-
             totDocLength = 0;
-
             while ((line = br.readLine()) != null) {
-
-                //if (manageMemory.checkFreeMemory()) {
-
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
@@ -92,47 +71,23 @@ public class Spimi {
 
                 if (documentCounter % MAX_DOC_PER_FILE == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    //TODO serve davvero fare la new
-//                    invertedIndex = new HashMap<>(); // create a new inverted index
-
-//                    //read Structures from disk
-//                    lexicon.readLexiconFromDisk(indexCounter);
-//                    // per ogni chiave del lexicon, leggi il posting list dal file
-//                    for (String key : lexicon.getLexicon().keySet()) {
-//                        //get lexicon elem
-//                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
-//                        PostingList postingList = new PostingList();
-//                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
-//                        System.out.println(lexiconElem);
-//                        System.out.println(postingList);
-//                    }
-                    // clear per sicurezza
-//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-//                    invertedIndex = new HashMap<>(); // create a new inverted index
-
-//                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
-//                    System.out.println(documents1);
                     indexCounter += 1;
 //                    if (documentCounter == 20000)
 //                        break;
                 }
-
-
             }
             if (!documents.isEmpty()) {
                 log.getLog("Processed: " + documentCounter + " documents");
-
                 manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                 Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                 manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-
                 indexCounter += 1;
             }
+
             //save into disk documentCounter
             FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -141,7 +96,6 @@ public class Spimi {
             out.close();
             fileOut.close();
             tarArchiveInputStream.close();
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -163,7 +117,6 @@ public class Spimi {
         }
     }
 
-
     private static void deleteFiles(String folderPath, String extension) {
         File folder = new File(folderPath);
         if (folder.exists() && folder.isDirectory()) {
@@ -181,5 +134,4 @@ public class Spimi {
             folder.mkdirs();
         }
     }
-
 }

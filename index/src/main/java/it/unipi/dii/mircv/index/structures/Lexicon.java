@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 
 
 public class Lexicon {
-
     TreeMap<String, LexiconElem> lexicon;
-
-    Logs log = new Logs();
 
     public Lexicon() {
         this.lexicon = new TreeMap<>();
@@ -43,8 +40,8 @@ public class Lexicon {
         }
     }
 
-    public void printLexicon(String timestamp){
-        System.out.println("["+timestamp+"] Lexicon status: ");
+    public void printLexicon(String timestamp) {
+        System.out.println("[" + timestamp + "] Lexicon status: ");
         System.out.println(" -> Size: " + this.lexicon.size());
         System.out.println("**************************************");
     }
@@ -61,28 +58,31 @@ public class Lexicon {
     }
 
     //sort lexicon by TUB in termElem
-    public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String,LexiconElem> lexicon, String scoringFunction){
-
+    public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String, LexiconElem> lexicon, String scoringFunction) {
         // Ordina la lexicon per LexiconELem.TUB_bm25 in ordine decrescente
         LinkedHashMap<String, LexiconElem> sorted = new LinkedHashMap<>();
-        if(scoringFunction.equals("TFIDF")){
+        if (scoringFunction.equals("TFIDF")) {
             sorted = lexicon.entrySet().stream()
-                .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (x, y) -> {throw new AssertionError();},
-                        LinkedHashMap::new
-                ));
-        }else if(scoringFunction.equals("BM25")) {
+                    .sorted((e1, e2) -> e1.getValue().compareTFIDF(e2.getValue()))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (x, y) -> {
+                                throw new AssertionError();
+                            },
+                            LinkedHashMap::new
+                    ));
+        } else if (scoringFunction.equals("BM25")) {
             sorted = lexicon.entrySet().stream()
-                .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (x, y) -> {throw new AssertionError();},
-                        LinkedHashMap::new
-                ));
+                    .sorted((e1, e2) -> e1.getValue().compareBM25(e2.getValue()))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (x, y) -> {
+                                throw new AssertionError();
+                            },
+                            LinkedHashMap::new
+                    ));
         }
         return sorted;
     }
@@ -119,7 +119,7 @@ public class Lexicon {
         }
     }
 
-    public void readLexiconFromDisk(int indexCounter, String filePath){
+    public void readLexiconFromDisk(int indexCounter, String filePath) {
 
         if (indexCounter != -1)
             filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
@@ -165,11 +165,11 @@ public class Lexicon {
 
         arrayOffset[i] = raf.getFilePointer();
         // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
-        LexiconElem lexiconElem = new LexiconElem(df, cf, offset,-1,-1,-1);
+        LexiconElem lexiconElem = new LexiconElem(df, cf, offset, -1, -1, -1);
         return lexiconElem;
     }
 
-    public static String writeEntry(RandomAccessFile raf,String term, int df,long cf, long offset, int numBlock) throws IOException {
+    public static String writeEntry(RandomAccessFile raf, String term, int df, long cf, long offset, int numBlock) throws IOException {
         raf.writeUTF(term);
         raf.writeInt(df);
         raf.writeLong(cf);

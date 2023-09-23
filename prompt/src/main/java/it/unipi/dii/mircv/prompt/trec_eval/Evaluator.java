@@ -130,22 +130,4 @@ public class Evaluator {
 }
 
 
-    public void printResults() {
-        File file = new File(EVALUATION_PATH);
-        try {
-            if (!file.exists())
-                Files.createFile(Path.of(EVALUATION_PATH));
-            BufferedReader reader = new BufferedReader(new FileReader(new File(EVALUATION_PATH)));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
