@@ -124,7 +124,7 @@ public class Spimi {
 
 
             }
-            if (documentCounter % MAX_DOC_PER_FILE == 0) {
+            if (!documents.isEmpty()) {
                 log.getLog("Processed: " + documentCounter + " documents");
 
                 manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
