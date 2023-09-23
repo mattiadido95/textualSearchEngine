@@ -20,6 +20,8 @@ public class Prompt {
 
     public static void main(String[] args) throws InterruptedException {
 
+        // TODO fare una funzione che controlli se tutte le cartelle necessarie esistono e se non esistono le crea
+
         int[] options = processOptions(args);
 
         String scoringFunction = options[0] == 1 ? "BM25" : "TFIDF";
@@ -82,7 +84,7 @@ public class Prompt {
 
             } else if (userInput == 2) {
                 //TODO INSERIRE LA SCORING FUNCTION
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
 //                evaluator.execute();

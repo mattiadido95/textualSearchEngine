@@ -59,8 +59,8 @@ public class Evaluator {
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
-                if (queryCounter % 10 == 0) {
-                    System.out.println("Query " + queryCounter + " processed");
+                if (queryCounter % 36 == 0) {
+                    System.out.println("Evalueator single process ends");
                     break;
                 }
             }
