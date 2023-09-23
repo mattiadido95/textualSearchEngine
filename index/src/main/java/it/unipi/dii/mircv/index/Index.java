@@ -20,6 +20,7 @@ public class Index {
     private static final String INDEX_PATH = "data/index";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
+
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
@@ -49,6 +50,9 @@ public class Index {
 
         processOptions(args, compressed_reading, porterStemmer);
 
+        System.out.println("Compressed: " + compressed_reading);
+        System.out.println("Porter: " + porterStemmer);
+
         Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
         start = System.currentTimeMillis();
         spimi.execute();
@@ -66,14 +70,19 @@ public class Index {
             if (args[i].equals("-compressed")) { //compressed_reading
             } else if (args[i].equals("-stemmer")) { // porterStemmer
                 porterStemmer = true;
+            } else if (args[i].equals("-help")) {
+                // Se viene specificata l'opzione -help, mostra un messaggio di aiuto
+                System.out.println("Uso del programma:");
+                System.out.println("-compressed : Abilita la lettura compressa della collezione, nel formato tar.gz.");
+                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing dei documenti.");
+                System.out.println("-help: Mostra questo messaggio di aiuto.");
+                System.exit(0);
             } else {
                 System.err.println("Opzione non riconosciuta: " + args[i]);
                 System.exit(1);
             }
         }
 
-        System.out.println("Compressed: " + compressed_reading);
-        System.out.println("Porter: " + porterStemmer);
     }
 
 }

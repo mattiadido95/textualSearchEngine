@@ -24,8 +24,15 @@ public class Prompt {
         String scoringFunctionOption = "TFIDF";
         Boolean dynamicPruning = false;
         Boolean conjunctive = false;
+        Boolean porterStemmer = false;
 
-        processOptions(args, scoringFunctionOption, dynamicPruning, conjunctive);
+        processOptions(args, scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer);
+
+
+        System.out.println("Scoring Function Option: " + scoringFunctionOption);
+        System.out.println("Dynamic Pruning: " + dynamicPruning);
+        System.out.println("Conjunctive: " + conjunctive);
+        System.out.println("Porter: " + porterStemmer);
 
         Logs log = new Logs();
         long start, end;
@@ -101,7 +108,7 @@ public class Prompt {
         }
     }
 
-    private static void processOptions(String[] args, String scoringFunctionOption, Boolean dynamicPruning, Boolean conjunctive) {
+    private static void processOptions(String[] args, String scoringFunctionOption, Boolean dynamicPruning, Boolean conjunctive, Boolean porterStemmer) {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-sf")) { //scoring function
                 if (i + 1 < args.length) {
@@ -115,15 +122,22 @@ public class Prompt {
                 dynamicPruning = true;
             } else if (args[i].equals("-conjunctive")) { // conjunctive
                 conjunctive = true;
+            } else if (args[i].equals("-stemmer")) { // porterStemmer
+                porterStemmer = true;
+            } else if (args[i].equals("-help")) {
+                // Se viene specificata l'opzione -help, mostra un messaggio di aiuto
+                System.out.println("Uso del programma:");
+                System.out.println("-scoring_function <valore>: Specifica la scoring function [BM25, TFIDF].");
+                System.out.println("-dinamic_pruning: Abilita il pruning dinamico usando il MAXSCORE.");
+                System.out.println("-disjunctive: Abilita la modalità disgiuntiva.");
+                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing della query.");
+                System.out.println("-help: Mostra questo messaggio di aiuto.");
+                System.exit(0);
             } else {
                 System.err.println("Opzione non riconosciuta: " + args[i]);
                 System.exit(1);
             }
         }
-
-        System.out.println("Scoring Function Option: " + scoringFunctionOption);
-        System.out.println("Dynamic Pruning: " + dynamicPruning);
-        System.out.println("Conjunctive: " + conjunctive);
     }
 }
 
