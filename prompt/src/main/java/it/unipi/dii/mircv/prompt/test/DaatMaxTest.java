@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 
 
-public class daatMaxTest {
+public class DaatMaxTest {
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
     private static Lexicon lexicon;

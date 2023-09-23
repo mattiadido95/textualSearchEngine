@@ -18,30 +18,32 @@ public class Prompt {
     private static int n_results_eval = 15; // number of documents to return for evaluation
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
+
     public static void main(String[] args) throws InterruptedException {
 
-        //delete file di log
-        File file = new File("data/logs/logs.json");
-        file.delete();
+        String scoringFunctionOption = "TFIDF";
+        Boolean dynamicPruning = false;
+        Boolean conjunctive = false;
+
+        processOptions(args, scoringFunctionOption, dynamicPruning, conjunctive);
 
         Logs log = new Logs();
         long start, end;
+
         System.out.println("Loading index ...");
         // load main structure in memory
         Lexicon lexicon = new Lexicon();
         start = System.currentTimeMillis();
-        lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
+        lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_lexicon", start, end);
-
         start = System.currentTimeMillis();
-        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH);
+        ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_documents", start, end);
 
         Scanner scanner = new Scanner(System.in);
-        Searcher searcherDAAT = new Searcher(lexicon, documents);
-        Searcher searcherMAX = new Searcher(lexicon, documents);
+        Searcher searcher = new Searcher(lexicon, documents);
 
         while (true) {
             System.out.println("--------------------------------------------------");
@@ -65,20 +67,20 @@ public class Prompt {
 
                 System.out.println("DAAT");
                 start = System.currentTimeMillis();
-                searcherDAAT.DAAT(queryTerms, n_results, "disjunctive", "BM25");
+                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
                 end = System.currentTimeMillis();
-                searcherDAAT.printResults(end - start);
+                searcher.printResults(end - start);
                 log.addLog("query", start, end);
 
                 System.out.println("MaxScore");
                 start = System.currentTimeMillis();
-                searcherMAX.maxScore(queryTerms, n_results, "disjunctive", "BM25");
+                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
                 end = System.currentTimeMillis();
-                searcherMAX.printResults(end - start);
+                searcher.printResults(end - start);
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcherDAAT, lexicon, documents, n_results_eval, "disjunctive");
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, n_results_eval, "disjunctive");
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();
@@ -88,7 +90,7 @@ public class Prompt {
                 dinamicPruning.TUB_processing("BM25");
                 dinamicPruning.TUB_processing("TFIDF");
                 lexicon = new Lexicon();
-                lexicon.readLexiconFromDisk(-1,LEXICON_PATH);
+                lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();
@@ -97,6 +99,31 @@ public class Prompt {
                 System.out.println("Wrong input, please insert 1 or 2");
             }
         }
+    }
+
+    private static void processOptions(String[] args, String scoringFunctionOption, Boolean dynamicPruning, Boolean conjunctive) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-sf")) { //scoring function
+                if (i + 1 < args.length) {
+                    scoringFunctionOption = args[i + 1];
+                    i++;
+                } else {
+                    System.err.println("L'opzione -sf richiede un valore.");
+                    System.exit(1);
+                }
+            } else if (args[i].equals("-dynamic")) { // dynamic pruning
+                dynamicPruning = true;
+            } else if (args[i].equals("-conjunctive")) { // conjunctive
+                conjunctive = true;
+            } else {
+                System.err.println("Opzione non riconosciuta: " + args[i]);
+                System.exit(1);
+            }
+        }
+
+        System.out.println("Scoring Function Option: " + scoringFunctionOption);
+        System.out.println("Dynamic Pruning: " + dynamicPruning);
+        System.out.println("Conjunctive: " + conjunctive);
     }
 }
 

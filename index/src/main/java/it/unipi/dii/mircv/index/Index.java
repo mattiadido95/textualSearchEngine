@@ -44,6 +44,10 @@ public class Index {
     public static void main(String[] args) throws IOException {
         Logs log = new Logs();
         long start, end;
+        Boolean compressed_reading = false;
+        Boolean porterStemmer = false;
+
+        processOptions(args, compressed_reading, porterStemmer);
 
         Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
         start = System.currentTimeMillis();
@@ -56,6 +60,22 @@ public class Index {
         end = System.currentTimeMillis();
         log.addLog("merger", start, end);
     }
+
+    private static void processOptions(String[] args, Boolean compressed_reading, Boolean porterStemmer) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-compressed")) { //compressed_reading
+            } else if (args[i].equals("-stemmer")) { // porterStemmer
+                porterStemmer = true;
+            } else {
+                System.err.println("Opzione non riconosciuta: " + args[i]);
+                System.exit(1);
+            }
+        }
+
+        System.out.println("Compressed: " + compressed_reading);
+        System.out.println("Porter: " + porterStemmer);
+    }
+
 }
 
 
