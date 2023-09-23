@@ -7,6 +7,7 @@ import it.unipi.dii.mircv.index.utility.MemoryManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
+import javax.management.loading.PrivateClassLoader;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class Spimi {
     private static final String DOCUMENTS_PATH = "data/index/documents/";
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
     private static final String INDEX_PATH = "data/index/";
+
+    private static final int MAX_DOC_PER_FILE = 250000;
 
 
     public Spimi(String collection) {
@@ -63,6 +66,7 @@ public class Spimi {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
+            MemoryManager manageMemory = new MemoryManager();
 
             String line; // start reading document by document
 
@@ -70,7 +74,6 @@ public class Spimi {
 
             while ((line = br.readLine()) != null) {
 
-                MemoryManager manageMemory = new MemoryManager();
                 //if (manageMemory.checkFreeMemory()) {
 
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter);
@@ -87,7 +90,7 @@ public class Spimi {
 
                 documentCounter++;
 
-                if (documentCounter % 250000 == 0) {
+                if (documentCounter % MAX_DOC_PER_FILE == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
 //                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
@@ -120,6 +123,15 @@ public class Spimi {
                 }
 
 
+            }
+            if (!documents.isEmpty()) {
+                log.getLog("Processed: " + documentCounter + " documents");
+
+                manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
+                manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+
+                indexCounter += 1;
             }
             //save into disk documentCounter
             FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
