@@ -87,7 +87,7 @@ public class BlockDescriptor {
 
     }
 
-    public static BlockDescriptor readFirstBlock(long offset,String filePath) {
+    public static BlockDescriptor readFirstBlock(long offset, String filePath) {
 
         BlockDescriptor result = new BlockDescriptor();
 

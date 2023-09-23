@@ -75,14 +75,14 @@ public class Index {
 
         index.getLexicon().readLexiconFromDisk(-1,LEXICON_PATH);
         // per ogni chiave del lexicon, leggi il posting list dal file
-        for (String key : index.getLexicon().getLexicon().keySet()) {
-            //get lexicon elem
-            LexiconElem lexiconElem = index.getLexicon().getLexiconElem(key);
-            PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index.bin");
-//            System.out.println(lexiconElem);
-//            System.out.println(postingList);
-        }
+//        for (String key : index.getLexicon().getLexicon().keySet()) {
+//            //get lexicon elem
+//            LexiconElem lexiconElem = index.getLexicon().getLexiconElem(key);
+//            PostingList postingList = new PostingList();
+//            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index.bin");
+////            System.out.println(lexiconElem);
+////            System.out.println(postingList);
+//        }
         index.setDocuments(Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH));
 //        System.out.println(index.getDocuments());
 

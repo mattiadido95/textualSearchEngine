@@ -53,9 +53,9 @@ public class EvaluatorMultiThread {
 
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 1000) {
-                    break;
-                }
+//                if (queryCounter == 100) {
+//                    break;
+//                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -108,46 +108,53 @@ public class EvaluatorMultiThread {
 
         public void run() {
             long start, end;
+
+            start = System.currentTimeMillis();
+            for (String query : thread_queries) {
+                String[] split = query.split("\t");
+                String queryId = split[0];
+                String queryText = split[1];
+
+                this.thread_queryIDs.add(queryId);
+                Query queryObj = new Query(queryText);
+                ArrayList<String> queryTerms = queryObj.getQueryTerms();
+
+                this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, "BM25");
+                this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
+
+//                System.out.println("Thread " + threadId + " sta elaborando le query..." + "con id -> " + queryId + " risultati trovati: " + this.thread_searcher.getQueryResults().size());
+            }
+            ArrayList<String> output = new ArrayList<>();
+            for (int i = 0; i < this.thread_arrayQueryResults.size(); i++) {
+                for (int j = 0; j < this.thread_arrayQueryResults.get(i).size(); j++) {
+                    String line = this.thread_queryIDs.get(i) + "\tQ0\t" + this.thread_arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + this.thread_arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
+                    output.add(line);
+                }
+            }
+
+            synchronized (t) {
+                t[threadId] = true;
+            }
+
+
             try {
-                start = System.currentTimeMillis();
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
-                String outputFile = "data/collection/results_thread_" + threadId + ".txt";
+                String outputFile = "data/collection/results_thread_" + this.threadId + ".txt";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-
-                for (String query : thread_queries) {
-
-                    String[] split = query.split("\t");
-                    String queryId = split[0];
-                    String queryText = split[1];
-
-                    this.thread_queryIDs.add(queryId);
-                    Query queryObj = new Query(queryText);
-                    ArrayList<String> queryTerms = queryObj.getQueryTerms();
-
-                    this.thread_searcher.DAAT(queryTerms,  this.thread_n_results, this.thread_mode,"BM25");
-                    this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
-
-                    for (int i = 0; i < this.thread_arrayQueryResults.size(); i++) {
-                        for (int j = 0; j < this.thread_arrayQueryResults.get(i).size(); j++) {
-                            String line = this.thread_queryIDs.get(i) + "\tQ0\t" + this.thread_arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + this.thread_arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD\n";
-                            writer.write(line);
-                        }
-                    }
-                }
-
-                synchronized (t) {
-                    t[threadId] = true;
-                }
+                for (String line : output)
+                    writer.write(line);
 
                 writer.close();
                 Logs log = new Logs();
                 log.getLog("Thread " + threadId + " ha completato l'elaborazione.");
                 end = System.currentTimeMillis();
                 log.addLog("Thread_" + threadId, start, end);
-            } catch (IOException e) {
+            } catch (
+                    IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
 
     public void execute() throws InterruptedException {
@@ -159,7 +166,7 @@ public class EvaluatorMultiThread {
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
-            Searcher thread_searcher = new Searcher( this.lexicon, this.documents);
+            Searcher thread_searcher = new Searcher(this.lexicon, this.documents);
             executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main));
         }
         executorService.shutdown();
@@ -168,6 +175,7 @@ public class EvaluatorMultiThread {
             // Aspetta che tutti i thread abbiano terminato
             Thread.sleep(100);
         }
+
         concatenateFileResults("results.test", "results_thread_0.txt", "results_thread_1.txt", "results_thread_2.txt", "results_thread_3.txt");
 
 //        trecEvalLauncher();
