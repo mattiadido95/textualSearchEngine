@@ -22,7 +22,7 @@ public class Spimi {
     private boolean compressed_reading;
     private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final int MAX_DOC_PER_FILE = 250000;
+    private static final int MAX_DOC_PER_FILE = 100000;
 
     public Spimi(String collection, boolean porterStemmer, boolean compressed_reading) {
         this.COLLECTION_PATH = collection;
@@ -86,9 +86,9 @@ public class Spimi {
                     Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     indexCounter += 1;
-//                    if (documentCounter == 20000)
-//                        break;
                 }
+//                if (documentCounter == 3 * MAX_DOC_PER_FILE)
+//                        break;
             }
             if (!documents.isEmpty()) {
                 log.getLog("Processed: " + documentCounter + " documents");

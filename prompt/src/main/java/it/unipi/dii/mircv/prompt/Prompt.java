@@ -150,7 +150,7 @@ public class Prompt {
                 System.out.println("Uso del programma:");
                 System.out.println("-scoring <valore>: Specifica la scoring function [BM25, TFIDF].");
                 System.out.println("-dynamic: Abilita il pruning dinamico usando il MAXSCORE.");
-                System.out.println("-disjunctive: Abilita la modalità disgiuntiva.");
+                System.out.println("-conjunctive: Abilita la modalità conjunctive.");
                 System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing della query\n NB:DEVE ESSERE UGUALE ALL'OPZIONE USATA IN index.java.");
                 System.out.println("-help: Mostra questo messaggio di aiuto.");
                 System.exit(0);

@@ -393,12 +393,14 @@ public class Searcher {
 
     public void printResults(long time) {
         if (queryResults == null || queryResults.size() == 0) {
-            System.out.println("Unfortunately, no documents were found for your query.");
+            System.out.println("\n\nUnfortunately, no documents were found for your query.");
             return;
         }
         System.out.println("These " + queryResults.size() + " documents may are of your interest");
-        System.out.println(queryResults);
-        System.out.println("Search time: " + time + " ms");
+        for (QueryResult qr : queryResults) {
+            System.out.println(qr);
+        }
+        System.out.println("\nSearch time: " + time + " ms");
     }
 
     public ArrayList<QueryResult> getQueryResults() {
