@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public class IndexTest {
     private static final String COLLECTION_PATH = "data/collection/collectionTest.tsv";
-    private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
@@ -17,7 +16,6 @@ public class IndexTest {
         Index index = new Index();
         Spimi spimi = new Spimi(COLLECTION_PATH);
         spimi.execute();
-//          System.out.println(spimi.getIndexCounter());
         new Merger(INDEX_PATH, spimi.getIndexCounter()).execute();
 
          index.getLexicon().readLexiconFromDisk(-1,LEXICON_PATH);

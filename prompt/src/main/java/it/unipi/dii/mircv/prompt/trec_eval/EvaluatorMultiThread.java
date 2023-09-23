@@ -29,7 +29,6 @@ public class EvaluatorMultiThread {
     private static final String RESULTS_PATH = "data/collection/results.test";
     private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
     private static final int NUM_THREADS = 4; // Numero di thread o job paralleli
-    private static final int NUM_QUERIES = 100000; // Numero totale di query
     private static final String OUTPUT_FILE = "results.txt"; // File di output
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
@@ -44,13 +43,11 @@ public class EvaluatorMultiThread {
     }
 
     private List<String> loadAllQueries() {
-
         List<String> queries = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(QUERY_PATH)))) {
             String line; // start reading query by query
             int queryCounter = 0;
             while ((line = br.readLine()) != null) {
-
                 queries.add(line);
                 queryCounter++;
 //                if (queryCounter == 100) {
@@ -60,7 +57,6 @@ public class EvaluatorMultiThread {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         return queries;
     }
 
@@ -68,7 +64,6 @@ public class EvaluatorMultiThread {
         List<List<String>> subsets = new ArrayList<>();
         int subsetSize = queries.size() / numThreads;
         int startIndex = 0;
-
         for (int i = 0; i < numThreads; i++) {
             int endIndex = startIndex + subsetSize;
             if (i == numThreads - 1) {
@@ -119,10 +114,8 @@ public class EvaluatorMultiThread {
                 Query queryObj = new Query(queryText);
                 ArrayList<String> queryTerms = queryObj.getQueryTerms();
 
-                this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, "BM25");
+                this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, "BM25"); // TODO parametrizzare la scoring function e tutti gli altri parametri
                 this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
-
-//                System.out.println("Thread " + threadId + " sta elaborando le query..." + "con id -> " + queryId + " risultati trovati: " + this.thread_searcher.getQueryResults().size());
             }
             ArrayList<String> output = new ArrayList<>();
             for (int i = 0; i < this.thread_arrayQueryResults.size(); i++) {
@@ -131,19 +124,15 @@ public class EvaluatorMultiThread {
                     output.add(line);
                 }
             }
-
             synchronized (t) {
                 t[threadId] = true;
             }
-
-
             try {
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
                 String outputFile = "data/collection/results_thread_" + this.threadId + ".txt";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
                 for (String line : output)
                     writer.write(line);
-
                 writer.close();
                 Logs log = new Logs();
                 log.getLog("Thread " + threadId + " ha completato l'elaborazione.");
@@ -159,10 +148,8 @@ public class EvaluatorMultiThread {
 
     public void execute() throws InterruptedException {
         List<String> allQueries = loadAllQueries();
-
         // Divide le query in sottoinsiemi per i thread
         List<List<String>> querySubsets = splitQueries(allQueries, NUM_THREADS);
-
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
@@ -170,12 +157,12 @@ public class EvaluatorMultiThread {
             executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main));
         }
         executorService.shutdown();
-
         while (!allThreadEnds(t_main)) {
             // Aspetta che tutti i thread abbiano terminato
             Thread.sleep(100);
         }
-
+        // get all files name with results_thread_*.txt
+        File[] files = new File("data/collection/").listFiles((dir, name) -> name.startsWith("results_thread_") && name.endsWith(".txt")); // TODO parametrizzare i paths dei file da concatenare cosi da usare anche piu thread
         concatenateFileResults("results.test", "results_thread_0.txt", "results_thread_1.txt", "results_thread_2.txt", "results_thread_3.txt");
 
 //        trecEvalLauncher();
@@ -211,19 +198,6 @@ public class EvaluatorMultiThread {
         }
     }
 
-    private void saveResults() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
-            for (int i = 0; i < queryIDs.size(); i++) {
-                for (int j = 0; j < arrayQueryResults.get(i).size(); j++) {
-                    String line = queryIDs.get(i) + "\tQ0\t" + arrayQueryResults.get(i).get(j).getDocNo() + "\t" + (j + 1) + "\t" + arrayQueryResults.get(i).get(j).getScoring() + "\tSTANDARD";
-                    bw.write(line);
-                    bw.newLine();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void trecEvalLauncher() {
         try {
@@ -236,7 +210,6 @@ public class EvaluatorMultiThread {
                     Q_REL_PATH,
                     RESULTS_PATH
             );
-
             // Avvia il processo
             Process process = processBuilder.start();
 
@@ -253,35 +226,15 @@ public class EvaluatorMultiThread {
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
                 }
-
                 // Scrivi l'output nel file
                 bw.write(output.toString());
             }
-
             if (exitCode == 0) {
                 System.out.println("Il comando è stato eseguito con successo.");
             } else {
                 System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void printResults() {
-        File file = new File(EVALUATION_PATH);
-        try {
-            if (!file.exists())
-                Files.createFile(Path.of(EVALUATION_PATH));
-            BufferedReader reader = new BufferedReader(new FileReader(new File(EVALUATION_PATH)));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

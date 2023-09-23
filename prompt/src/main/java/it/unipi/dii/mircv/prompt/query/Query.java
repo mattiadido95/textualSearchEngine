@@ -5,9 +5,8 @@ import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import java.util.ArrayList;
 
 public class Query {
-
     private String query; // query string
-    private ArrayList<String> queryTerms = new ArrayList<String>(); // list of query terms
+    private ArrayList<String> queryTerms = new ArrayList<>(); // list of query terms
 
     public Query(String query) {
         this.query = query;

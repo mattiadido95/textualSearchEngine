@@ -1,6 +1,5 @@
 package it.unipi.dii.mircv.index.structures;
 
-import java.util.Random;
 
 public class LexiconElem {
     private int df; // document frequency, is the number of documents containing the term
@@ -10,8 +9,7 @@ public class LexiconElem {
     private double TUB_bm25; // term upper bound for bm25
     private double TUB_tfidf; // term upper bound for tfidf
 
-
-    public LexiconElem(){
+    public LexiconElem() {
         this.cf = 0;
         this.df = 0;
     }

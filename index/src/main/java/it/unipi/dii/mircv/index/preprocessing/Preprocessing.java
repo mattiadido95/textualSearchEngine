@@ -9,13 +9,9 @@ import it.unipi.dii.mircv.index.structures.Document;
 
 
 public class Preprocessing {
-
     private static final String STOPWORDS_PATH = "data/stop_words_english.txt";
-
     private Map<String, Map<String, Integer>> index;
-
     private Document doc;
-
     public List<String> tokens = new ArrayList<>();
 
     public Preprocessing(String query) {
@@ -73,7 +69,6 @@ public class Preprocessing {
         Pattern pattern = Pattern.compile(regex);
         Pattern pattern2 = Pattern.compile(regex2);
 
-
         String[] tokens = pattern.split(doc);
         for (String token : tokens) {
             String[] subTokens = pattern2.split(token);
@@ -109,7 +104,6 @@ public class Preprocessing {
         words.removeAll(stopwords);
         return words;
     }
-
 
     public Document getDoc() {
         return doc;

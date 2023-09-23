@@ -52,10 +52,8 @@ public class BlockDescriptor {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
-
             // Memorizza la posizione di inizio nel file
             offset = fileChannel.position();
-
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
@@ -69,16 +67,13 @@ public class BlockDescriptor {
                 fileChannel.write(buffer);
                 buffer.clear();
             }
-
             // Scrivi eventuali dati rimanenti nel buffer sul file
             if (buffer.position() > 0) {
                 buffer.flip();
                 fileChannel.write(buffer);
             }
-
             // Chiudi le risorse
             fileChannel.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,15 +83,12 @@ public class BlockDescriptor {
     }
 
     public static BlockDescriptor readFirstBlock(long offset, String filePath) {
-
         BlockDescriptor result = new BlockDescriptor();
 
         try {
             FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
-
             // Memorizza la posizione di inizio nel file
             fileChannel.position(offset);
-
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
@@ -114,7 +106,6 @@ public class BlockDescriptor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return result;
     }
 }
