@@ -45,15 +45,12 @@ public class Index {
     public static void main(String[] args) throws IOException {
         Logs log = new Logs();
         long start, end;
-        boolean[] options = processOptions(args);
 
+        boolean[] options = processOptions(args);
         boolean compressed_reading = options[0];
         boolean porterStemmer = options[1];
 
-        System.out.println("Compressed: " + compressed_reading);
-        System.out.println("Porter: " + porterStemmer);
-
-        Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
+        Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();

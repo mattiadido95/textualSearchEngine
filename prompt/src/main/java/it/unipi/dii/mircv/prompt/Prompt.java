@@ -6,6 +6,7 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
+import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
 import java.io.File;
@@ -14,8 +15,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Prompt {
-    private static int n_results = 10; // number of documents to return for a query
-    private static int n_results_eval = 15; // number of documents to return for evaluation
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
 
@@ -23,17 +22,11 @@ public class Prompt {
 
         int[] options = processOptions(args);
 
-        int scoringFunctionOption = options[0];
-        int dynamicPruning = options[1];
-        int conjunctive = options[2];
-        int porterStemmer = options[3];
-
-        processOptions(args);
-
-        System.out.println("Scoring Function Option: " + scoringFunctionOption);
-        System.out.println("Dynamic Pruning: " + dynamicPruning);
-        System.out.println("Conjunctive: " + conjunctive);
-        System.out.println("Porter: " + porterStemmer);
+        String scoringFunction = options[0] == 1 ? "BM25" : "TFIDF";
+        boolean dynamicPruning = options[1] == 1 ? true : false;
+        String mode = options[2] == 1 ? "conjunctive" : "disjunctive";
+        boolean porterStemmerOption = options[3] == 1 ? true : false;
+        int K = options[4];
 
         Logs log = new Logs();
         long start, end;
@@ -56,7 +49,7 @@ public class Prompt {
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
-            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 to run dynamic pruning \n - insert 10 to exit");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate TUBs for dynamic pruning \n - insert 10 to exit");
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
@@ -70,27 +63,28 @@ public class Prompt {
                 System.out.println("Insert your query ...");
                 String queryInput = scanner.nextLine();
 
-                Query query = new Query(queryInput);
+                Query query = new Query(queryInput, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
 
-                System.out.println("DAAT");
-                start = System.currentTimeMillis();
-                searcher.DAAT(queryTerms, n_results, "disjunctive", "BM25");
-                end = System.currentTimeMillis();
+                if (dynamicPruning) {
+                    start = System.currentTimeMillis();
+                    searcher.maxScore(queryTerms, K, mode, scoringFunction);
+                    end = System.currentTimeMillis();
+                } else {
+                    start = System.currentTimeMillis();
+                    searcher.DAAT(queryTerms, K, mode, scoringFunction);
+                    end = System.currentTimeMillis();
+                }
+
                 searcher.printResults(end - start);
                 log.addLog("query", start, end);
 
-                System.out.println("MaxScore");
-                start = System.currentTimeMillis();
-                searcher.maxScore(queryTerms, n_results, "disjunctive", "BM25");
-                end = System.currentTimeMillis();
-                searcher.printResults(end - start);
-                log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, n_results_eval, "disjunctive");
+                //TODO INSERIRE LA SCORING FUNCTION
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
                 evaluatorMT.execute();
-//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
+//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
 //                evaluator.execute();
             } else if (userInput == 3) {
                 // call to dynamic pruning process
@@ -114,6 +108,7 @@ public class Prompt {
         int dynamicPruning = 0;
         int conjunctive = 0;
         int porterStemmer = 0;
+        int K = 10;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-scoring")) { //scoring function
@@ -124,7 +119,19 @@ public class Prompt {
                     else if (scoring.equals("BM25"))
                         scoringFunctionOption = 1;
                     else {
-                        System.err.println("L'opzione -sf richiede un valore tra TFIDF e BM25.");
+                        System.err.println("L'opzione -scoring richiede un valore tra TFIDF e BM25.");
+                        System.exit(1);
+                    }
+                    i++;
+                } else {
+                    System.err.println("L'opzione -scoring richiede un valore.");
+                    System.exit(1);
+                }
+            } else if (args[i].equals("-topK")) { // topK results from query
+                if (i + 1 < args.length) {
+                    K = Integer.parseInt(args[i + 1]);
+                    if (K < 1) {
+                        System.err.println("Il numero deve essere maggiore di 0.");
                         System.exit(1);
                     }
                     i++;
@@ -153,7 +160,7 @@ public class Prompt {
             }
         }
 
-        return new int[]{scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer};
+        return new int[]{scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer, K};
     }
 }
 

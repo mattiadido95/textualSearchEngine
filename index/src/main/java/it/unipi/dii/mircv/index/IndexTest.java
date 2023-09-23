@@ -14,7 +14,7 @@ public class IndexTest {
 
     public static void main(String[] args) throws IOException {
         Index index = new Index();
-        Spimi spimi = new Spimi(COLLECTION_PATH);
+        Spimi spimi = new Spimi(COLLECTION_PATH,true,true);
         spimi.execute();
         new Merger(INDEX_PATH, spimi.getIndexCounter()).execute();
 

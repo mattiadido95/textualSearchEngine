@@ -24,6 +24,8 @@ public class EvaluatorMultiThread {
     private Query query;
     private ArrayList<String> queryIDs;
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
+    private String scoringFunction;
+    private boolean porterStemmerOption;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/collection/results.test";
@@ -32,12 +34,14 @@ public class EvaluatorMultiThread {
     private static final String OUTPUT_FILE = "results.txt"; // File di output
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
-    public EvaluatorMultiThread(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
+    public EvaluatorMultiThread(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
         this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
         this.n_results = n_results;
         this.mode = mode;
+        this.scoringFunction = scoringFunction;
+        this.porterStemmerOption = porterStemmerOption;
         arrayQueryResults = new ArrayList<>();
         queryIDs = new ArrayList<>();
     }
@@ -87,8 +91,10 @@ public class EvaluatorMultiThread {
         private String thread_mode;
         private ArrayList<ArrayList<QueryResult>> thread_arrayQueryResults;
         private boolean[] t;
+        private String thread_scoringFunction;
+        private boolean thread_porterStemmerOption;
 
-        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t) {
+        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t, String scoringFunction, boolean porterStemmerOption) {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
@@ -98,6 +104,8 @@ public class EvaluatorMultiThread {
             this.thread_mode = mode;
             this.thread_arrayQueryResults = new ArrayList<>();
             this.thread_queryIDs = new ArrayList<>();
+            this.thread_scoringFunction = scoringFunction;
+            this.thread_porterStemmerOption = porterStemmerOption;
             this.t = t;
         }
 
@@ -111,10 +119,10 @@ public class EvaluatorMultiThread {
                 String queryText = split[1];
 
                 this.thread_queryIDs.add(queryId);
-                Query queryObj = new Query(queryText);
+                Query queryObj = new Query(queryText, thread_porterStemmerOption);
                 ArrayList<String> queryTerms = queryObj.getQueryTerms();
 
-                this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, "BM25"); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
                 this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
             }
             ArrayList<String> output = new ArrayList<>();
@@ -154,7 +162,7 @@ public class EvaluatorMultiThread {
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
             Searcher thread_searcher = new Searcher(this.lexicon, this.documents);
-            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main));
+            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main, this.scoringFunction, this.porterStemmerOption));
         }
         executorService.shutdown();
         while (!allThreadEnds(t_main)) {
