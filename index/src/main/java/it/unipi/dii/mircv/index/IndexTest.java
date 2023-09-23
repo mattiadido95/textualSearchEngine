@@ -7,7 +7,7 @@ import it.unipi.dii.mircv.index.structures.*;
 import java.io.IOException;
 
 public class IndexTest {
-    private static final String COLLECTION_PATH = "data/collection/collection.tsv";
+    private static final String COLLECTION_PATH = "data/collection/collectionTest.tsv";
     private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
