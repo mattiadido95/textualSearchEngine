@@ -16,30 +16,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class EvaluatorMultiThread {
-    private Searcher searcher;
+    //private Searcher searcher;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private int n_results;
     private String mode;
-    private Query query;
-    private ArrayList<String> queryIDs;
-    private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
+//    private Query query;
+//    private ArrayList<String> queryIDs;
+//    private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
-    private static final String RESULTS_PATH = "data/collection/results.test";
-    private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
-    private static final int NUM_THREADS = 4; // Numero di thread o job paralleli
-    private static final String OUTPUT_FILE = "results.txt"; // File di output
+    private static final String RESULTS_PATH = "data/trec_eval/results.test";
+    private static final String EVALUATION_PATH = "data/trec_eval/evaluation.txt";
+    private static final int NUM_THREADS = 6; // Numero di thread o job paralleli
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
-    public EvaluatorMultiThread(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
-        this.searcher = searcher;
+    public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
+        //this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
         this.n_results = n_results;
         this.mode = mode;
-        arrayQueryResults = new ArrayList<>();
-        queryIDs = new ArrayList<>();
+//        arrayQueryResults = new ArrayList<>();
+//        queryIDs = new ArrayList<>();
     }
 
     private List<String> loadAllQueries() {
@@ -50,9 +49,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-//                if (queryCounter == 100) {
-//                    break;
-//                }
+                if (queryCounter == 36)
+                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -81,8 +79,8 @@ public class EvaluatorMultiThread {
         private final List<String> thread_queries;
         private ArrayList<String> thread_queryIDs;
         private Searcher thread_searcher;
-        private Lexicon thread_lexicon;
-        private ArrayList<Document> thread_documents;
+        //        private Lexicon thread_lexicon;
+//        private ArrayList<Document> thread_documents;
         private int thread_n_results;
         private String thread_mode;
         private ArrayList<ArrayList<QueryResult>> thread_arrayQueryResults;
@@ -92,8 +90,8 @@ public class EvaluatorMultiThread {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
-            this.thread_lexicon = lexicon;
-            this.thread_documents = documents;
+//            this.thread_lexicon = lexicon;
+//            this.thread_documents = documents;
             this.thread_n_results = n_results;
             this.thread_mode = mode;
             this.thread_arrayQueryResults = new ArrayList<>();
@@ -103,7 +101,6 @@ public class EvaluatorMultiThread {
 
         public void run() {
             long start, end;
-
             start = System.currentTimeMillis();
             for (String query : thread_queries) {
                 String[] split = query.split("\t");
@@ -129,7 +126,7 @@ public class EvaluatorMultiThread {
             }
             try {
                 // Elabora le query e scrivi i risultati su un file specifico per il thread
-                String outputFile = "data/collection/results_thread_" + this.threadId + ".txt";
+                String outputFile = "data/trec_eval/results_thread_" + this.threadId + ".txt";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
                 for (String line : output)
                     writer.write(line);
@@ -162,9 +159,14 @@ public class EvaluatorMultiThread {
             Thread.sleep(100);
         }
         // get all files name with results_thread_*.txt
-        File[] files = new File("data/collection/").listFiles((dir, name) -> name.startsWith("results_thread_") && name.endsWith(".txt")); // TODO parametrizzare i paths dei file da concatenare cosi da usare anche piu thread
-        concatenateFileResults("results.test", "results_thread_0.txt", "results_thread_1.txt", "results_thread_2.txt", "results_thread_3.txt");
-
+        File[] files = new File("data/trec_eval/").listFiles((dir, name) -> name.startsWith("results_thread_") && name.endsWith(".txt"));
+        List<String> fileNames = new ArrayList<>();
+        if (files != null) {
+            for (File file : files) {
+                fileNames.add(file.getName());
+            }
+        }
+        concatenateFileResults(RESULTS_PATH, fileNames);
 //        trecEvalLauncher();
     }
 
@@ -178,11 +180,11 @@ public class EvaluatorMultiThread {
     }
 
 
-    private void concatenateFileResults(String outputFileName, String... inputFiles) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/collection/" + outputFileName))) {
+    private void concatenateFileResults(String outputFileName, List<String> inputFiles) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
             for (String inputFile : inputFiles) {
                 System.out.println("Concatenazione del file " + inputFile + " in corso...");
-                try (BufferedReader reader = new BufferedReader(new FileReader("data/collection/" + inputFile))) {
+                try (BufferedReader reader = new BufferedReader(new FileReader("data/trec_eval/" + inputFile))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         writer.write(line);

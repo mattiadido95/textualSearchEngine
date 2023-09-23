@@ -20,6 +20,8 @@ public class Prompt {
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
     public static void main(String[] args) throws InterruptedException {
 
+        // TODO fare una funzione che controlli se tutte le cartelle necessarie esistono e se non esistono le crea
+
         //delete file di log
         File file = new File("data/logs/logs.json");
         file.delete();
@@ -78,7 +80,7 @@ public class Prompt {
                 log.addLog("query", start, end);
 
             } else if (userInput == 2) {
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(searcherDAAT, lexicon, documents, n_results_eval, "disjunctive");
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, n_results_eval, "disjunctive");
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, n_results_eval, "disjunctive");
 //                evaluator.execute();

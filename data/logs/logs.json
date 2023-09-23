@@ -1,26 +1,158 @@
 [
     {
-        "duration": 3043,
-        "start_time": 1695479868404,
-        "end_time": 1695479871447,
+        "duration": 3031,
+        "start_time": 1695482371989,
+        "end_time": 1695482375020,
         "type": "load_lexicon"
     },
     {
-        "duration": 2236,
-        "start_time": 1695479871453,
-        "end_time": 1695479873689,
+        "duration": 2151,
+        "start_time": 1695482375027,
+        "end_time": 1695482377178,
         "type": "load_documents"
     },
     {
-        "duration": 454,
-        "start_time": 1695479887251,
-        "end_time": 1695479887705,
-        "type": "query"
+        "duration": 14876,
+        "start_time": 1695482381026,
+        "end_time": 1695482395902,
+        "type": "Thread_0"
     },
     {
-        "duration": 320,
-        "start_time": 1695479887722,
-        "end_time": 1695479888042,
-        "type": "query"
+        "duration": 15009,
+        "start_time": 1695482381027,
+        "end_time": 1695482396036,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 19846,
+        "start_time": 1695482381027,
+        "end_time": 1695482400873,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 21429,
+        "start_time": 1695482381027,
+        "end_time": 1695482402456,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 22741,
+        "start_time": 1695482381026,
+        "end_time": 1695482403767,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 25168,
+        "start_time": 1695482381028,
+        "end_time": 1695482406196,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 2433,
+        "start_time": 1695482718333,
+        "end_time": 1695482720766,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 5214,
+        "start_time": 1695482718334,
+        "end_time": 1695482723548,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 6533,
+        "start_time": 1695482718334,
+        "end_time": 1695482724867,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 7817,
+        "start_time": 1695482718334,
+        "end_time": 1695482726151,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 8148,
+        "start_time": 1695482718335,
+        "end_time": 1695482726483,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 10237,
+        "start_time": 1695482718335,
+        "end_time": 1695482728572,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 2349,
+        "start_time": 1695482834458,
+        "end_time": 1695482836807,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 5527,
+        "start_time": 1695482834459,
+        "end_time": 1695482839986,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 6575,
+        "start_time": 1695482834458,
+        "end_time": 1695482841033,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 8160,
+        "start_time": 1695482834459,
+        "end_time": 1695482842619,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 8546,
+        "start_time": 1695482834460,
+        "end_time": 1695482843006,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 10528,
+        "start_time": 1695482834460,
+        "end_time": 1695482844988,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 2391,
+        "start_time": 1695483141814,
+        "end_time": 1695483144205,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 5273,
+        "start_time": 1695483141815,
+        "end_time": 1695483147088,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 6600,
+        "start_time": 1695483141814,
+        "end_time": 1695483148414,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 7781,
+        "start_time": 1695483141815,
+        "end_time": 1695483149596,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 7923,
+        "start_time": 1695483141816,
+        "end_time": 1695483149739,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 10149,
+        "start_time": 1695483141815,
+        "end_time": 1695483151964,
+        "type": "Thread_4"
     }
 ]

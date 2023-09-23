@@ -51,12 +51,12 @@ public class Evaluator {
                 query = new Query(queryText);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.DAAT(queryTerms, n_results, mode,"BM25");
+                searcher.DAAT(queryTerms, n_results, mode, "BM25");
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
-                if (queryCounter % 10 == 0) {
-                    System.out.println("Query " + queryCounter + " processed");
+                if (queryCounter % 36 == 0) {
+                    System.out.println("Evalueator single process ends");
                     break;
                 }
             }
@@ -87,47 +87,47 @@ public class Evaluator {
 
 
     private void trecEvalLauncher() {
-    try {
-        // Costruisci il comando come una lista di stringhe
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "../trec_eval/trec_eval",
-                "-q",
-                "-c",
-                "-M15",
-                Q_REL_PATH,
-                RESULTS_PATH
-        );
+        try {
+            // Costruisci il comando come una lista di stringhe
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    "../trec_eval/trec_eval",
+                    "-q",
+                    "-c",
+                    "-M15",
+                    Q_REL_PATH,
+                    RESULTS_PATH
+            );
 
-        // Avvia il processo
-        Process process = processBuilder.start();
+            // Avvia il processo
+            Process process = processBuilder.start();
 
-        // Attendere che il processo termini
-        int exitCode = process.waitFor();
+            // Attendere che il processo termini
+            int exitCode = process.waitFor();
 
-        // Utilizza un BufferedReader per leggere l'output del processo
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(EVALUATION_PATH))) {
+            // Utilizza un BufferedReader per leggere l'output del processo
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                 BufferedWriter bw = new BufferedWriter(new FileWriter(EVALUATION_PATH))) {
 
-            String line;
-            StringBuilder output = new StringBuilder();
+                String line;
+                StringBuilder output = new StringBuilder();
 
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
+                }
+
+                // Scrivi l'output nel file
+                bw.write(output.toString());
             }
 
-            // Scrivi l'output nel file
-            bw.write(output.toString());
+            if (exitCode == 0) {
+                System.out.println("Il comando è stato eseguito con successo.");
+            } else {
+                System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-
-        if (exitCode == 0) {
-            System.out.println("Il comando è stato eseguito con successo.");
-        } else {
-            System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
-        }
-    } catch (IOException | InterruptedException e) {
-        e.printStackTrace();
     }
-}
 
 
 }
