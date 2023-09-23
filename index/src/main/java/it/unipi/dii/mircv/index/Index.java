@@ -45,10 +45,10 @@ public class Index {
     public static void main(String[] args) throws IOException {
         Logs log = new Logs();
         long start, end;
-        Boolean compressed_reading = false;
-        Boolean porterStemmer = false;
+        boolean[] options = processOptions(args);
 
-        processOptions(args, compressed_reading, porterStemmer);
+        boolean compressed_reading = options[0];
+        boolean porterStemmer = options[1];
 
         System.out.println("Compressed: " + compressed_reading);
         System.out.println("Porter: " + porterStemmer);
@@ -65,13 +65,16 @@ public class Index {
         log.addLog("merger", start, end);
     }
 
-    private static void processOptions(String[] args, Boolean compressed_reading, Boolean porterStemmer) {
+    private static boolean[] processOptions(String[] args) {
+        boolean compressed_reading = false;
+        boolean porterStemmer = false;
+
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-compressed")) { //compressed_reading
-            } else if (args[i].equals("-stemmer")) { // porterStemmer
+            if (args[i].equals("-compressed")) {
+                compressed_reading = true;
+            } else if (args[i].equals("-stemmer")) {
                 porterStemmer = true;
             } else if (args[i].equals("-help")) {
-                // Se viene specificata l'opzione -help, mostra un messaggio di aiuto
                 System.out.println("Uso del programma:");
                 System.out.println("-compressed : Abilita la lettura compressa della collezione, nel formato tar.gz.");
                 System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing dei documenti.");
@@ -83,7 +86,10 @@ public class Index {
             }
         }
 
+        // Restituisci le opzioni aggiornate come array di booleani
+        return new boolean[]{compressed_reading, porterStemmer};
     }
+
 
 }
 

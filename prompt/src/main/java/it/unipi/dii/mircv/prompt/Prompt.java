@@ -21,13 +21,14 @@ public class Prompt {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String scoringFunctionOption = "TFIDF";
-        Boolean dynamicPruning = false;
-        Boolean conjunctive = false;
-        Boolean porterStemmer = false;
+        int[] options = processOptions(args);
 
-        processOptions(args, scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer);
+        int scoringFunctionOption = options[0];
+        int dynamicPruning = options[1];
+        int conjunctive = options[2];
+        int porterStemmer = options[3];
 
+        processOptions(args);
 
         System.out.println("Scoring Function Option: " + scoringFunctionOption);
         System.out.println("Dynamic Pruning: " + dynamicPruning);
@@ -108,29 +109,42 @@ public class Prompt {
         }
     }
 
-    private static void processOptions(String[] args, String scoringFunctionOption, Boolean dynamicPruning, Boolean conjunctive, Boolean porterStemmer) {
+    private static int[] processOptions(String[] args) {
+        int scoringFunctionOption = 0;
+        int dynamicPruning = 0;
+        int conjunctive = 0;
+        int porterStemmer = 0;
+
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-sf")) { //scoring function
+            if (args[i].equals("-scoring")) { //scoring function
                 if (i + 1 < args.length) {
-                    scoringFunctionOption = args[i + 1];
+                    String scoring = args[i + 1];
+                    if (scoring.equals("TFIDF"))
+                        scoringFunctionOption = 0;
+                    else if (scoring.equals("BM25"))
+                        scoringFunctionOption = 1;
+                    else {
+                        System.err.println("L'opzione -sf richiede un valore tra TFIDF e BM25.");
+                        System.exit(1);
+                    }
                     i++;
                 } else {
-                    System.err.println("L'opzione -sf richiede un valore.");
+                    System.err.println("L'opzione -scoring richiede un valore.");
                     System.exit(1);
                 }
             } else if (args[i].equals("-dynamic")) { // dynamic pruning
-                dynamicPruning = true;
+                dynamicPruning = 1;
             } else if (args[i].equals("-conjunctive")) { // conjunctive
-                conjunctive = true;
+                conjunctive = 1;
             } else if (args[i].equals("-stemmer")) { // porterStemmer
-                porterStemmer = true;
+                porterStemmer = 1;
             } else if (args[i].equals("-help")) {
                 // Se viene specificata l'opzione -help, mostra un messaggio di aiuto
                 System.out.println("Uso del programma:");
-                System.out.println("-scoring_function <valore>: Specifica la scoring function [BM25, TFIDF].");
-                System.out.println("-dinamic_pruning: Abilita il pruning dinamico usando il MAXSCORE.");
+                System.out.println("-scoring <valore>: Specifica la scoring function [BM25, TFIDF].");
+                System.out.println("-dynamic: Abilita il pruning dinamico usando il MAXSCORE.");
                 System.out.println("-disjunctive: Abilita la modalità disgiuntiva.");
-                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing della query.");
+                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing della query\n NB:DEVE ESSERE UGUALE ALL'OPZIONE USATA IN index.java.");
                 System.out.println("-help: Mostra questo messaggio di aiuto.");
                 System.exit(0);
             } else {
@@ -138,6 +152,8 @@ public class Prompt {
                 System.exit(1);
             }
         }
+
+        return new int[]{scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer};
     }
 }
 
