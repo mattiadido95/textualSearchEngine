@@ -2,23 +2,26 @@ package it.unipi.dii.mircv.index;
 
 import it.unipi.dii.mircv.index.algorithms.Merger;
 import it.unipi.dii.mircv.index.algorithms.Spimi;
-import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
-import it.unipi.dii.mircv.index.utility.MemoryManager;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
+// Class-level variables and constructor...
+
+/**
+ * The Index class implements the main program for building an inverted index from a collection of documents.
+ */
 public class Index {
     //https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020
     private static final String INDEX_PATH = "data/index";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
 
+    /**
+     * Constructs a new Index object.
+     */
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
@@ -40,6 +43,15 @@ public class Index {
         this.documents = documents;
     }
 
+    /**
+     * Executes the main program for building an inverted index from a collection of documents.
+     *
+     * @param args The command-line arguments.
+     * The list of accepted arguments is:
+     *             -compressed_reading: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.
+     *             -porterStemmer: Enable PorterStemming in document preprocessing. Default: disabled.
+     *             -help: Show the help message.
+     */
     public static void main(String[] args) throws IOException {
         // create folder logs if not exists
         File logsFolder = new File("data/logs");
@@ -53,22 +65,25 @@ public class Index {
         Logs log = new Logs();
         long start, end;
 
+        // process options from command line
         boolean[] options = processOptions(args);
         boolean compressed_reading = options[0];
         boolean porterStemmer = options[1];
         printOptions(options);
         String COLLECTION_PATH;
-
         if (compressed_reading)
             COLLECTION_PATH = "data/collection/collection.tar.gz";
         else
             COLLECTION_PATH = "data/collection/collectionTest.tsv";
 
+        // spimi algorithm
         Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
         log.addLog("spimi", start, end);
+
+        // merger algorithm
         Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
         start = System.currentTimeMillis();
         merger.execute();
@@ -84,6 +99,12 @@ public class Index {
         System.out.println("----------------------------");
     }
 
+    /**
+     * Processes the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return An array of booleans indicating the options selected.
+     */
     private static boolean[] processOptions(String[] args) {
         boolean compressed_reading = false;
         boolean porterStemmer = false;
@@ -97,15 +118,13 @@ public class Index {
                 System.out.println("Program usage:");
                 System.out.println("-compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.");
                 System.out.println("-stemmer: Enable PorterStemming in document preprocessing. Default: disabled.");
-                System.out.println("-help: Show this help message.");
+                System.out.println("-help: Show this help message."); // TODO forse non serve se lo si mette nel bash script
                 System.exit(0);
             } else {
                 System.err.println("Unrecognized option: " + args[i]);
                 System.exit(1);
             }
         }
-
-
         // Restituisci le opzioni aggiornate come array di booleani
         return new boolean[]{compressed_reading, porterStemmer};
     }

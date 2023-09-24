@@ -3,7 +3,6 @@ package it.unipi.dii.mircv.prompt.dynamicPruning;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-
 import java.io.File;
 import java.util.ArrayList;
 

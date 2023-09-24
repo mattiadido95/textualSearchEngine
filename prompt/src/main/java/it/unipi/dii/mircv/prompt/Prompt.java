@@ -163,7 +163,7 @@ public class Prompt {
                 System.out.println("-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.");
                 System.out.println("-conjunctive: Enable conjunctive mode. Default: disjunctive.");
                 System.out.println("-stemmer: Enable Porter Stemming in query preprocessing\n NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.");
-                System.out.println("-help: Show this help message.");
+                System.out.println("-help: Show this help message."); // TODO forse non serve se lo si mette nel bash script
                 System.exit(0);
             } else {
                 System.err.println("Unrecognized option: " + args[i]);
