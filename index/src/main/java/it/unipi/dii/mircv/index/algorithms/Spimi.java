@@ -19,13 +19,17 @@ public class Spimi {
     private int indexCounter;
     private int documentCounter;
     private long totDocLength;
+    private boolean compressed_reading;
+    private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final int MAX_DOC_PER_FILE = 250000;
+    private static final int MAX_DOC_PER_FILE = 100000;
 
-    public Spimi(String collection) {
+    public Spimi(String collection, boolean porterStemmer, boolean compressed_reading) {
         this.COLLECTION_PATH = collection;
         this.log = new Logs();// create a log object to print log messages
         this.indexCounter = 0;
+        this.compressed_reading = compressed_reading;
+        this.porterStemmer = porterStemmer;
     }
 
     public int getIndexCounter() {
@@ -35,18 +39,24 @@ public class Spimi {
     public void execute() throws IOException {
 
         log.getLog("Start indexing ...");
-
         deleteFiles("data/index/", "bin");
         deleteFiles("data/index/lexicon/", "bin");
         deleteFiles("data/index/documents/", "bin");
         log.getLog("Deleted old index files ...");
 
-
-        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
-        tarArchiveInputStream.getNextEntry();
-
+        TarArchiveInputStream tarArchiveInputStream = null;
         // open buffer to read documents
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"))) {
+        try {
+            BufferedReader br;
+
+            if (compressed_reading) {
+                tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
+                tarArchiveInputStream.getNextEntry();
+                br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"));
+            } else {
+                br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
+            }
+
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
@@ -55,7 +65,7 @@ public class Spimi {
             String line; // start reading document by document
             totDocLength = 0;
             while ((line = br.readLine()) != null) {
-                Preprocessing preprocessing = new Preprocessing(line, documentCounter);
+                Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents
@@ -76,9 +86,9 @@ public class Spimi {
                     Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     indexCounter += 1;
-//                    if (documentCounter == 20000)
-//                        break;
                 }
+//                if (documentCounter == 3 * MAX_DOC_PER_FILE)
+//                        break;
             }
             if (!documents.isEmpty()) {
                 log.getLog("Processed: " + documentCounter + " documents");
@@ -95,7 +105,9 @@ public class Spimi {
             out.writeObject(totDocLength);
             out.close();
             fileOut.close();
-            tarArchiveInputStream.close();
+            if (compressed_reading)
+                tarArchiveInputStream.close();
+            br.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

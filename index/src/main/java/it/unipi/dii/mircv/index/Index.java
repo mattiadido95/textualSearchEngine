@@ -15,11 +15,10 @@ import java.util.List;
 
 public class Index {
     //https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020
-    private static final String COLLECTION_PATH = "data/collection/collection.tsv";
-    private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
+
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
@@ -45,7 +44,17 @@ public class Index {
         Logs log = new Logs();
         long start, end;
 
-        Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
+        boolean[] options = processOptions(args);
+        boolean compressed_reading = options[0];
+        boolean porterStemmer = options[1];
+        String COLLECTION_PATH;
+
+        if (compressed_reading)
+            COLLECTION_PATH = "data/collection/collection.tar.gz";
+        else
+            COLLECTION_PATH = "data/collection/collectionTest.tsv";
+
+        Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
@@ -56,6 +65,33 @@ public class Index {
         end = System.currentTimeMillis();
         log.addLog("merger", start, end);
     }
+
+    private static boolean[] processOptions(String[] args) {
+        boolean compressed_reading = false;
+        boolean porterStemmer = false;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-compressed")) {
+                compressed_reading = true;
+            } else if (args[i].equals("-stemmer")) {
+                porterStemmer = true;
+            } else if (args[i].equals("-help")) {
+                System.out.println("Uso del programma:");
+                System.out.println("-compressed : Abilita la lettura compressa della collezione, nel formato tar.gz.");
+                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing dei documenti.");
+                System.out.println("-help: Mostra questo messaggio di aiuto.");
+                System.exit(0);
+            } else {
+                System.err.println("Opzione non riconosciuta: " + args[i]);
+                System.exit(1);
+            }
+        }
+
+        // Restituisci le opzioni aggiornate come array di booleani
+        return new boolean[]{compressed_reading, porterStemmer};
+    }
+
+
 }
 
 

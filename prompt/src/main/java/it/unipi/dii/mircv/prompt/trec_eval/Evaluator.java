@@ -20,17 +20,21 @@ public class Evaluator {
     private Query query;
     private ArrayList<String> queryIDs;
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
+    private String scoringFunction;
+    private boolean porterStemmerOption;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/collection/results.test";
     private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
 
-    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode) {
+    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
         this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
         this.n_results = n_results;
         this.mode = mode;
+        this.scoringFunction = scoringFunction;
+        this.porterStemmerOption = porterStemmerOption;
         arrayQueryResults = new ArrayList<>();
         queryIDs = new ArrayList<>();
     }
@@ -48,10 +52,10 @@ public class Evaluator {
                 String queryText = input[1];
 
                 queryIDs.add(queryId);
-                query = new Query(queryText);
+                query = new Query(queryText, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.DAAT(queryTerms, n_results, mode, "BM25");
+                searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 

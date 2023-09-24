@@ -19,10 +19,10 @@ public class QueryResult implements Comparable<QueryResult>{
 
     @Override
     public String toString() {
-        return "QueryResult{" +
+        return "[" +
                 "docNo='" + docNo + '\'' +
                 ", scoring=" + scoring +
-                '}';
+                ']';
     }
 
     @Override

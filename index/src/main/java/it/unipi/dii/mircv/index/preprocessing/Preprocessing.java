@@ -14,33 +14,42 @@ public class Preprocessing {
     private Document doc;
     public List<String> tokens = new ArrayList<>();
 
-    public Preprocessing(String query) {
+    public Preprocessing(String query, boolean porterStemmerOption) {
         List<String> words = tokenization(query);
         words = removeNumbers(words); // Remove words that contain more than 4 digits
         words = removeWordstop(words); // Remove stopwords
-        PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
-        List<String> stemWords = new ArrayList<>();
-        for (String word : words) {
-            String stem = porterStemmer.stemWord(word);
-            stemWords.add(stem);
+        if (porterStemmerOption) {
+            PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
+            List<String> stemWords = new ArrayList<>();
+            for (String word : words) {
+                String stem = porterStemmer.stemWord(word);
+                stemWords.add(stem);
+            }
+            this.tokens = stemWords;
+        } else {
+            this.tokens = words;
         }
-        this.tokens = stemWords;
     }
 
-    public Preprocessing(String document, int docCounter) {
+    public Preprocessing(String document, int docCounter, boolean porterStemmerOption) {
         // create new document
         this.doc = new Document(document, docCounter);
         List<String> words = tokenization(doc.getBody());
         words = removeNumbers(words); // Remove words that contain numbers
         words = removeWordstop(words); // Remove stopwords
-        PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
-        List<String> stemWords = new ArrayList<>();
-        for (String word : words) {
-            String stem = porterStemmer.stemWord(word);
-            stemWords.add(stem);
+        if (porterStemmerOption) {
+            PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
+            List<String> stemWords = new ArrayList<>();
+            for (String word : words) {
+                String stem = porterStemmer.stemWord(word);
+                stemWords.add(stem);
+            }
+            this.doc.setLength(stemWords.size());
+            this.tokens = stemWords;
+        } else {
+            this.doc.setLength(words.size());
+            this.tokens = words;
         }
-        this.doc.setLength(stemWords.size());
-        this.tokens = stemWords;
     }
 
     // function to remove all words that contain more than 4 digits
