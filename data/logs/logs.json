@@ -280,5 +280,35 @@
         "start_time": 1695491003080,
         "end_time": 1695491003096,
         "type": "query"
+    },
+    {
+        "duration": 3249805,
+        "start_time": 1695535346836,
+        "end_time": 1695538596641,
+        "type": "spimi"
+    },
+    {
+        "duration": 1361018,
+        "start_time": 1695538610254,
+        "end_time": 1695539971272,
+        "type": "merger"
+    },
+    {
+        "duration": 2960,
+        "start_time": 1695541678669,
+        "end_time": 1695541681629,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2125,
+        "start_time": 1695541681642,
+        "end_time": 1695541683767,
+        "type": "load_documents"
+    },
+    {
+        "duration": 191,
+        "start_time": 1695542941459,
+        "end_time": 1695542941650,
+        "type": "query"
     }
 ]
