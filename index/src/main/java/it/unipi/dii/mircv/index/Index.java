@@ -47,6 +47,7 @@ public class Index {
         boolean[] options = processOptions(args);
         boolean compressed_reading = options[0];
         boolean porterStemmer = options[1];
+        printOptions(options);
         String COLLECTION_PATH;
 
         if (compressed_reading)
@@ -66,6 +67,14 @@ public class Index {
         log.addLog("merger", start, end);
     }
 
+    private static void printOptions(boolean[] options) {
+        System.out.println("Options:");
+        System.out.println("----------------------------");
+        System.out.println("|   compressed  |   " + options[0] + "      |");
+        System.out.println("|   stemmer     |   " + options[1] + "      |");
+        System.out.println("----------------------------");
+    }
+
     private static boolean[] processOptions(String[] args) {
         boolean compressed_reading = false;
         boolean porterStemmer = false;
@@ -76,21 +85,21 @@ public class Index {
             } else if (args[i].equals("-stemmer")) {
                 porterStemmer = true;
             } else if (args[i].equals("-help")) {
-                System.out.println("Uso del programma:");
-                System.out.println("-compressed : Abilita la lettura compressa della collezione, nel formato tar.gz.");
-                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing dei documenti.");
-                System.out.println("-help: Mostra questo messaggio di aiuto.");
+                System.out.println("Program usage:");
+                System.out.println("-compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.");
+                System.out.println("-stemmer: Enable PorterStemming in document preprocessing. Default: disabled.");
+                System.out.println("-help: Show this help message.");
                 System.exit(0);
             } else {
-                System.err.println("Opzione non riconosciuta: " + args[i]);
+                System.err.println("Unrecognized option: " + args[i]);
                 System.exit(1);
             }
         }
 
+
         // Restituisci le opzioni aggiornate come array di booleani
         return new boolean[]{compressed_reading, porterStemmer};
     }
-
 
 }
 
