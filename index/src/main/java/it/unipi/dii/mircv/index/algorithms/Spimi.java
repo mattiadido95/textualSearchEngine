@@ -13,6 +13,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// Class-level variables and constructor...
+
+/**
+ * The Spimi class implements the SPIMI (Single-pass in-memory indexing) algorithm
+ * for building an inverted index from a collection of documents.
+ * It manages indexing, preprocessing, and data storage.
+ */
 public class Spimi {
     private String COLLECTION_PATH;
     private Logs log;
@@ -24,6 +31,13 @@ public class Spimi {
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
     private static final int MAX_DOC_PER_FILE = 100000;
 
+    /**
+     * Constructs a new Spimi indexer.
+     *
+     * @param collection         The path to the collection of documents to be indexed.
+     * @param porterStemmer      A boolean indicating whether Porter stemming should be applied during preprocessing.
+     * @param compressed_reading A boolean indicating whether the collection is compressed in tar.gz format.
+     */
     public Spimi(String collection, boolean porterStemmer, boolean compressed_reading) {
         this.COLLECTION_PATH = collection;
         this.log = new Logs();// create a log object to print log messages
@@ -36,6 +50,12 @@ public class Spimi {
         return indexCounter;
     }
 
+    /**
+     * Executes the SPIMI (Single-pass in-memory indexing) algorithm to build an inverted index
+     * from a collection of documents.
+     *
+     * @throws IOException If there are any issues with reading or writing files.
+     */
     public void execute() throws IOException {
 
         log.getLog("Start indexing ...");
@@ -114,6 +134,15 @@ public class Spimi {
         log.getLog("Indexing completed ...");
     }
 
+    /**
+     * Adds a token to the inverted index, updating the corresponding posting list for the token.
+     * If the token is not already in the inverted index, a new posting list is created.
+     *
+     * @param invertedIndex A HashMap representing the inverted index with tokens as keys and posting lists as values.
+     * @param token         The token to be added to the inverted index.
+     * @param document      The document associated with the token.
+     * @return The size of the updated or newly created posting list.
+     */
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
         // check if the token is already in the inverted index and manage the update the posting list
         if (invertedIndex.containsKey(token)) {
@@ -129,6 +158,12 @@ public class Spimi {
         }
     }
 
+    /**
+     * Deletes files with a specified extension from a given folder path. If the folder does not exist, it creates it.
+     *
+     * @param folderPath The path of the folder from which files should be deleted.
+     * @param extension  The file extension to filter files for deletion.
+     */
     private static void deleteFiles(String folderPath, String extension) {
         File folder = new File(folderPath);
         if (folder.exists() && folder.isDirectory()) {

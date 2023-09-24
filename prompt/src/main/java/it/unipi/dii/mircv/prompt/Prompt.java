@@ -6,7 +6,6 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
 import java.io.File;
@@ -20,7 +19,15 @@ public class Prompt {
 
     public static void main(String[] args) throws InterruptedException {
 
-        // TODO fare una funzione che controlli se tutte le cartelle necessarie esistono e se non esistono le crea
+        // create folder logs if not exists
+        File logsFolder = new File("data/logs");
+        if (!logsFolder.exists())
+            logsFolder.mkdir();
+        //create folder trec_eval if not exists
+        File trec_evalFolder = new File("data/trec_eval");
+        if (!trec_evalFolder.exists())
+            trec_evalFolder.mkdir();
+
 
         int[] options = processOptions(args);
 
@@ -29,6 +36,8 @@ public class Prompt {
         String mode = options[2] == 1 ? "conjunctive" : "disjunctive";
         boolean porterStemmerOption = options[3] == 1 ? true : false;
         int K = options[4];
+
+        printOptions(scoringFunction, dynamicPruning, mode, porterStemmerOption, K);
 
         Logs log = new Logs();
         long start, end;
@@ -83,7 +92,6 @@ public class Prompt {
 
 
             } else if (userInput == 2) {
-                //TODO INSERIRE LA SCORING FUNCTION
                 EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
@@ -113,7 +121,7 @@ public class Prompt {
         int K = 10;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-scoring")) { //scoring function
+            if (args[i].equals("-scoring")) { // Scoring function
                 if (i + 1 < args.length) {
                     String scoring = args[i + 1];
                     if (scoring.equals("TFIDF"))
@@ -121,48 +129,60 @@ public class Prompt {
                     else if (scoring.equals("BM25"))
                         scoringFunctionOption = 1;
                     else {
-                        System.err.println("L'opzione -scoring richiede un valore tra TFIDF e BM25.");
+                        System.err.println("The -scoring option requires a value of either TFIDF or BM25.");
                         System.exit(1);
                     }
                     i++;
                 } else {
-                    System.err.println("L'opzione -scoring richiede un valore.");
+                    System.err.println("The -scoring option requires a value.");
                     System.exit(1);
                 }
-            } else if (args[i].equals("-topK")) { // topK results from query
+            } else if (args[i].equals("-topK")) { // Top K results from the query
                 if (i + 1 < args.length) {
                     K = Integer.parseInt(args[i + 1]);
                     if (K < 1) {
-                        System.err.println("Il numero deve essere maggiore di 0.");
+                        System.err.println("The number must be greater than 0.");
                         System.exit(1);
                     }
                     i++;
                 } else {
-                    System.err.println("L'opzione -scoring richiede un valore.");
+                    System.err.println("The -topK option requires a value.");
                     System.exit(1);
                 }
-            } else if (args[i].equals("-dynamic")) { // dynamic pruning
+            } else if (args[i].equals("-dynamic")) { // Dynamic pruning
                 dynamicPruning = 1;
-            } else if (args[i].equals("-conjunctive")) { // conjunctive
+            } else if (args[i].equals("-conjunctive")) { // Conjunctive mode
                 conjunctive = 1;
-            } else if (args[i].equals("-stemmer")) { // porterStemmer
+            } else if (args[i].equals("-stemmer")) { // Porter Stemmer
                 porterStemmer = 1;
             } else if (args[i].equals("-help")) {
-                // Se viene specificata l'opzione -help, mostra un messaggio di aiuto
-                System.out.println("Uso del programma:");
-                System.out.println("-scoring <valore>: Specifica la scoring function [BM25, TFIDF].");
-                System.out.println("-dynamic: Abilita il pruning dinamico usando il MAXSCORE.");
-                System.out.println("-conjunctive: Abilita la modalità conjunctive.");
-                System.out.println("-stemmer: Abilita il PorterStemming nel preprocessing della query\n NB:DEVE ESSERE UGUALE ALL'OPZIONE USATA IN index.java.");
-                System.out.println("-help: Mostra questo messaggio di aiuto.");
+                // If the -help option is specified, display a help message
+                System.out.println("Program usage:");
+                System.out.println("-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.");
+                System.out.println("-topK: Specify the number of documents to return. Default: 10.");
+                System.out.println("-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.");
+                System.out.println("-conjunctive: Enable conjunctive mode. Default: disjunctive.");
+                System.out.println("-stemmer: Enable Porter Stemming in query preprocessing\n NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.");
+                System.out.println("-help: Show this help message.");
                 System.exit(0);
             } else {
-                System.err.println("Opzione non riconosciuta: " + args[i]);
+                System.err.println("Unrecognized option: " + args[i]);
                 System.exit(1);
             }
         }
 
         return new int[]{scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer, K};
+    }
+
+    private static void printOptions(String scoringFunction, boolean dynamicPruning, String mode, boolean porterStemmerOption, int K) {
+        System.out.println("Options:");
+        System.out.println("------------------------------------");
+        System.out.println("|   scoring     |   " + scoringFunction + "          |");
+        System.out.println("|   dynamic     |   " + dynamicPruning + "          |");
+        System.out.println("|   conjunctive |   " + mode + "    |");
+        System.out.println("|   stemmer     |   " + porterStemmerOption + "          |");
+        System.out.println("|   topK        |   " + K + "             |");
+        System.out.println("------------------------------------");
     }
 }
 
