@@ -41,6 +41,15 @@ public class Index {
     }
 
     public static void main(String[] args) throws IOException {
+        // create folder logs if not exists
+        File logsFolder = new File("data/logs");
+        if (!logsFolder.exists())
+            logsFolder.mkdir();
+        //create folder trec_eval if not exists
+        File trec_evalFolder = new File("data/trec_eval");
+        if (!trec_evalFolder.exists())
+            trec_evalFolder.mkdir();
+
         Logs log = new Logs();
         long start, end;
 
@@ -70,8 +79,8 @@ public class Index {
     private static void printOptions(boolean[] options) {
         System.out.println("Options:");
         System.out.println("----------------------------");
-        System.out.println("|   compressed  |   " + options[0] + "      |");
-        System.out.println("|   stemmer     |   " + options[1] + "      |");
+        System.out.println("|   compressed  |   " + options[0] + "  |");
+        System.out.println("|   stemmer     |   " + options[1] + "  |");
         System.out.println("----------------------------");
     }
 

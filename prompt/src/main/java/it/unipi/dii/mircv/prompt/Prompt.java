@@ -8,6 +8,7 @@ import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -18,7 +19,15 @@ public class Prompt {
 
     public static void main(String[] args) throws InterruptedException {
 
-        // TODO fare una funzione che controlli se tutte le cartelle necessarie esistono e se non esistono le crea
+        // create folder logs if not exists
+        File logsFolder = new File("data/logs");
+        if (!logsFolder.exists())
+            logsFolder.mkdir();
+        //create folder trec_eval if not exists
+        File trec_evalFolder = new File("data/trec_eval");
+        if (!trec_evalFolder.exists())
+            trec_evalFolder.mkdir();
+
 
         int[] options = processOptions(args);
 
@@ -83,7 +92,6 @@ public class Prompt {
 
 
             } else if (userInput == 2) {
-                //TODO INSERIRE LA SCORING FUNCTION
                 EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
