@@ -1,17 +1,13 @@
 package it.unipi.dii.mircv.index.structures;
 
-import it.unipi.dii.mircv.index.utility.Logs;
-
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/*
+ * This class represents the lexicon of the index.
+ * It is implemented as a TreeMap<String, LexiconElem> where the key is the term and the value is a LexiconElem object.
+ * */
 public class Lexicon {
     TreeMap<String, LexiconElem> lexicon;
 
@@ -27,6 +23,11 @@ public class Lexicon {
         return new ArrayList<>(this.lexicon.keySet());
     }
 
+    /*
+     * This method adds a term to the lexicon.
+     * If the term is already present, it increments the cf of the term.
+     * If the term is not present, it creates a new LexiconElem object and adds it to the lexicon.
+     * */
     public void addLexiconElem(String term) {
         // lexicon contains the term
         if (this.lexicon.containsKey(term)) {
@@ -57,7 +58,12 @@ public class Lexicon {
         return this.lexicon.get(term);
     }
 
-    //sort lexicon by TUB in termElem
+    /*
+     * This method sorts the lexicon by LexiconElem.TUB_bm25 in descending order
+     * @param lexicon: the lexicon to be sorted
+     * @param scoringFunction: the scoring function to be used for sorting
+     * @return the sorted lexicon
+     * */
     public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String, LexiconElem> lexicon, String scoringFunction) {
         // Ordina la lexicon per LexiconELem.TUB_bm25 in ordine decrescente
         LinkedHashMap<String, LexiconElem> sorted = new LinkedHashMap<>();
@@ -87,20 +93,21 @@ public class Lexicon {
         return sorted;
     }
 
-
     public void setDf(String term, int newDf) {
         this.lexicon.get(term).setDf(newDf);
     }
 
+    /*
+     * This method saves the lexicon to disk.
+     * @param indexCounter: the index counter used to distinguish the spimi phase where the lexicon is saved in subportions
+     * @param filePath: the path where the lexicon will be saved
+     * */
     public void saveLexiconToDisk(int indexCounter, String filePath) {
-//        String filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
-
         if (indexCounter != -1)
             filePath += indexCounter + ".bin";
 
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
-
             for (String term : lexicon.keySet()) {
                 LexiconElem lexiconElem = lexicon.get(term);
                 randomAccessFile.writeUTF(term);
@@ -113,24 +120,23 @@ public class Lexicon {
                     randomAccessFile.writeDouble(lexiconElem.getTUB_tfidf());
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /*
+     * This method reads the lexicon from disk.
+     * @param indexCounter: the index counter used to distinguish the merge phase where the lexicon is saved in subportions
+     * @param filePath: the path where the lexicon will be read
+     * */
     public void readLexiconFromDisk(int indexCounter, String filePath) {
-
         if (indexCounter != -1)
             filePath = "data/index/lexicon/lexicon_" + indexCounter + ".bin";
 
-
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
              BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(randomAccessFile.getFD()))) {
-
             DataInputStream dataInputStream = new DataInputStream(bufferedInputStream);
-
-
             while (dataInputStream.available() > 0) {
                 String term = dataInputStream.readUTF();
                 int df = dataInputStream.readInt();
@@ -144,7 +150,6 @@ public class Lexicon {
                     tub_bm25 = dataInputStream.readDouble();
                     tub_tfidf = dataInputStream.readDouble();
                 }
-                // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
                 LexiconElem lexiconElem = new LexiconElem(df, cf, offset, numblock, tub_bm25, tub_tfidf);
                 this.lexicon.put(term, lexiconElem);
             }
@@ -153,22 +158,33 @@ public class Lexicon {
         }
     }
 
+    /*
+     * This method read singe lexicon entry from disk.
+     * @param araf:  ???? TODO
+     * @param arrayOffset: ???? TODO
+     * @param i:  ???? TODO
+     * */
     public static LexiconElem readEntry(ArrayList<RandomAccessFile> araf, long[] arrayOffset, int i) throws IOException {
-        //get right file and offset
         RandomAccessFile raf = araf.get(i);
         raf.seek(arrayOffset[i]);
-
         raf.readUTF();
         int df = raf.readInt();
         long cf = raf.readLong();
         long offset = raf.readLong();
-
         arrayOffset[i] = raf.getFilePointer();
-        // Creare un nuovo oggetto LexiconElem e inserirlo nell'HashMap
         LexiconElem lexiconElem = new LexiconElem(df, cf, offset, -1, -1, -1);
         return lexiconElem;
     }
 
+    /*
+     * This method write singe lexicon entry to disk.
+     * @param raf:  ???? TODO
+     * @param term: ???? TODO
+     * @param df:  ???? TODO
+     * @param cf:  ???? TODO
+     * @param offset:  ???? TODO
+     * @param numBlock:  ???? TODO
+     * */
     public static String writeEntry(RandomAccessFile raf, String term, int df, long cf, long offset, int numBlock) throws IOException {
         raf.writeUTF(term);
         raf.writeInt(df);
