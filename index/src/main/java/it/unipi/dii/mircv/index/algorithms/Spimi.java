@@ -3,7 +3,6 @@ package it.unipi.dii.mircv.index.algorithms;
 import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
-import it.unipi.dii.mircv.index.utility.MemoryManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import java.io.*;
@@ -28,6 +27,8 @@ public class Spimi {
     private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
     private static final int MAX_DOC_PER_FILE = 100000;
+    private static final String PARTIAL_INDEX_PATH = "data/index/index_";
+    private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
 
     /**
      * Constructs a new Spimi indexer.
@@ -78,7 +79,6 @@ public class Spimi {
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
-            MemoryManager manageMemory = new MemoryManager();
 
             String line; // start reading document by document
             totDocLength = 0;
@@ -100,9 +100,9 @@ public class Spimi {
                 if (documentCounter % MAX_DOC_PER_FILE == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
                     //save Structures to disk
-                    manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                    saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
-                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+                    clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                     indexCounter += 1;
                 }
 //                if (documentCounter == 3 * MAX_DOC_PER_FILE)
@@ -110,9 +110,9 @@ public class Spimi {
             }
             if (!documents.isEmpty()) {
                 log.getLog("Processed: " + documentCounter + " documents");
-                manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                 Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
-                manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+                clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
                 indexCounter += 1;
             }
 
@@ -178,5 +178,36 @@ public class Spimi {
         if (!folder.exists()) {
             folder.mkdirs();
         }
+    }
+
+    /**
+     * Saves the inverted index and lexicon to disk.
+     *
+     * @param lexicon       The lexicon to save.
+     * @param invertedIndex The inverted index to save.
+     * @param indexCounter  The index counter used to distinguish different index segments.
+     */
+    public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter) {
+        for (String term : lexicon.getLexicon().keySet()) {
+            // for each term in lexicon
+            PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
+            long offset = postingList.savePostingListToDisk(indexCounter, PARTIAL_INDEX_PATH); // save posting list to disk and get offset of file
+            lexicon.getLexicon().get(term).setOffset(offset); // set offset of term in the lexicon
+        }
+        lexicon.saveLexiconToDisk(indexCounter, PARTIAL_LEXICON_PATH); // save lexicon to disk
+        lexicon.getLexicon().clear(); // clear lexicon
+    }
+
+    /**
+     * Clears memory by clearing the inverted index, documents, and lexicon.
+     *
+     * @param lexicon       The lexicon to clear.
+     * @param invertedIndex The inverted index to clear.
+     * @param docs          The list of documents to clear.
+     */
+    public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs) {
+        invertedIndex.clear();  // clear index
+        docs.clear(); // clear docs
+        lexicon.getLexicon().clear(); // clear lexicon
     }
 }
