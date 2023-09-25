@@ -9,18 +9,16 @@ print_menu() {
 }
 
 compile_index() {
-#  mvn --projects index --also-make clean install # specificare cartella output
   echo "Enter parameters for indexing:"
   echo "params: "
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/index-1.0-SNAPSHOT.jar $params
+  java -jar out/artifacts/index_jar/index.jar $params
   read -p "Press ENTER to continue..."
 }
 
 start_prompt() {
-#  mvn --projects prompt --also-make clean install # specificare cartella output
   echo "Enter parameters for the prompt:"
   echo "List of params:"
   echo ""
@@ -35,9 +33,7 @@ start_prompt() {
   echo "-stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
   echo ""
   read -p "Parameters: " params
-#  java -jar out/prompt-1.0-SNAPSHOT.jar $params
   java -jar out/artifacts/prompt_jar/prompt.jar $params
-
   read -p "Press ENTER to continue..."
 }
 

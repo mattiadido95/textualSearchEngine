@@ -334,5 +334,17 @@
         "start_time": 1695629446521,
         "end_time": 1695629446980,
         "type": "query"
+    },
+    {
+        "duration": 96929,
+        "start_time": 1695629430341,
+        "end_time": 1695629527270,
+        "type": "load_documents"
+    },
+    {
+        "duration": 40612,
+        "start_time": 1695629593481,
+        "end_time": 1695629634093,
+        "type": "query"
     }
 ]
