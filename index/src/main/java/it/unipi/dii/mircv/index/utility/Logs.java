@@ -14,6 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * This class handles logging and provides methods to log various elements.
+ */
 public class Logs {
     private SimpleDateFormat dateFormat;
 
@@ -25,6 +28,12 @@ public class Logs {
         return dateFormat.format(new Date());
     }
 
+    /**
+     * Logs an element based on its type.
+     *
+     * @param element   The element to be logged.
+     * @param <T>       The type of the element.
+     */
     public <T> void getLog(T element) {
         String typeObj = element.getClass().getSimpleName();
         String timestamp = getFormattedTimestamp();
@@ -83,6 +92,13 @@ public class Logs {
         System.out.println("**************************************");
     }
 
+    /**
+     * Adds a log entry with a specified type, start time, and end time to a JSON log file.
+     *
+     * @param logType   The type of the log entry.
+     * @param startTime The start time of the operation being logged.
+     * @param endTime   The end time of the operation being logged.
+     */
     public void addLog(String logType, long startTime, long endTime) {
         // Crea l'oggetto JSON per il log
         JSONObject logObject = new JSONObject();

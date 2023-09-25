@@ -14,6 +14,12 @@ public class Document {
     private int length;
     private String rawDocument;
 
+    /**
+     * Constructor to initialize a Document from raw text.
+     *
+     * @param rawDocument The raw text content of the document.
+     * @param docID       The unique identifier for the document.
+     */
     public Document(String rawDocument, int docID) {
         this.docID = docID;
         this.rawDocument = rawDocument;
@@ -21,16 +27,29 @@ public class Document {
         parseDocument();
     }
 
+    /**
+     * Constructor to initialize a Document with specified attributes.
+     *
+     * @param docID   The unique identifier for the document.
+     * @param docNo   The document number.
+     * @param length  The length of the document.
+     */
     public Document(int docID, String docNo, int length) {
         this.docID = docID;
         this.docNo = docNo;
         this.length = length;
     }
 
+    /**
+     * Default constructor for a Document.
+     */
     public Document() {
 
     }
 
+    /**
+     * Parse document by dividing it into its components: docid and body.
+     */
     private void parseDocument() {
         // parse the raw document and set id and body
         String split[] = rawDocument.split("\t");
@@ -47,26 +66,58 @@ public class Document {
                 '}';
     }
 
+    /**
+     * Get the unique identifier for the document.
+     *
+     * @return The document ID.
+     */
     public int getDocID() {
         return this.docID;
     }
 
+    /**
+     * Get the document number.
+     *
+     * @return The document number.
+     */
     public String getDocNo() {
         return docNo;
     }
 
+    /**
+     * Get the length of the document.
+     *
+     * @return The length of the document.
+     */
     public int getLength() {
         return length;
     }
 
+    /**
+     * Get the body content of the document.
+     *
+     * @return The document body.
+     */
     public String getBody() {
         return this.body;
     }
 
+    /**
+     * Set the length of the document.
+     *
+     * @param length The new length to set.
+     */
     public void setLength(int length) {
         this.length = length;
     }
 
+     /**
+     * Save a list of Document objects to a binary file.
+     *
+     * @param docs     The list of Document objects to save.
+     * @param index    The index (used for filename) or -1 if not used.
+     * @param filePath The path to the binary file to save the documents.
+     */
     public static void saveDocumentsToDisk(ArrayList<Document> docs, int index, String filePath) {
         if (index != -1)
             filePath += index + ".bin";
@@ -109,6 +160,13 @@ public class Document {
         }
     }
 
+    /**
+     * Read a list of Document objects from a binary file.
+     *
+     * @param index    The index (used for filename) or -1 if not used.
+     * @param filePath The path to the binary file containing the documents.
+     * @return An ArrayList of Document objects read from the file.
+     */
     public static ArrayList<Document> readDocumentsFromDisk(int index, String filePath) {
         if (index != -1) {
             filePath += index + ".bin";
@@ -143,6 +201,12 @@ public class Document {
         return documents;
     }
 
+    /**
+     * Concatenate a list of files into a single output file.
+     *
+     * @param fileNames     The list of file names to concatenate.
+     * @param outputFileName The name of the output file.
+     */
     public static void ConcatenateFiles(ArrayList<String> fileNames, String outputFileName) {
         try {
             FileOutputStream outputStream = new FileOutputStream(outputFileName);
