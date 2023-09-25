@@ -14,6 +14,7 @@ compile_index() {
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
+#  java -jar out/index-1.0-SNAPSHOT.jar $params
   java -jar out/artifacts/index_jar/index.jar $params
   read -p "Press ENTER to continue..."
 }
@@ -24,7 +25,7 @@ start_prompt() {
   echo ""
   echo "-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF."
   echo ""
-  echo "-topK: Specify the number of documents to return. Default: 10."
+  echo "-topK <value>: Specify the number of documents to return. Default: 10."
   echo ""
   echo "-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled."
   echo ""
