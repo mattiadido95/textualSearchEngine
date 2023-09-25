@@ -158,7 +158,7 @@ public class Prompt {
                 // If the -help option is specified, display a help message
                 System.out.println("Program usage:");
                 System.out.println("-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.");
-                System.out.println("-topK: Specify the number of documents to return. Default: 10.");
+                System.out.println("-topK <value>: Specify the number of documents to return. Default: 10.");
                 System.out.println("-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.");
                 System.out.println("-conjunctive: Enable conjunctive mode. Default: disjunctive.");
                 System.out.println("-stemmer: Enable Porter Stemming in query preprocessing\n NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.");
