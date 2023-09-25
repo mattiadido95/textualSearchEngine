@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Logs {
-
     private SimpleDateFormat dateFormat;
 
     public Logs() {

@@ -11,7 +11,7 @@ print_menu() {
 compile_index() {
 #  mvn --projects index --also-make clean install # specificare cartella output
   echo "Enter parameters for indexing:"
-  echo "params: -compressed -stemmer"
+  echo "params: "
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
@@ -22,14 +22,22 @@ compile_index() {
 start_prompt() {
 #  mvn --projects prompt --also-make clean install # specificare cartella output
   echo "Enter parameters for the prompt:"
-  echo "params: -TFIDF or BM25 -K -mode -dynamic -stemmer"
-  echo "<TFIDF/BM25> Specify the scoring function [BM25, TFIDF]. Default: TFIDF.."
-  echo "<K> Specify the number of documents to return. Default: 10."
-  echo "<conjunctive> Enable conjunctive mode. Default: disjunctive."
-  echo "<dynamic> Enable dynamic pruning using MAXSCORE. Default: disabled."
-  echo "<stemmer> Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
+  echo "List of params:"
+  echo ""
+  echo "-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF."
+  echo ""
+  echo "-topK: Specify the number of documents to return. Default: 10."
+  echo ""
+  echo "-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled."
+  echo ""
+  echo "-conjunctive: Enable conjunctive mode. Default: disjunctive."
+  echo ""
+  echo "-stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
+  echo ""
   read -p "Parameters: " params
-  java -jar out/prompt-1.0-SNAPSHOT.jar $params
+#  java -jar out/prompt-1.0-SNAPSHOT.jar $params
+  java -jar out/artifacts/prompt_jar/prompt.jar $params
+
   read -p "Press ENTER to continue..."
 }
 

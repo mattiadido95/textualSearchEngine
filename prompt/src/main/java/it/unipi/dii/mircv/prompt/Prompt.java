@@ -7,7 +7,6 @@ import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
