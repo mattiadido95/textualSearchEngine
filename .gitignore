@@ -2,6 +2,9 @@
 /data/collection
 /data/index
 .DS_Store
+/data/collection
+/data/trec_eval
+/data/logs
 index/.DS_Store
 prompt/.DS_Store
 /index/src/test/data
