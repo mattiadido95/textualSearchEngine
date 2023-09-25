@@ -20,13 +20,13 @@ The Prompt module implements the main program for querying the index built by th
 
 ### Clone the repository
 ```shell
-git clone https://github.com/tuonome/textualSearchEngine.git
+git clone https://github.com/mattiadido95/textualSearchEngine.git
 cd textualSearchEngine
 ```
 ### Download the dataset
 You must use the document collection available on this page:
 https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020. Scroll down
-the page until you come to a section titled “Passage ranking dataset”, and download the first link in the table, collection.tar.gz. Note that this is a collection of
+the page until you come to a section titled “Passage ranking dataset”, and download the first link in the table, collection.tar.gz. Note that this is a collection of
 8.8M documents, also called passages, about 2.2GB in size. Put the collection in the folder textualSearchEngine/data/collection/ and unzip it.
 ### Download the queries
 You must use the queries available on this page: https://msmarco.blob.core.windows.net/msmarcoranking/queries.tar.gz. Put the queries in the folder textualSearchEngine/data/collection/ and unzip them.
@@ -80,4 +80,4 @@ MENU:
 - Option 3 to calculate the TUBs for dynamic pruning: with this option the program will be started that calculates the TUB values for each term present in the lexicon.
 
 ## Requirements
-minimum java version is 17 
+- Java 17
