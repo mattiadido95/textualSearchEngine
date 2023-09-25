@@ -1,9 +1,12 @@
 package it.unipi.dii.mircv.prompt.query;
 
 import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
-
 import java.util.ArrayList;
 
+/**
+ * This class represents a query.
+ * It is used to parse the query string and to store the query terms.
+ */
 public class Query {
     private String query; // query string
     private boolean porterStemmerOption; // porter stemmer option
