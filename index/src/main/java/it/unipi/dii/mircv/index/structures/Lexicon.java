@@ -158,7 +158,7 @@ public class Lexicon {
         }
     }
 
-    /*
+    /**
      * This method read singe lexicon entry from disk.
      * @param araf:  ???? TODO
      * @param arrayOffset: ???? TODO
@@ -176,7 +176,7 @@ public class Lexicon {
         return lexiconElem;
     }
 
-    /*
+    /**
      * This method write singe lexicon entry to disk.
      * @param raf:  ???? TODO
      * @param term: ???? TODO

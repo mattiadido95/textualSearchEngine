@@ -1,9 +1,8 @@
 # TEXTUAL SEARCH ENGINE
  
-## Descrizione
+## Description
 
-Inserisci una descrizione più dettagliata del tuo progetto qui. Spiega di cosa si tratta, perché è importante e come funziona. Fornisci contesto agli utenti che visitano il tuo repository GitHub per la prima volta.
-
+A text search engine is an application that allows users to search and retrieve documents or information within large collections of text. These search engines are designed to parse, index and retrieve textual data efficiently.
 ## Modules
 
 The project is divided into 2 modules:
@@ -52,8 +51,8 @@ Select option 1 to start the indexing program. You will have to enter the parame
 ```shell
 Enter parameters for indexing
 params: 
--compressed Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading
--stemmer Enable Porter Stemming in document preprocessing. Default: disabled
+-compressed: Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading
+-stemmer: Enable Porter Stemming in document preprocessing. Default: disabled
 ```
 Once the parameters have been entered, the indexing program will start and the lexicon and index will be built.
 
