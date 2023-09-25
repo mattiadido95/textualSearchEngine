@@ -27,7 +27,7 @@ start_prompt() {
   echo ""
   echo "-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF."
   echo ""
-  echo "-topK: Specify the number of documents to return. Default: 10."
+  echo "-topK <value>: Specify the number of documents to return. Default: 10."
   echo ""
   echo "-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled."
   echo ""
