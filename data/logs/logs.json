@@ -346,5 +346,29 @@
         "start_time": 1695629593481,
         "end_time": 1695629634093,
         "type": "query"
+    },
+    {
+        "duration": 221588,
+        "start_time": 1695630718272,
+        "end_time": 1695630939860,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 89080,
+        "start_time": 1695630939886,
+        "end_time": 1695631028966,
+        "type": "load_documents"
+    },
+    {
+        "duration": 9623,
+        "start_time": 1695631280671,
+        "end_time": 1695631290294,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1695631314666,
+        "end_time": 1695631314666,
+        "type": "query"
     }
 ]
