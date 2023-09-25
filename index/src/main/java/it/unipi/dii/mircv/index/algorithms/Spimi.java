@@ -6,8 +6,6 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-
-import javax.management.loading.PrivateClassLoader;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;

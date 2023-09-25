@@ -36,6 +36,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
+                    <outputDirectory>../out</outputDirectory>
                     <archive>
                         <manifest>
                             <mainClass>it.unipi.dii.mircv.prompt.Prompt</mainClass>

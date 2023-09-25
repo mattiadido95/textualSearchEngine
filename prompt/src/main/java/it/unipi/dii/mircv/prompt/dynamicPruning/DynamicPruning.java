@@ -3,7 +3,6 @@ package it.unipi.dii.mircv.prompt.dynamicPruning;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -23,7 +22,7 @@ public class DynamicPruning {
         for (String term : this.queryTerms) {
             ArrayList<String> faketerm = new ArrayList<>();
             faketerm.add(term); // used to call the search function, made for compatibility
-            System.out.println(term);
+            //System.out.println(term);
             if (scoreFunction.equals("BM25")) {
                 this.searcher.DAAT(faketerm, 1, "disjunctive", "BM25");
                 this.lexicon.getLexiconElem(term).setTUB_bm25(this.searcher.getQueryResults().get(0).getScoring());
