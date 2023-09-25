@@ -7,6 +7,7 @@ import it.unipi.dii.mircv.prompt.dynamicPruning.DynamicPruning;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -25,7 +26,7 @@ public class Prompt {
      * Executes the main program to run the search engine.
      *
      * @param args The command-line arguments.
-     * The list of accepted arguments is:
+     *             The list of accepted arguments is:
      *             -scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.
      *             -topK <value>: Specify the number of documents to return. Default: 10.
      *             -dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.
@@ -33,7 +34,6 @@ public class Prompt {
      *             -stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.
      */
     public static void main(String[] args) throws InterruptedException {
-
         // create folder logs if not exists
         File logsFolder = new File("data/logs");
         if (!logsFolder.exists())
@@ -58,6 +58,12 @@ public class Prompt {
 
         // load main structure in memory
         System.out.println("Loading index ...");
+        // check if index exists
+        if (!checkIndexing()) {
+            System.out.println("Indexing not found, please run Index first");
+            System.out.println("Bye!");
+            System.exit(0);
+        }
         // load lexicon
         Lexicon lexicon = new Lexicon();
         start = System.currentTimeMillis();
@@ -124,6 +130,15 @@ public class Prompt {
                 System.out.println("Wrong input, please insert 1 or 2");
             }
         }
+    }
+
+    /**
+     * Checks if the index exists.
+     *
+     * @return True if the index exists, false otherwise.
+     */
+    private static boolean checkIndexing() {
+        return (new File(DOCUMENTS_PATH).exists() && new File(LEXICON_PATH).exists() && new File("data/index/index.bin").exists() && new File("data/index/documentinfo.bin").exists() && new File("data/index/blockdescriptor.bin").exists());
     }
 
     /**
