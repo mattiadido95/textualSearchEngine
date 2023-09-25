@@ -7,19 +7,23 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
+/**
+ * The PostingList class implements a posting list for a term in the inverted index.
+ * It stores the list of documents containing the term and the frequency of the term in each document.
+ */
 public class PostingList {
-    private ArrayList<Posting> postings;
-    private Iterator<Posting> postingIterator;
-    private Posting actualPosting;
-
-    private static final String INDEX_PATH = "data/index/index.bin";
-
+    private ArrayList<Posting> postings; // array of postings containing docID and frequency relative to a term
+    private Iterator<Posting> postingIterator; // iterator for the postings
+    private Posting actualPosting; // current posting in the iterator
     Logs log = new Logs();
 
+    /**
+     * Constructs a new PostingList object.
+     *
+     * @param doc The first document containing the term.
+     */
     public PostingList(Document doc) {
         postings = new ArrayList<>();
         postings.add(new Posting(doc.getDocID(), 1));
@@ -27,6 +31,9 @@ public class PostingList {
         actualPosting = null;
     }
 
+    /**
+     * Constructs a new PostingList object.
+     */
     public PostingList() {
         postings = new ArrayList<>();
         postingIterator = null;
@@ -42,10 +49,6 @@ public class PostingList {
         log.getLog(this.postings);
     }
 
-    public Posting getActualPosting() {
-        return actualPosting;
-    }
-
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
@@ -54,9 +57,7 @@ public class PostingList {
             Posting posting = postings.get(i);
             int docID = posting.getDocID();
             int freq = posting.getFreq();
-
             output.append("(").append(docID).append(", ").append(freq).append(")");
-
             if (i < postings.size() - 1) {
                 output.append(" -> ");
             }
@@ -65,17 +66,24 @@ public class PostingList {
         return output.toString();
     }
 
-    // binary search on posting list to find the document return the posting
+    /**
+     * Updates the posting list with a new document.
+     * If the document is already in the posting list, the frequency is increased by 1.
+     * The posting list is sorted by docID and the search is performed with a binary search.
+     * If the document is not in the posting list, a new posting is created and added to the posting list.
+     *
+     * @param doc The document to be added to the posting list.
+     */
     public void updatePostingList(Document doc) {
         int docID = doc.getDocID();
         int low = 0;
         int high = this.postings.size() - 1;
 
+        // binary search to find the document in the posting list
         while (low <= high) {
             int mid = (low + high) / 2;
             Posting posting = this.postings.get(mid);
             int postingDocID = posting.getDocID();
-
             if (postingDocID == docID) {
                 posting.updateFreq();
                 return;
@@ -90,10 +98,16 @@ public class PostingList {
         this.postings.add(newPosting); // add posting to posting list
     }
 
+    /**
+     * Initializes the iterator for the posting list
+     */
     public void openList() {
         postingIterator = postings.iterator();
     }
 
+    /**
+     * Closes the iterator for the posting list and sets the actual posting to null
+     */
     public void closeList() {
         actualPosting = null;
         postingIterator = null;
@@ -103,36 +117,53 @@ public class PostingList {
         return postingIterator;
     }
 
+    /**
+     * Returns the next posting in the posting list.
+     *
+     * @return The next posting in the posting list.
+     */
     public Posting next() {
+        // check if there is another posting in the posting list
         if (postingIterator.hasNext())
-            actualPosting = postingIterator.next();
-        else
-            actualPosting = null;
+            actualPosting = postingIterator.next(); // if there is another posting, set actual posting to the next posting
+        else // if there is not another posting, set actual posting to null
+            actualPosting = null; // actual posting is null, posting list is finished
         return actualPosting;
     }
 
+    /**
+     * Returns the next posting in the posting list with docID greater than or equal to the given docID.
+     *
+     * @param docId     The docID to be compared with the docID of the next posting.
+     * @param bdl       The block descriptor list.
+     * @param numBlocks The number of blocks in the block descriptor list.
+     * @return The next posting in the posting list with docID greater than or equal to the given docID.
+     */
     public Posting nextGEQ(int docId, BlockDescriptorList bdl, int numBlocks, String path) {
         //todo inserire controllo se posting è null dove chiami nextGEQ
-        bdl.openBlock();
-        // cerca il blocco che contiene il docId
+
+        bdl.openBlock(); // initialize the block descriptor list iterator
+
+        // find block that contains the docId
         while (numBlocks > 0 && docId > bdl.next().getMaxDocID()) {
             numBlocks--;
         }
-        if (numBlocks == 0) { // non esiste il posting
+        if (numBlocks == 0) {
+            //if no block contains the docId, return null
             return null;
         }
-        // carica la relativa posting list
-        //controllo se postinglist caricata è quella del blocco di interesse
+        // docid found, load the posting list
+        // check if the postinglist that I need is the one that I have already loaded
+        // TODO controllare con matteo. che faccio se non è quello il blocco giusto?
         if (postings.get(bdl.getNumPosting() - 1).getDocID() != bdl.getMaxDocID()) {
             this.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), path);
             this.openList();
             this.next();
         }
-        // scorri la posting list fino a trovare il docId
+        // search in the posting list the docid that i need
         while (actualPosting.getDocID() < docId && postingIterator.hasNext()) {
             actualPosting = postingIterator.next();
         }
-
         return actualPosting;
     }
 
@@ -156,8 +187,15 @@ public class PostingList {
         return this.getPostings().size();
     }
 
+    /**
+     * Saves the posting list to disk.
+     *
+     * @param indexCounter The indexCounter indicates the number of portion of the posting list.
+     * @param filePath     The path of the file where the posting list should be saved.
+     * @return The start offset of the portion of posting list saved in the file.
+     */
     public long savePostingListToDisk(int indexCounter, String filePath) {
-        if (indexCounter != -1)
+        if (indexCounter != -1) // if indexCounter is not -1, the posting list is saved in portions
             filePath += indexCounter + ".bin";
 
         long offset = -1;
@@ -165,64 +203,58 @@ public class PostingList {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
-
-            // Memorizza la posizione di inizio nel file
+            // starting offset in the file
             offset = fileChannel.position();
-
-            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             for (Posting posting : this.postings) {
                 buffer.putInt(posting.getDocID());
                 buffer.putInt(posting.getFreq());
-
-                // Se il buffer è pieno, scrivi il suo contenuto sul file
+                // if the buffer is full, write the buffer to the file
                 if (!buffer.hasRemaining()) {
-                    buffer.flip();
+                    buffer.flip(); // todo che minchia fa?
                     fileChannel.write(buffer);
                     buffer.clear();
                 }
             }
-
-            // Scrivi eventuali dati rimanenti nel buffer sul file
+            // write the remaining data in the buffer to the file
             if (buffer.position() > 0) {
                 buffer.flip();
                 fileChannel.write(buffer);
             }
-
-            // Chiudi le risorse
             fileChannel.close();
             fileOutputStream.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return offset;
-
     }
 
-    public ArrayList<Posting> readPostingList(int indexCounter, int df, long offset, String filePath) {
+    /**
+     * Reads the posting list from disk.
+     *
+     * @param indexCounter The indexCounter indicates the number of portion of the posting list.
+     * @param df           The df indicates the number of postings in the posting list.
+     * @param offset       The offset indicates the start offset of the portion of posting list in the file.
+     * @param filePath     The path of the file where the posting list should be read.
+     */
+    public void readPostingList(int indexCounter, int df, long offset, String filePath) {
+        // if indexCounter is not -1, the posting list is saved in portions
         if (indexCounter != -1)
             filePath += indexCounter + ".bin";
 
-        ArrayList<Posting> result = new ArrayList<>();
+        ArrayList<Posting> result = new ArrayList<>(); // array of postings initialized to contain the posting list read from disk
 
         try {
             FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
             ByteBuffer buffer = ByteBuffer.allocate(8); // Buffer per leggere due interi
-
-            // Posizionati nella posizione desiderata
+            // put the file pointer at the start offset of the portion of posting list
             fileChannel.position(offset);
-
             for (int i = 0; i < df; i++) {
                 buffer.clear();
                 int bytesRead = fileChannel.read(buffer);
-
-                if (bytesRead == -1) {
-                    // Non ci sono abbastanza dati nel file
+                if (bytesRead == -1) // not enough bytes in the file to read
                     break;
-                }
 
                 buffer.flip();
                 int docID = buffer.getInt();
@@ -233,12 +265,7 @@ public class PostingList {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //TODO rendere la funzione statica ed eliminare le due righe sottostanti oppure eliminare la return
         this.postings = result;
-
-        return result; // serve forse dopo per ricostruire l'indice
     }
-
 
 }

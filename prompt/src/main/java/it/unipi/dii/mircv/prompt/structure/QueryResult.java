@@ -13,24 +13,16 @@ public class QueryResult implements Comparable<QueryResult>{
         return docNo;
     }
 
-    public void setDocNo(String docNo) {
-        this.docNo = docNo;
-    }
-
     public double getScoring() {
         return scoring;
     }
 
-    public void setScoring(double scoring) {
-        this.scoring = scoring;
-    }
-
     @Override
     public String toString() {
-        return "QueryResult{" +
+        return "[" +
                 "docNo='" + docNo + '\'' +
                 ", scoring=" + scoring +
-                '}';
+                ']';
     }
 
     @Override

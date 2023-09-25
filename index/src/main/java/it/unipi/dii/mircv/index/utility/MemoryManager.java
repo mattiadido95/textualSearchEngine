@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-
+/**
+ * This class manages memory and provides methods for saving and clearing data structures.
+ */
 public class MemoryManager {
 
     private long freeMemoryPercentage = 0;
@@ -62,6 +64,13 @@ public class MemoryManager {
         return this.freeMemoryPercentage > 10 ? false : true;
     }
 
+    /**
+     * Saves the inverted index and lexicon to disk.
+     *
+     * @param lexicon      The lexicon to save.
+     * @param invertedIndex The inverted index to save.
+     * @param indexCounter The index counter used to distinguish different index segments.
+     */
     public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter){
 
         for (String term : lexicon.getLexicon().keySet()) {
@@ -120,6 +129,13 @@ public class MemoryManager {
 */
     }
 
+     /**
+     * Clears memory by clearing the inverted index, documents, and lexicon.
+     *
+     * @param lexicon      The lexicon to clear.
+     * @param invertedIndex The inverted index to clear.
+     * @param docs         The list of documents to clear.
+     */
     public void clearMemory(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, ArrayList<Document> docs){
         invertedIndex.clear();  // clear index
         docs.clear(); // clear docs

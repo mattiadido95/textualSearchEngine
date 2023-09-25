@@ -6,74 +6,84 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.index.utility.MemoryManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// Class-level variables and constructor...
+
+/**
+ * The Spimi class implements the SPIMI (Single-pass in-memory indexing) algorithm
+ * for building an inverted index from a collection of documents.
+ * It manages indexing, preprocessing, and data storage.
+ */
 public class Spimi {
     private String COLLECTION_PATH;
-
     private Logs log;
     private int indexCounter;
     private int documentCounter;
     private long totDocLength;
-    private static final String LEXICON_PATH = "data/index/lexicon/";
-    private static final String DOCUMENTS_PATH = "data/index/documents/";
+    private boolean compressed_reading;
+    private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final String INDEX_PATH = "data/index/";
+    private static final int MAX_DOC_PER_FILE = 100000;
 
-
-    public Spimi(String collection) {
+    /**
+     * Constructs a new Spimi indexer.
+     *
+     * @param collection         The path to the collection of documents to be indexed.
+     * @param porterStemmer      A boolean indicating whether Porter stemming should be applied during preprocessing.
+     * @param compressed_reading A boolean indicating whether the collection is compressed in tar.gz format.
+     */
+    public Spimi(String collection, boolean porterStemmer, boolean compressed_reading) {
         this.COLLECTION_PATH = collection;
         this.log = new Logs();// create a log object to print log messages
         this.indexCounter = 0;
-    }
-
-    public String getCOLLECTION_PATH() {
-        return COLLECTION_PATH;
-    }
-
-    public Logs getLog() {
-        return log;
+        this.compressed_reading = compressed_reading;
+        this.porterStemmer = porterStemmer;
     }
 
     public int getIndexCounter() {
         return indexCounter;
     }
 
+    /**
+     * Executes the SPIMI (Single-pass in-memory indexing) algorithm to build an inverted index
+     * from a collection of documents.
+     *
+     * @throws IOException If there are any issues with reading or writing files.
+     */
     public void execute() throws IOException {
 
         log.getLog("Start indexing ...");
-
         deleteFiles("data/index/", "bin");
         deleteFiles("data/index/lexicon/", "bin");
         deleteFiles("data/index/documents/", "bin");
-
         log.getLog("Deleted old index files ...");
 
-
-        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
-        tarArchiveInputStream.getNextEntry();
-
-
+        TarArchiveInputStream tarArchiveInputStream = null;
         // open buffer to read documents
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"))) {
+        try {
+            BufferedReader br;
+
+            if (compressed_reading) {
+                tarArchiveInputStream = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(COLLECTION_PATH)));
+                tarArchiveInputStream.getNextEntry();
+                br = new BufferedReader(new InputStreamReader(tarArchiveInputStream, "UTF-8"));
+            } else {
+                br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
+            }
+
             Lexicon lexicon = new Lexicon(); // create a lexicon
             HashMap<String, PostingList> invertedIndex = new HashMap<>(); // create an invertedIndex with an hashmap linking each token to its posting list
             ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
+            MemoryManager manageMemory = new MemoryManager();
 
             String line; // start reading document by document
-
             totDocLength = 0;
-
             while ((line = br.readLine()) != null) {
-
-                MemoryManager manageMemory = new MemoryManager();
-                //if (manageMemory.checkFreeMemory()) {
-
-                Preprocessing preprocessing = new Preprocessing(line, documentCounter);
+                Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents
@@ -87,40 +97,25 @@ public class Spimi {
 
                 documentCounter++;
 
-                if (documentCounter % 250000 == 0) {
+                if (documentCounter % MAX_DOC_PER_FILE == 0) {
                     log.getLog("Processed: " + documentCounter + " documents");
-//                    log.getLog("Memory is full, suspend indexing, save invertedIndex to disk and clear memory ...");
                     //save Structures to disk
                     manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
                     Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
                     manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-                    //TODO serve davvero fare la new
-//                    invertedIndex = new HashMap<>(); // create a new inverted index
-
-//                    //read Structures from disk
-//                    lexicon.readLexiconFromDisk(indexCounter);
-//                    // per ogni chiave del lexicon, leggi il posting list dal file
-//                    for (String key : lexicon.getLexicon().keySet()) {
-//                        //get lexicon elem
-//                        LexiconElem lexiconElem = lexicon.getLexiconElem(key);
-//                        PostingList postingList = new PostingList();
-//                        postingList.readPostingList(indexCounter, lexiconElem.getDf(), lexiconElem.getOffset());
-//                        System.out.println(lexiconElem);
-//                        System.out.println(postingList);
-//                    }
-                    // clear per sicurezza
-//                    manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
-//                    invertedIndex = new HashMap<>(); // create a new inverted index
-
-//                    ArrayList<Document> documents1 = Document.readDocumentsFromDisk(indexCounter);
-//                    System.out.println(documents1);
                     indexCounter += 1;
-//                    if (documentCounter == 20000)
-//                        break;
                 }
-
-
+//                if (documentCounter == 3 * MAX_DOC_PER_FILE)
+//                        break;
             }
+            if (!documents.isEmpty()) {
+                log.getLog("Processed: " + documentCounter + " documents");
+                manageMemory.saveInvertedIndexToDisk(lexicon, invertedIndex, indexCounter); // save inverted index to disk
+                Document.saveDocumentsToDisk(documents, indexCounter, PARTIAL_DOCUMENTS_PATH); // save documents to disk
+                manageMemory.clearMemory(lexicon, invertedIndex, documents); // clear inverted index and document index from memory
+                indexCounter += 1;
+            }
+
             //save into disk documentCounter
             FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -128,14 +123,24 @@ public class Spimi {
             out.writeObject(totDocLength);
             out.close();
             fileOut.close();
-            tarArchiveInputStream.close();
-
+            if (compressed_reading)
+                tarArchiveInputStream.close();
+            br.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         log.getLog("Indexing completed ...");
     }
 
+    /**
+     * Adds a token to the inverted index, updating the corresponding posting list for the token.
+     * If the token is not already in the inverted index, a new posting list is created.
+     *
+     * @param invertedIndex A HashMap representing the inverted index with tokens as keys and posting lists as values.
+     * @param token         The token to be added to the inverted index.
+     * @param document      The document associated with the token.
+     * @return The size of the updated or newly created posting list.
+     */
     public static int addElementToInvertedIndex(HashMap invertedIndex, String token, Document document) {
         // check if the token is already in the inverted index and manage the update the posting list
         if (invertedIndex.containsKey(token)) {
@@ -151,7 +156,12 @@ public class Spimi {
         }
     }
 
-
+    /**
+     * Deletes files with a specified extension from a given folder path. If the folder does not exist, it creates it.
+     *
+     * @param folderPath The path of the folder from which files should be deleted.
+     * @param extension  The file extension to filter files for deletion.
+     */
     private static void deleteFiles(String folderPath, String extension) {
         File folder = new File(folderPath);
         if (folder.exists() && folder.isDirectory()) {
@@ -169,5 +179,4 @@ public class Spimi {
             folder.mkdirs();
         }
     }
-
 }

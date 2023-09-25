@@ -9,7 +9,6 @@ import java.util.*;
 
 public class Searcher {
 
-    //    private String term;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private ArrayList<QueryResult> queryResults;
@@ -20,9 +19,6 @@ public class Searcher {
     private String previousScoringFunction;
     private double AVG_DOC_LENGTH;
     private static int N_docs = 0; // number of documents in the collection
-    private static final int NUMBER_OF_POSTING = 10;
-    private static final int BLOCK_POSTING_LIST_SIZE = (4 * 2) * NUMBER_OF_POSTING; // 4 byte per docID, 4 byte per freq and postings
-    private static final int POSTING_LIST_SIZE = (4 * 2); // 4 byte per docID, 4 byte per freq
     private static final String BLOCK_DESCRIPTOR_PATH = "data/index/blockDescriptor.bin";
     private static final String INDEX_PATH = "data/index/index.bin";
 
@@ -104,7 +100,7 @@ public class Searcher {
 
             for (Integer i : indexes) {
                 //calculate score for posting list with min docID
-                if(postingLists.get(i).getPostingIterator() != null) {
+                if (postingLists.get(i).getPostingIterator() != null) {
                     if (scoringFunction.equals("TFIDF"))
                         scores.add(tfidf(postingLists.get(i).getFreq(), lexicon.getLexiconElem(queryTermsPresentInLexicon.get(i)).getDf()));
                     else if (scoringFunction.equals("BM25"))
@@ -127,16 +123,12 @@ public class Searcher {
                 document_score = Math.round(document_score * 10e5) / 10e5;
                 queryResults.add(new QueryResult(pid, document_score));
             }
-
         } while (true);
-
         Collections.sort(queryResults);
         if (queryResults.size() > K) {
             queryResults = new ArrayList<>(queryResults.subList(0, K));
         }
-
         postingLists.clear();
-
     }
 
     public void maxScore(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
@@ -266,7 +258,6 @@ public class Searcher {
             else if (scoringFunction.equals("BM25"))
                 DUB += queryTermsMap.get(termList.get(j)).getTUB_bm25();
         }
-
         return DUB;
     }
 
@@ -274,8 +265,6 @@ public class Searcher {
         double partial_score = 0;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
         boolean notFound = false;
-
-
         for (int j = essential_index; j < postingLists.size(); j++) {
             PostingList pl = postingLists.get(j);
             if (pl.getPostingIterator() == null || pl.getDocId() != docid) {
@@ -288,7 +277,6 @@ public class Searcher {
             else if (scoringFunction.equals("BM25"))
                 partial_score += BM25(pl.getFreq(), lexicon.getLexiconElem(termList.get(j)).getDf(), documents.get(docid).getLength(), AVG_DOC_LENGTH);
             //update posting list
-
             updatePosting(pl, j);
         }
         if (notFound)
@@ -320,7 +308,6 @@ public class Searcher {
             blocksNumber.add(lexicon.getLexiconElem(term).getBlocksNumber());
             //read all blocks
             blockDescriptorList.add(new BlockDescriptorList(firstBlockOffset, blocksNumber.get(i), BLOCK_DESCRIPTOR_PATH));
-//            DebugPostingList(blockDescriptorList.get(i), blocksNumber.get(i));
             blockDescriptorList.get(i).openBlock();
             blockDescriptorList.get(i).next();
             //load first posting list for the term
@@ -336,7 +323,6 @@ public class Searcher {
     private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
         if (current_threshold == 0)
             return 0;
-
         int essential_index = 0;
         double TUBsum = 0;
         boolean essential_postings_found = false;
@@ -370,7 +356,6 @@ public class Searcher {
         double score;
         double k1 = 1.2;
         double b = 0.75;
-
         double B = ((1 - b) + b * (docLength / avgDocLength));
         double idf = Math.log((N_docs) / (df));
         score = (tf / (k1 * B + tf)) * idf;
@@ -379,12 +364,10 @@ public class Searcher {
 
     private int getNextDocIdDAAT(ArrayList<Integer> indexes) {
         int min = Integer.MAX_VALUE;
-
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
             if (postList.getPostingIterator() == null)
                 continue;
-
             if (postList.getDocId() < min) {
                 indexes.clear();
                 min = postList.getDocId();
@@ -398,7 +381,6 @@ public class Searcher {
 
     private int getNextDocIdMAXSCORE(int essential_index) {
         int min = Integer.MAX_VALUE;
-
         for (int i = essential_index; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
             if (postList.getPostingIterator() == null)
@@ -411,45 +393,18 @@ public class Searcher {
 
     public void printResults(long time) {
         if (queryResults == null || queryResults.size() == 0) {
-            System.out.println("Unfortunately, no documents were found for your query.");
+            System.out.println("\nUnfortunately, no documents were found for your query.");
             return;
         }
-
-        System.out.println("These " + queryResults.size() + " documents may are of your interest");
-        System.out.println(queryResults);
-        System.out.println("Search time: " + time + " ms");
+        System.out.println("\nThese " + queryResults.size() + " documents may are of your interest");
+        for (QueryResult qr : queryResults) {
+            System.out.println(qr);
+        }
+        System.out.println("\nSearch time: " + time + " ms");
     }
 
     public ArrayList<QueryResult> getQueryResults() {
         return this.queryResults;
-    }
-
-    public void Debug(int docid, double current_threshold, int essential_index, LinkedHashMap<
-            String, LexiconElem> queryTermsMap) {
-
-        System.out.println("------------------");
-        for (String term : queryTermsMap.keySet()) {
-            System.out.println(term + " " + queryTermsMap.get(term).getTUB_bm25());
-        }
-        System.out.println(docid + " " + current_threshold + " " + essential_index);
-        for (int i = 0; i < postingLists.size(); i++) {
-            System.out.println(postingLists.get(i));
-        }
-        System.out.println("------------------");
-    }
-
-    public void DebugPostingList(BlockDescriptorList bdl, int blocksNumber) {
-        System.out.println("------------------");
-        PostingList pl = new PostingList();
-        bdl.openBlock();
-        int sum = 0;
-        for (int i = 0; i < blocksNumber; i++) {
-//            System.out.println("Block " + i);
-            bdl.next();
-            pl.readPostingList(-1, bdl.getNumPosting(), bdl.getPostingListOffset(), INDEX_PATH);
-            sum += pl.getPostingListSize();
-        }
-        System.out.println(sum);
     }
 
 }

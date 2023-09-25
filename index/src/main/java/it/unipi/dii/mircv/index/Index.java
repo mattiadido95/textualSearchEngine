@@ -2,28 +2,26 @@ package it.unipi.dii.mircv.index;
 
 import it.unipi.dii.mircv.index.algorithms.Merger;
 import it.unipi.dii.mircv.index.algorithms.Spimi;
-import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
-import it.unipi.dii.mircv.index.utility.MemoryManager;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
+// Class-level variables and constructor...
+
+/**
+ * The Index class implements the main program for building an inverted index from a collection of documents.
+ */
 public class Index {
     //https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020
-    private static final String COLLECTION_PATH = "data/collection/collection.tsv";
-    private static final String COMPRESSED_COLLECTION_PATH = "data/collection/collection.tar.gz";
     private static final String INDEX_PATH = "data/index";
-    private static final String LEXICON_PATH = "data/index/lexicon.bin";
-    private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private Lexicon lexicon;
     private ArrayList<Document> documents;
-    private static Logs log;
 
+    /**
+     * Constructs a new Index object.
+     */
     public Index() {
         this.lexicon = new Lexicon();
         this.documents = new ArrayList<>();
@@ -45,48 +43,92 @@ public class Index {
         this.documents = documents;
     }
 
-    public static String convertMillisecondsToHMmSs(long milliseconds) {
-        long seconds = milliseconds / 1000;
-        long hours = seconds / 3600;
-        seconds = seconds % 3600;
-        long minutes = seconds / 60;
-        seconds = seconds % 60;
-
-        return hours + "h " + minutes + "m " + seconds + "s";
-    }
-
+    /**
+     * Executes the main program for building an inverted index from a collection of documents.
+     *
+     * @param args The command-line arguments.
+     * The list of accepted arguments is:
+     *             -compressed_reading: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.
+     *             -porterStemmer: Enable PorterStemming in document preprocessing. Default: disabled.
+     *             -help: Show the help message.
+     */
     public static void main(String[] args) throws IOException {
+        // create folder logs if not exists
+        File logsFolder = new File("data/logs");
+        if (!logsFolder.exists())
+            logsFolder.mkdir();
+        //create folder trec_eval if not exists
+        File trec_evalFolder = new File("data/trec_eval");
+        if (!trec_evalFolder.exists())
+            trec_evalFolder.mkdir();
 
         Logs log = new Logs();
         long start, end;
 
-        Index index = new Index();
-        Spimi spimi = new Spimi(COMPRESSED_COLLECTION_PATH);
+        // process options from command line
+        boolean[] options = processOptions(args);
+        boolean compressed_reading = options[0];
+        boolean porterStemmer = options[1];
+        printOptions(options);
+        String COLLECTION_PATH;
+        if (compressed_reading)
+            COLLECTION_PATH = "data/collection/collection.tar.gz";
+        else
+            COLLECTION_PATH = "data/collection/collectionTest.tsv";
+
+        // spimi algorithm
+        Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
         start = System.currentTimeMillis();
         spimi.execute();
         end = System.currentTimeMillis();
         log.addLog("spimi", start, end);
-//        System.out.println(spimi.getIndexCounter());
+
+        // merger algorithm
         Merger merger = new Merger(INDEX_PATH, spimi.getIndexCounter());
         start = System.currentTimeMillis();
         merger.execute();
         end = System.currentTimeMillis();
         log.addLog("merger", start, end);
-
-        index.getLexicon().readLexiconFromDisk(-1,LEXICON_PATH);
-        // per ogni chiave del lexicon, leggi il posting list dal file
-        for (String key : index.getLexicon().getLexicon().keySet()) {
-            //get lexicon elem
-            LexiconElem lexiconElem = index.getLexicon().getLexiconElem(key);
-            PostingList postingList = new PostingList();
-            postingList.readPostingList(-1, lexiconElem.getDf(), lexiconElem.getOffset(),INDEX_PATH + "/index.bin");
-//            System.out.println(lexiconElem);
-//            System.out.println(postingList);
-        }
-        index.setDocuments(Document.readDocumentsFromDisk(-1,DOCUMENTS_PATH));
-//        System.out.println(index.getDocuments());
-
     }
+
+    private static void printOptions(boolean[] options) {
+        System.out.println("Options:");
+        System.out.println("----------------------------");
+        System.out.println("|   compressed  |   " + options[0] + "  |");
+        System.out.println("|   stemmer     |   " + options[1] + "  |");
+        System.out.println("----------------------------");
+    }
+
+    /**
+     * Processes the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return An array of booleans indicating the options selected.
+     */
+    private static boolean[] processOptions(String[] args) {
+        boolean compressed_reading = false;
+        boolean porterStemmer = false;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-compressed")) {
+                compressed_reading = true;
+            } else if (args[i].equals("-stemmer")) {
+                porterStemmer = true;
+            } else if (args[i].equals("-help")) {
+                System.out.println("Program usage:");
+                System.out.println("-compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.");
+                System.out.println("-stemmer: Enable PorterStemming in document preprocessing. Default: disabled.");
+                System.out.println("-help: Show this help message."); // TODO forse non serve se lo si mette nel bash script
+                System.exit(0);
+            } else {
+                System.err.println("Unrecognized option: " + args[i]);
+                System.exit(1);
+            }
+        }
+        // Restituisci le opzioni aggiornate come array di booleani
+        return new boolean[]{compressed_reading, porterStemmer};
+    }
+
 }
 
 
