@@ -74,7 +74,7 @@ public class Index {
         if (compressed_reading)
             COLLECTION_PATH = "data/collection/collection.tar.gz";
         else
-            COLLECTION_PATH = "data/collection/collectionTest.tsv";
+            COLLECTION_PATH = "data/collection/collection.tsv";
 
         // spimi algorithm
         Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);
