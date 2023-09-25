@@ -8,7 +8,6 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import java.io.*;
 import java.util.ArrayList;
 
-// Class-level variables and constructor...
 
 /**
  * The Index class implements the main program for building an inverted index from a collection of documents.
@@ -48,8 +47,8 @@ public class Index {
      *
      * @param args The command-line arguments.
      * The list of accepted arguments is:
-     *             -compressed_reading: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.
-     *             -porterStemmer: Enable PorterStemming in document preprocessing. Default: disabled.
+     *             -compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.
+     *             -stemmer: Enable PorterStemming in document preprocessing. Default: disabled.
      *             -help: Show the help message.
      */
     public static void main(String[] args) throws IOException {
