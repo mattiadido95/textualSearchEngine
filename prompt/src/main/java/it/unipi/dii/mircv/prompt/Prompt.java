@@ -12,23 +12,38 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
+/**
+ * The Prompt class implements the main program for querying the inverted index. It is a command-line interface that allows
+ * the user to perform queries on the index. Moreover, it allows the user to evaluate the search engine using the trec_eval tool.
+ */
 public class Prompt {
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
 
+    /**
+     * Executes the main program to run the search engine.
+     *
+     * @param args The command-line arguments.
+     * The list of accepted arguments is:
+     *             -scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.
+     *             -topK <value>: Specify the number of documents to return. Default: 10.
+     *             -dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.
+     *             -conjunctive: Enable conjunctive mode. Default: disjunctive.
+     *             -stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.
+     */
     public static void main(String[] args) throws InterruptedException {
 
         // create folder logs if not exists
         File logsFolder = new File("data/logs");
         if (!logsFolder.exists())
             logsFolder.mkdir();
-        //create folder trec_eval if not exists
+        // create folder trec_eval if not exists
         File trec_evalFolder = new File("data/trec_eval");
         if (!trec_evalFolder.exists())
             trec_evalFolder.mkdir();
 
-
-        int[] options = processOptions(args);
+        int[] options = processOptions(args); // process parameters from command line
 
         String scoringFunction = options[0] == 1 ? "BM25" : "TFIDF";
         boolean dynamicPruning = options[1] == 1 ? true : false;
@@ -41,13 +56,15 @@ public class Prompt {
         Logs log = new Logs();
         long start, end;
 
-        System.out.println("Loading index ...");
         // load main structure in memory
+        System.out.println("Loading index ...");
+        // load lexicon
         Lexicon lexicon = new Lexicon();
         start = System.currentTimeMillis();
         lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
         end = System.currentTimeMillis();
         log.addLog("load_lexicon", start, end);
+        // load documents
         start = System.currentTimeMillis();
         ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
         end = System.currentTimeMillis();
@@ -62,7 +79,7 @@ public class Prompt {
             System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate TUBs for dynamic pruning \n - insert 10 to exit");
             int userInput = 0;
             try {
-                userInput = scanner.nextInt(); // Tentativo di lettura dell'intero
+                userInput = scanner.nextInt(); // try to read an integer from the console
             } catch (InputMismatchException e) {
                 System.out.println("Wrong input");
                 scanner.nextLine(); // to consume the \n character left by nextInt()
@@ -70,12 +87,11 @@ public class Prompt {
             }
             scanner.nextLine(); // to consume the \n character left by nextInt()
             if (userInput == 1) {
+                // first option: search
                 System.out.println("Insert your query ...");
                 String queryInput = scanner.nextLine();
-
                 Query query = new Query(queryInput, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
-
                 if (dynamicPruning) {
                     start = System.currentTimeMillis();
                     searcher.maxScore(queryTerms, K, mode, scoringFunction);
@@ -85,18 +101,16 @@ public class Prompt {
                     searcher.DAAT(queryTerms, K, mode, scoringFunction);
                     end = System.currentTimeMillis();
                 }
-
                 searcher.printResults(end - start);
                 log.addLog("query", start, end);
-
-
             } else if (userInput == 2) {
+                // second option: evaluate search engine with trec_eval
                 EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
 //                evaluator.execute();
             } else if (userInput == 3) {
-                // call to dynamic pruning process
+                // third option: calculate TUBs for dynamic pruning
                 DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
                 dinamicPruning.TUB_processing("BM25");
                 dinamicPruning.TUB_processing("TFIDF");
@@ -112,6 +126,12 @@ public class Prompt {
         }
     }
 
+    /**
+     * Processes the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return An array of integers indicating the options selected.
+     */
     private static int[] processOptions(String[] args) {
         int scoringFunctionOption = 0;
         int dynamicPruning = 0;
@@ -173,6 +193,14 @@ public class Prompt {
         return new int[]{scoringFunctionOption, dynamicPruning, conjunctive, porterStemmer, K};
     }
 
+    /**
+     * Prints the options selected by the user.
+     *
+     * @param scoringFunction The scoring function selected by the user.
+     * @param dynamicPruning  The dynamic pruning option selected by the user.
+     * @param mode            The mode selected by the user.
+     * @param K               The number of documents to return.
+     */
     private static void printOptions(String scoringFunction, boolean dynamicPruning, String mode, boolean porterStemmerOption, int K) {
         System.out.println("Options:");
         System.out.println("------------------------------------");

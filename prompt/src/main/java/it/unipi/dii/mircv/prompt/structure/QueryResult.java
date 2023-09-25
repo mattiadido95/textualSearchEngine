@@ -1,5 +1,8 @@
 package it.unipi.dii.mircv.prompt.structure;
 
+/**
+ * Class that represents a single result of a query
+ */
 public class QueryResult implements Comparable<QueryResult>{
     String docNo;
     double scoring;
