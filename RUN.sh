@@ -24,7 +24,7 @@ compile_index() {
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/index.jar $params
+  java -jar out/artifacts/index_jar/index.jar $params
   read -p "Press ENTER to continue..."
 }
 
@@ -44,7 +44,7 @@ start_prompt() {
   echo "<dynamic> Enable dynamic pruning using MAXSCORE. Default: disabled."
   echo "<stemmer> Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/prompt.jar $params
+  java -jar out/artifacts/prompt_jar/prompt.jar $params
   read -p "Press ENTER to continue..."
 }
 
