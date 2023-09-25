@@ -1,0 +1,10 @@
+it/unipi/dii/mircv/prompt/query/Searcher.class
+it/unipi/dii/mircv/prompt/dynamicPruning/DynamicPruning.class
+it/unipi/dii/mircv/prompt/structure/QueryResult.class
+it/unipi/dii/mircv/prompt/Prompt.class
+it/unipi/dii/mircv/prompt/test/DaatMaxTest.class
+it/unipi/dii/mircv/prompt/trec_eval/EvaluatorMultiThread$QueryProcessor.class
+it/unipi/dii/mircv/prompt/test/evaluatorTest.class
+it/unipi/dii/mircv/prompt/trec_eval/Evaluator.class
+it/unipi/dii/mircv/prompt/trec_eval/EvaluatorMultiThread.class
+it/unipi/dii/mircv/prompt/query/Query.class

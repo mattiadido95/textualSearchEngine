@@ -9,33 +9,18 @@ print_menu() {
 }
 
 compile_index() {
-
-  # echo "Avvio la compilazione di index.jar..."
-  # Sostituisci con il comando di compilazione effettivo
-  # Esempio: javac -jar index.jar <parametri>
-  # Esempio: java -jar index.jar <parametri>
-  # Esempio: ./index.jar <parametri>
-  # Assicurati di aggiungere i parametri necessari
-  # Esempio: java -jar index.jar parametro1 parametro2
-  # Esempio: ./index.jar parametro1 parametro2
-
+#  mvn --projects index --also-make clean install # specificare cartella output
   echo "Enter parameters for indexing:"
   echo "params: -compressed -stemmer"
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/artifacts/index_jar/index.jar $params
+  java -jar out/index-1.0-SNAPSHOT.jar $params
   read -p "Press ENTER to continue..."
 }
 
 start_prompt() {
-
-  # echo "Avvio prompt.jar..."
-  # Sostituisci con il comando di avvio effettivo
-  # Esempio: java -jar prompt.jar
-  # Esempio: ./prompt.jar
-  # Assicurati di aggiungere i parametri necessari
-
+#  mvn --projects prompt --also-make clean install # specificare cartella output
   echo "Enter parameters for the prompt:"
   echo "params: -TFIDF or BM25 -K -mode -dynamic -stemmer"
   echo "<TFIDF/BM25> Specify the scoring function [BM25, TFIDF]. Default: TFIDF.."
@@ -44,7 +29,7 @@ start_prompt() {
   echo "<dynamic> Enable dynamic pruning using MAXSCORE. Default: disabled."
   echo "<stemmer> Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/artifacts/prompt_jar/prompt.jar $params
+  java -jar out/prompt-1.0-SNAPSHOT.jar $params
   read -p "Press ENTER to continue..."
 }
 
