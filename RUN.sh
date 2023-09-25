@@ -15,7 +15,8 @@ compile_index() {
   echo "<compressed> Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
   echo "<stemmer> Enable Porter Stemming in document preprocessing. Default: disabled."
   read -p "Parameters: " params
-  java -jar out/index-1.0-SNAPSHOT.jar $params
+#  java -jar out/index-1.0-SNAPSHOT.jar $params
+  java -jar out/artifacts/index_jar/index.jar $params
   read -p "Press ENTER to continue..."
 }
 
