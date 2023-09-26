@@ -221,6 +221,8 @@ public class Merger {
             System.out.println("Error in saveBlockPosting: blockCounter != numBlocks");
         return numBlocks;
     }
+
+    public void plot
 }
 
 

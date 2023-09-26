@@ -141,4 +141,34 @@ public class Logs {
         }
     }
 
+    /**
+     * Adds a log entry with a specified type, start time, and end time to a CSV log file.
+     *
+     * @param startTime The start time of the operation being logged.
+     * @param endTime   The end time of the operation being logged.
+     */
+    public void addLogCSV(long startTime, long endTime ){
+        // compute duration
+        long duration = endTime - startTime;
+        // create log string
+        String log = startTime + "," + endTime + "," + duration + "\n";
+        // if file exists, append log
+        String fileName = "data/logs/logs.csv";
+        File file = new File(fileName);
+        if (file.exists()) {
+            try (FileWriter writer = new FileWriter(fileName, true)) {
+                writer.write(log);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // if file does not exist, create it and write log
+            try (FileWriter writer = new FileWriter(fileName)) {
+                writer.write(log);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

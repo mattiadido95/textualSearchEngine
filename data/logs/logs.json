@@ -550,5 +550,101 @@
         "start_time": 1695727145308,
         "end_time": 1695727147570,
         "type": "load_documents"
+    },
+    {
+        "duration": 3192,
+        "start_time": 1695740052133,
+        "end_time": 1695740055325,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2292,
+        "start_time": 1695740055342,
+        "end_time": 1695740057634,
+        "type": "load_documents"
+    },
+    {
+        "duration": 1206,
+        "start_time": 1695740105160,
+        "end_time": 1695740106366,
+        "type": "query"
+    },
+    {
+        "duration": 433,
+        "start_time": 1695740158000,
+        "end_time": 1695740158433,
+        "type": "query"
+    },
+    {
+        "duration": 221,
+        "start_time": 1695740201883,
+        "end_time": 1695740202104,
+        "type": "query"
+    },
+    {
+        "duration": 3032,
+        "start_time": 1695743679737,
+        "end_time": 1695743682769,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2981,
+        "start_time": 1695743703959,
+        "end_time": 1695743706940,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2212,
+        "start_time": 1695743706956,
+        "end_time": 1695743709168,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12963,
+        "start_time": 1695743710718,
+        "end_time": 1695743723681,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 13588,
+        "start_time": 1695743710717,
+        "end_time": 1695743724305,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 16481,
+        "start_time": 1695743710717,
+        "end_time": 1695743727198,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 19496,
+        "start_time": 1695743710718,
+        "end_time": 1695743730214,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 21059,
+        "start_time": 1695743710717,
+        "end_time": 1695743731776,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 22557,
+        "start_time": 1695743710718,
+        "end_time": 1695743733275,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 2986,
+        "start_time": 1695744319387,
+        "end_time": 1695744322373,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2347,
+        "start_time": 1695744322390,
+        "end_time": 1695744324737,
+        "type": "load_documents"
     }
 ]
