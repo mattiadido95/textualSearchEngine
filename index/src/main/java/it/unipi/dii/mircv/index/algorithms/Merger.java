@@ -222,7 +222,6 @@ public class Merger {
         return numBlocks;
     }
 
-    public void plot
 }
 
 
