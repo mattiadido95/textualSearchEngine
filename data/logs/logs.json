@@ -646,5 +646,41 @@
         "start_time": 1695744322390,
         "end_time": 1695744324737,
         "type": "load_documents"
+    },
+    {
+        "duration": 3383,
+        "start_time": 1695746013155,
+        "end_time": 1695746016538,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4371,
+        "start_time": 1695746016570,
+        "end_time": 1695746020941,
+        "type": "load_documents"
+    },
+    {
+        "duration": 32748,
+        "start_time": 1695746026666,
+        "end_time": 1695746059414,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 36975,
+        "start_time": 1695746026668,
+        "end_time": 1695746063643,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 37316,
+        "start_time": 1695746026667,
+        "end_time": 1695746063983,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 38679,
+        "start_time": 1695746026669,
+        "end_time": 1695746065348,
+        "type": "Thread_3"
     }
 ]
