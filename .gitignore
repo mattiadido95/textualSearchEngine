@@ -2,6 +2,8 @@
 /data/collection
 /data/index
 .DS_Store
+/data/collection
+/data/logs
 index/.DS_Store
 prompt/.DS_Store
 /index/src/test/data

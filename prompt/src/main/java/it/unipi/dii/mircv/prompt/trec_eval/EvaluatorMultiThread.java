@@ -35,7 +35,7 @@ public class EvaluatorMultiThread {
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/trec_eval/results.test";
     private static final String EVALUATION_PATH = "data/trec_eval/evaluation.txt";
-    private static final int NUM_THREADS = 6; // Numero di thread o job paralleli
+    private static final int NUM_THREADS = 4; // Numero di thread o job paralleli
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
     /**
@@ -155,10 +155,13 @@ public class EvaluatorMultiThread {
                 Query queryObj = new Query(queryText, thread_porterStemmerOption); // new query object
                 ArrayList<String> queryTerms = queryObj.getQueryTerms(); // get query terms preprocessed
 
-                start_q = System.currentTimeMillis();
-                this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
-                end_q = System.currentTimeMillis();
-                log.addLogCSV(start_q, end_q);
+                // synchronized block to avoid concurrent access to log and obtain a correct duration of query processing
+                synchronized (this.thread_searcher) {
+                    start_q = System.currentTimeMillis();
+                    this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                    end_q = System.currentTimeMillis();
+                    log.addLogCSV(start_q, end_q);
+                }
                 this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
             }
             // write results in file for trec_eval evaluation in the format: query_id Q0 doc_id rank score STANDARD

@@ -754,5 +754,71 @@
         "start_time": 1695746043342,
         "end_time": 1695746064565,
         "type": "Thread_5"
+    },
+    {
+        "duration": 3029,
+        "start_time": 1695749957894,
+        "end_time": 1695749960923,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3430,
+        "start_time": 1695749960940,
+        "end_time": 1695749964370,
+        "type": "load_documents"
+    },
+    {
+        "duration": 18727,
+        "start_time": 1695749971621,
+        "end_time": 1695749990348,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 21941,
+        "start_time": 1695749971621,
+        "end_time": 1695749993562,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21984,
+        "start_time": 1695749971621,
+        "end_time": 1695749993605,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 23069,
+        "start_time": 1695749971622,
+        "end_time": 1695749994691,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 2930,
+        "start_time": 1695750265488,
+        "end_time": 1695750268418,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2144,
+        "start_time": 1695750268436,
+        "end_time": 1695750270580,
+        "type": "load_documents"
+    },
+    {
+        "duration": 19227,
+        "start_time": 1695750273334,
+        "end_time": 1695750292561,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 22876,
+        "start_time": 1695750273334,
+        "end_time": 1695750296210,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 23912,
+        "start_time": 1695750273335,
+        "end_time": 1695750297247,
+        "type": "Thread_3"
     }
 ]
