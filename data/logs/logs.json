@@ -646,5 +646,113 @@
         "start_time": 1695744322390,
         "end_time": 1695744324737,
         "type": "load_documents"
+    },
+    {
+        "duration": 2966,
+        "start_time": 1695745730884,
+        "end_time": 1695745733850,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2157,
+        "start_time": 1695745733867,
+        "end_time": 1695745736024,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12003,
+        "start_time": 1695745737012,
+        "end_time": 1695745749015,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 12471,
+        "start_time": 1695745737012,
+        "end_time": 1695745749483,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 15351,
+        "start_time": 1695745737012,
+        "end_time": 1695745752363,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 18307,
+        "start_time": 1695745737013,
+        "end_time": 1695745755320,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 19559,
+        "start_time": 1695745737012,
+        "end_time": 1695745756571,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21111,
+        "start_time": 1695745737013,
+        "end_time": 1695745758124,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 3029,
+        "start_time": 1695745909884,
+        "end_time": 1695745912913,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2223,
+        "start_time": 1695745912930,
+        "end_time": 1695745915153,
+        "type": "load_documents"
+    },
+    {
+        "duration": 2967,
+        "start_time": 1695746035338,
+        "end_time": 1695746038305,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2191,
+        "start_time": 1695746038322,
+        "end_time": 1695746040513,
+        "type": "load_documents"
+    },
+    {
+        "duration": 12166,
+        "start_time": 1695746043341,
+        "end_time": 1695746055507,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 12739,
+        "start_time": 1695746043341,
+        "end_time": 1695746056080,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 15460,
+        "start_time": 1695746043341,
+        "end_time": 1695746058801,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 18425,
+        "start_time": 1695746043342,
+        "end_time": 1695746061767,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 19713,
+        "start_time": 1695746043341,
+        "end_time": 1695746063054,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21223,
+        "start_time": 1695746043342,
+        "end_time": 1695746064565,
+        "type": "Thread_5"
     }
 ]
