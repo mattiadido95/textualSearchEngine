@@ -41,12 +41,12 @@ public class EvaluatorMultiThread {
     /**
      * Constructor of the class.
      *
-     * @param lexicon              lexicon of the index
-     * @param documents            list of all the documents
-     * @param n_results            number of results to return
-     * @param mode                 mode of the query processing
-     * @param scoringFunction      scoring function to use
-     * @param porterStemmerOption  true if the porter stemmer is used, false otherwise
+     * @param lexicon             lexicon of the index
+     * @param documents           list of all the documents
+     * @param n_results           number of results to return
+     * @param mode                mode of the query processing
+     * @param scoringFunction     scoring function to use
+     * @param porterStemmerOption true if the porter stemmer is used, false otherwise
      */
     public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
         //this.searcher = searcher;
@@ -73,8 +73,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 36)
-                    break;
+//                if (queryCounter == 100)
+//                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -141,9 +141,11 @@ public class EvaluatorMultiThread {
          * Method that executes the query processing.
          */
         public void run() {
+            Logs log = new Logs();
             long start, end;
             start = System.currentTimeMillis();
             for (String query : thread_queries) {
+                long start_q, end_q;
                 // parse query and get query terms
                 String[] split = query.split("\t");
                 String queryId = split[0];
@@ -153,7 +155,10 @@ public class EvaluatorMultiThread {
                 Query queryObj = new Query(queryText, thread_porterStemmerOption); // new query object
                 ArrayList<String> queryTerms = queryObj.getQueryTerms(); // get query terms preprocessed
 
+                start_q = System.currentTimeMillis();
                 this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                end_q = System.currentTimeMillis();
+                log.addLogCSV(start_q, end_q);
                 this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
             }
             // write results in file for trec_eval evaluation in the format: query_id Q0 doc_id rank score STANDARD
@@ -173,7 +178,6 @@ public class EvaluatorMultiThread {
                 for (String line : output)
                     writer.write(line);
                 writer.close();
-                Logs log = new Logs();
                 log.getLog("Thread " + threadId + " has completed processing.");
                 end = System.currentTimeMillis();
                 log.addLog("Thread_" + threadId, start, end);
@@ -194,6 +198,10 @@ public class EvaluatorMultiThread {
         List<String> allQueries = loadAllQueries();
         // Divide le query in sottoinsiemi per i thread
         List<List<String>> querySubsets = splitQueries(allQueries, NUM_THREADS);
+        // delete log.csv file if exists
+        File logFile = new File("data/logs/logs.csv");
+        if (logFile.exists())
+            logFile.delete();
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
