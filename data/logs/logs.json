@@ -682,5 +682,101 @@
         "start_time": 1695746026669,
         "end_time": 1695746065348,
         "type": "Thread_3"
+    },
+    {
+        "duration": 5191,
+        "start_time": 1695748745217,
+        "end_time": 1695748750408,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3086,
+        "start_time": 1695748750425,
+        "end_time": 1695748753511,
+        "type": "load_documents"
+    },
+    {
+        "duration": 17820,
+        "start_time": 1695748756799,
+        "end_time": 1695748774619,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 21126,
+        "start_time": 1695748756800,
+        "end_time": 1695748777926,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 21338,
+        "start_time": 1695748756799,
+        "end_time": 1695748778137,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 22727,
+        "start_time": 1695748756800,
+        "end_time": 1695748779527,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 16563,
+        "start_time": 1695748824649,
+        "end_time": 1695748841212,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 19916,
+        "start_time": 1695748824649,
+        "end_time": 1695748844565,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 20121,
+        "start_time": 1695748824649,
+        "end_time": 1695748844770,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 21657,
+        "start_time": 1695748824650,
+        "end_time": 1695748846307,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 5242,
+        "start_time": 1695748868740,
+        "end_time": 1695748873982,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2737,
+        "start_time": 1695748874001,
+        "end_time": 1695748876738,
+        "type": "load_documents"
+    },
+    {
+        "duration": 16865,
+        "start_time": 1695748930766,
+        "end_time": 1695748947631,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 20120,
+        "start_time": 1695748930767,
+        "end_time": 1695748950887,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 20273,
+        "start_time": 1695748930767,
+        "end_time": 1695748951040,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21653,
+        "start_time": 1695748930767,
+        "end_time": 1695748952420,
+        "type": "Thread_3"
     }
 ]

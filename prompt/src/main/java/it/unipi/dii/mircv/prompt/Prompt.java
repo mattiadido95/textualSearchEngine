@@ -111,9 +111,9 @@ public class Prompt {
                 log.addLog("query", start, end);
             } else if (userInput == 2) {
                 // second option: evaluate search engine with trec_eval
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption,dynamicPruning);
                 evaluatorMT.execute();
-//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption);
+//                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption, dynamicPruning);
 //                evaluator.execute();
             } else if (userInput == 3) {
                 // third option: calculate TUBs for dynamic pruning

@@ -22,12 +22,13 @@ public class Evaluator {
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private String scoringFunction;
     private boolean porterStemmerOption;
+    private boolean dynamic;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/collection/results.test";
     private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
 
-    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
+    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
         this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
@@ -35,6 +36,7 @@ public class Evaluator {
         this.mode = mode;
         this.scoringFunction = scoringFunction;
         this.porterStemmerOption = porterStemmerOption;
+        this.dynamic = dynamic;
         arrayQueryResults = new ArrayList<>();
         queryIDs = new ArrayList<>();
     }
@@ -55,12 +57,15 @@ public class Evaluator {
                 query = new Query(queryText, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
+                if (dynamic)
+                    searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
+                else
+                    searcher.DAAT(queryTerms, n_results, mode, scoringFunction);
                 arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
                 queryCounter++;
 
                 if (queryCounter % 36 == 0) {
-                    System.out.println("Evalueator single process ends");
+                    System.out.println("Evaluate single process ends");
                     break;
                 }
             }
