@@ -778,5 +778,41 @@
         "start_time": 1695748930767,
         "end_time": 1695748952420,
         "type": "Thread_3"
+    },
+    {
+        "duration": 5260,
+        "start_time": 1695807729899,
+        "end_time": 1695807735159,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3374,
+        "start_time": 1695807735199,
+        "end_time": 1695807738573,
+        "type": "load_documents"
+    },
+    {
+        "duration": 18953823,
+        "start_time": 1695807760144,
+        "end_time": 1695826713967,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 19849961,
+        "start_time": 1695807760145,
+        "end_time": 1695827610106,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 19905956,
+        "start_time": 1695807760144,
+        "end_time": 1695827666100,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 20153621,
+        "start_time": 1695807760144,
+        "end_time": 1695827913765,
+        "type": "Thread_1"
     }
 ]
