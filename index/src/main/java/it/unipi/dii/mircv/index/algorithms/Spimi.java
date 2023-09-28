@@ -26,7 +26,7 @@ public class Spimi {
     private boolean compressed_reading;
     private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final int MAX_DOC_PER_FILE = 100000;
+    private static final int MAX_DOC_PER_FILE = 250000;
     private static final String PARTIAL_INDEX_PATH = "data/index/index_";
     private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
 
