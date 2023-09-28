@@ -31,6 +31,7 @@ public class EvaluatorMultiThread {
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private String scoringFunction;
     private boolean porterStemmerOption;
+    private boolean dynamic;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/trec_eval/results.test";
@@ -47,8 +48,9 @@ public class EvaluatorMultiThread {
      * @param mode                mode of the query processing
      * @param scoringFunction     scoring function to use
      * @param porterStemmerOption true if the porter stemmer is used, false otherwise
+     * @param dynamic             true if dynamic pruning is used, false otherwise
      */
-    public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
+    public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
         //this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
@@ -56,6 +58,7 @@ public class EvaluatorMultiThread {
         this.mode = mode;
         this.scoringFunction = scoringFunction;
         this.porterStemmerOption = porterStemmerOption;
+        this.dynamic = dynamic;
 //        arrayQueryResults = new ArrayList<>();
 //        queryIDs = new ArrayList<>();
     }
@@ -73,8 +76,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 5000)
-                    break;
+//                if (queryCounter == 5000)
+//                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -121,8 +124,9 @@ public class EvaluatorMultiThread {
         private boolean[] t;
         private String thread_scoringFunction;
         private boolean thread_porterStemmerOption;
+        private boolean thread_dynamic;
 
-        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t, String scoringFunction, boolean porterStemmerOption) {
+        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
@@ -134,6 +138,7 @@ public class EvaluatorMultiThread {
             this.thread_queryIDs = new ArrayList<>();
             this.thread_scoringFunction = scoringFunction;
             this.thread_porterStemmerOption = porterStemmerOption;
+            this.thread_dynamic = dynamic;
             this.t = t;
         }
 
@@ -158,7 +163,10 @@ public class EvaluatorMultiThread {
                 // synchronized block to avoid concurrent access to log and obtain a correct duration of query processing
                 synchronized (this.thread_searcher) {
                     start_q = System.currentTimeMillis();
-                    this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                    if (this.thread_dynamic)
+                        this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction);
+                    else
+                        this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
                     end_q = System.currentTimeMillis();
                     log.addLogCSV(start_q, end_q);
                 }
@@ -209,7 +217,7 @@ public class EvaluatorMultiThread {
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
             Searcher thread_searcher = new Searcher(this.lexicon, this.documents);
-            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main, this.scoringFunction, this.porterStemmerOption));
+            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main, this.scoringFunction, this.porterStemmerOption, this.dynamic));
         }
         executorService.shutdown();
         while (!allThreadEnds(t_main)) {
