@@ -73,7 +73,7 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 100)
+                if (queryCounter == 5000)
                     break;
             }
         } catch (IOException e) {
@@ -158,7 +158,7 @@ public class EvaluatorMultiThread {
                 // synchronized block to avoid concurrent access to log and obtain a correct duration of query processing
                 synchronized (this.thread_searcher) {
                     start_q = System.currentTimeMillis();
-                    this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                    this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
                     end_q = System.currentTimeMillis();
                     log.addLogCSV(start_q, end_q);
                 }
