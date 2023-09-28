@@ -76,8 +76,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-//                if (queryCounter == 5000)
-//                    break;
+                if (queryCounter == 10000)
+                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

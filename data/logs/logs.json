@@ -964,5 +964,17 @@
         "start_time": 1695838284621,
         "end_time": 1695839501100,
         "type": "Thread_0"
+    },
+    {
+        "duration": 3162,
+        "start_time": 1695891991211,
+        "end_time": 1695891994373,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3568,
+        "start_time": 1695891994405,
+        "end_time": 1695891997973,
+        "type": "load_documents"
     }
 ]
