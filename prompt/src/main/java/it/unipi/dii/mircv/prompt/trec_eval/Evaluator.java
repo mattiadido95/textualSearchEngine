@@ -2,6 +2,7 @@ package it.unipi.dii.mircv.prompt.trec_eval;
 
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
+import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.structure.QueryResult;
@@ -47,7 +48,8 @@ public class Evaluator {
             String line; // start reading query by query
 
             int queryCounter = 0;
-
+            Logs log = new Logs();
+            long start_q, end_q;
             while ((line = br.readLine()) != null) {
                 String[] input = line.split("\t");
                 String queryId = input[0];
@@ -57,11 +59,17 @@ public class Evaluator {
                 query = new Query(queryText, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                if (dynamic)
+                if (dynamic) {
+                    start_q = System.currentTimeMillis();
                     searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
-                else
+                }
+                else {
+                    start_q = System.currentTimeMillis();
                     searcher.DAAT(queryTerms, n_results, mode, scoringFunction);
-                arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
+                }
+                end_q = System.currentTimeMillis();
+//                log.addLogCSV(start_q, end_q);
+
                 queryCounter++;
 
                 if (queryCounter % 36 == 0) {

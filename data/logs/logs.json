@@ -648,171 +648,321 @@
         "type": "load_documents"
     },
     {
-        "duration": 3383,
-        "start_time": 1695746013155,
-        "end_time": 1695746016538,
+        "duration": 2966,
+        "start_time": 1695745730884,
+        "end_time": 1695745733850,
         "type": "load_lexicon"
     },
     {
-        "duration": 4371,
-        "start_time": 1695746016570,
-        "end_time": 1695746020941,
+        "duration": 2157,
+        "start_time": 1695745733867,
+        "end_time": 1695745736024,
         "type": "load_documents"
     },
     {
-        "duration": 32748,
-        "start_time": 1695746026666,
-        "end_time": 1695746059414,
-        "type": "Thread_0"
-    },
-    {
-        "duration": 36975,
-        "start_time": 1695746026668,
-        "end_time": 1695746063643,
-        "type": "Thread_2"
-    },
-    {
-        "duration": 37316,
-        "start_time": 1695746026667,
-        "end_time": 1695746063983,
-        "type": "Thread_1"
-    },
-    {
-        "duration": 38679,
-        "start_time": 1695746026669,
-        "end_time": 1695746065348,
+        "duration": 12003,
+        "start_time": 1695745737012,
+        "end_time": 1695745749015,
         "type": "Thread_3"
     },
     {
-        "duration": 5191,
-        "start_time": 1695748745217,
-        "end_time": 1695748750408,
+        "duration": 12471,
+        "start_time": 1695745737012,
+        "end_time": 1695745749483,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 15351,
+        "start_time": 1695745737012,
+        "end_time": 1695745752363,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 18307,
+        "start_time": 1695745737013,
+        "end_time": 1695745755320,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 19559,
+        "start_time": 1695745737012,
+        "end_time": 1695745756571,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21111,
+        "start_time": 1695745737013,
+        "end_time": 1695745758124,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 3029,
+        "start_time": 1695745909884,
+        "end_time": 1695745912913,
         "type": "load_lexicon"
     },
     {
-        "duration": 3086,
-        "start_time": 1695748750425,
-        "end_time": 1695748753511,
+        "duration": 2223,
+        "start_time": 1695745912930,
+        "end_time": 1695745915153,
         "type": "load_documents"
     },
     {
-        "duration": 17820,
-        "start_time": 1695748756799,
-        "end_time": 1695748774619,
-        "type": "Thread_0"
-    },
-    {
-        "duration": 21126,
-        "start_time": 1695748756800,
-        "end_time": 1695748777926,
-        "type": "Thread_2"
-    },
-    {
-        "duration": 21338,
-        "start_time": 1695748756799,
-        "end_time": 1695748778137,
-        "type": "Thread_1"
-    },
-    {
-        "duration": 22727,
-        "start_time": 1695748756800,
-        "end_time": 1695748779527,
-        "type": "Thread_3"
-    },
-    {
-        "duration": 16563,
-        "start_time": 1695748824649,
-        "end_time": 1695748841212,
-        "type": "Thread_0"
-    },
-    {
-        "duration": 19916,
-        "start_time": 1695748824649,
-        "end_time": 1695748844565,
-        "type": "Thread_1"
-    },
-    {
-        "duration": 20121,
-        "start_time": 1695748824649,
-        "end_time": 1695748844770,
-        "type": "Thread_2"
-    },
-    {
-        "duration": 21657,
-        "start_time": 1695748824650,
-        "end_time": 1695748846307,
-        "type": "Thread_3"
-    },
-    {
-        "duration": 5242,
-        "start_time": 1695748868740,
-        "end_time": 1695748873982,
+        "duration": 2967,
+        "start_time": 1695746035338,
+        "end_time": 1695746038305,
         "type": "load_lexicon"
     },
     {
-        "duration": 2737,
-        "start_time": 1695748874001,
-        "end_time": 1695748876738,
+        "duration": 2191,
+        "start_time": 1695746038322,
+        "end_time": 1695746040513,
         "type": "load_documents"
     },
     {
-        "duration": 16865,
-        "start_time": 1695748930766,
-        "end_time": 1695748947631,
-        "type": "Thread_0"
-    },
-    {
-        "duration": 20120,
-        "start_time": 1695748930767,
-        "end_time": 1695748950887,
-        "type": "Thread_2"
-    },
-    {
-        "duration": 20273,
-        "start_time": 1695748930767,
-        "end_time": 1695748951040,
-        "type": "Thread_1"
-    },
-    {
-        "duration": 21653,
-        "start_time": 1695748930767,
-        "end_time": 1695748952420,
+        "duration": 12166,
+        "start_time": 1695746043341,
+        "end_time": 1695746055507,
         "type": "Thread_3"
     },
     {
-        "duration": 5260,
-        "start_time": 1695807729899,
-        "end_time": 1695807735159,
+        "duration": 12739,
+        "start_time": 1695746043341,
+        "end_time": 1695746056080,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 15460,
+        "start_time": 1695746043341,
+        "end_time": 1695746058801,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 18425,
+        "start_time": 1695746043342,
+        "end_time": 1695746061767,
+        "type": "Thread_4"
+    },
+    {
+        "duration": 19713,
+        "start_time": 1695746043341,
+        "end_time": 1695746063054,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 21223,
+        "start_time": 1695746043342,
+        "end_time": 1695746064565,
+        "type": "Thread_5"
+    },
+    {
+        "duration": 3029,
+        "start_time": 1695749957894,
+        "end_time": 1695749960923,
         "type": "load_lexicon"
     },
     {
-        "duration": 3374,
-        "start_time": 1695807735199,
-        "end_time": 1695807738573,
+        "duration": 3430,
+        "start_time": 1695749960940,
+        "end_time": 1695749964370,
         "type": "load_documents"
     },
     {
-        "duration": 18953823,
-        "start_time": 1695807760144,
-        "end_time": 1695826713967,
-        "type": "Thread_2"
-    },
-    {
-        "duration": 19849961,
-        "start_time": 1695807760145,
-        "end_time": 1695827610106,
-        "type": "Thread_3"
-    },
-    {
-        "duration": 19905956,
-        "start_time": 1695807760144,
-        "end_time": 1695827666100,
+        "duration": 18727,
+        "start_time": 1695749971621,
+        "end_time": 1695749990348,
         "type": "Thread_0"
     },
     {
-        "duration": 20153621,
-        "start_time": 1695807760144,
-        "end_time": 1695827913765,
+        "duration": 21941,
+        "start_time": 1695749971621,
+        "end_time": 1695749993562,
         "type": "Thread_1"
+    },
+    {
+        "duration": 21984,
+        "start_time": 1695749971621,
+        "end_time": 1695749993605,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 23069,
+        "start_time": 1695749971622,
+        "end_time": 1695749994691,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 2930,
+        "start_time": 1695750265488,
+        "end_time": 1695750268418,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2144,
+        "start_time": 1695750268436,
+        "end_time": 1695750270580,
+        "type": "load_documents"
+    },
+    {
+        "duration": 19227,
+        "start_time": 1695750273334,
+        "end_time": 1695750292561,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 22876,
+        "start_time": 1695750273334,
+        "end_time": 1695750296210,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 23912,
+        "start_time": 1695750273335,
+        "end_time": 1695750297247,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3399,
+        "start_time": 1695829050709,
+        "end_time": 1695829054108,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3037,
+        "start_time": 1695829054129,
+        "end_time": 1695829057166,
+        "type": "load_documents"
+    },
+    {
+        "duration": 966381,
+        "start_time": 1695829058999,
+        "end_time": 1695830025380,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 1007084,
+        "start_time": 1695829059000,
+        "end_time": 1695830066084,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 1022460,
+        "start_time": 1695829058999,
+        "end_time": 1695830081459,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1057590,
+        "start_time": 1695829058999,
+        "end_time": 1695830116589,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 3261,
+        "start_time": 1695832502796,
+        "end_time": 1695832506057,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2539,
+        "start_time": 1695832506094,
+        "end_time": 1695832508633,
+        "type": "load_documents"
+    },
+    {
+        "duration": 992261,
+        "start_time": 1695832664682,
+        "end_time": 1695833656943,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 1023035,
+        "start_time": 1695832664682,
+        "end_time": 1695833687717,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 1035334,
+        "start_time": 1695832664682,
+        "end_time": 1695833700016,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1076453,
+        "start_time": 1695832664682,
+        "end_time": 1695833741135,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 3035,
+        "start_time": 1695835611226,
+        "end_time": 1695835614261,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2136,
+        "start_time": 1695835614280,
+        "end_time": 1695835616416,
+        "type": "load_documents"
+    },
+    {
+        "duration": 1076467,
+        "start_time": 1695835640112,
+        "end_time": 1695836716579,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 1111825,
+        "start_time": 1695835640112,
+        "end_time": 1695836751937,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 1143806,
+        "start_time": 1695835640111,
+        "end_time": 1695836783917,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1187663,
+        "start_time": 1695835640111,
+        "end_time": 1695836827774,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 3135,
+        "start_time": 1695838200946,
+        "end_time": 1695838204081,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2404,
+        "start_time": 1695838204101,
+        "end_time": 1695838206505,
+        "type": "load_documents"
+    },
+    {
+        "duration": 1101973,
+        "start_time": 1695838284622,
+        "end_time": 1695839386595,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 1130237,
+        "start_time": 1695838284622,
+        "end_time": 1695839414859,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 1167956,
+        "start_time": 1695838284621,
+        "end_time": 1695839452577,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 1216479,
+        "start_time": 1695838284621,
+        "end_time": 1695839501100,
+        "type": "Thread_0"
     }
 ]
