@@ -85,12 +85,12 @@ public class DynamicPruning {
                 br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
             }
 
-            ArrayList<Document> documents = new ArrayList<>(); // create an array of documents
+            ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
 
             String line; // start reading document by document
             while ((line = br.readLine()) != null) {
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
-                Document document = preprocessing.getDoc(); // for each document, start preprocessing
+                Document currentDoc = documents.get(documentCounter);
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 double dub_bm25 = 0;
@@ -101,10 +101,9 @@ public class DynamicPruning {
                         dub_tfidf += lexicon.getLexiconElem(token).getTUB_tfidf();
                     }
                 }
-                document.setDUB_bm25(dub_bm25);
-                document.setDUB_tfidf(dub_tfidf);
+                currentDoc.setDUB_bm25(dub_bm25);
+                currentDoc.setDUB_tfidf(dub_tfidf);
                 documentCounter++;
-                documents.add(document); // add document to the array of documents
             }
             // save the updated documents to disk
             Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
