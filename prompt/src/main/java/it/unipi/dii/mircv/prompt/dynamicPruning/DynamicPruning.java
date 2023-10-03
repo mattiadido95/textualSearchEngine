@@ -118,7 +118,9 @@ public class DynamicPruning {
     }
 
     public void execute() {
+        System.out.println("Computing TUB scores...");
         this.TUB_processing();
+        System.out.println("Computing DUB scores...");
         this.DUB_processing();
     }
 }
