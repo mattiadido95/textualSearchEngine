@@ -13,6 +13,8 @@ public class Document {
     private String body;
     private int length;
     private String rawDocument;
+    private double DUB_tfidf;
+    private double DUB_bm25;
 
     /**
      * Constructor to initialize a Document from raw text.
@@ -25,19 +27,23 @@ public class Document {
         this.rawDocument = rawDocument;
         length = 0;
         parseDocument();
+        DUB_tfidf = 0;
+        DUB_bm25 = 0;
     }
 
     /**
      * Constructor to initialize a Document with specified attributes.
      *
-     * @param docID   The unique identifier for the document.
-     * @param docNo   The document number.
-     * @param length  The length of the document.
+     * @param docID  The unique identifier for the document.
+     * @param docNo  The document number.
+     * @param length The length of the document.
      */
     public Document(int docID, String docNo, int length) {
         this.docID = docID;
         this.docNo = docNo;
         this.length = length;
+        DUB_tfidf = 0;
+        DUB_bm25 = 0;
     }
 
     /**
@@ -111,7 +117,23 @@ public class Document {
         this.length = length;
     }
 
-     /**
+    public double getDUB_tfidf() {
+        return DUB_tfidf;
+    }
+
+    public void setDUB_tfidf(double DUB_tfidf) {
+        this.DUB_tfidf = DUB_tfidf;
+    }
+
+    public double getDUB_bm25() {
+        return DUB_bm25;
+    }
+
+    public void setDUB_bm25(double DUB_bm25) {
+        this.DUB_bm25 = DUB_bm25;
+    }
+
+    /**
      * Save a list of Document objects to a binary file.
      *
      * @param docs     The list of Document objects to save.
@@ -204,7 +226,7 @@ public class Document {
     /**
      * Concatenate a list of files into a single output file.
      *
-     * @param fileNames     The list of file names to concatenate.
+     * @param fileNames      The list of file names to concatenate.
      * @param outputFileName The name of the output file.
      */
     public static void ConcatenateFiles(ArrayList<String> fileNames, String outputFileName) {
