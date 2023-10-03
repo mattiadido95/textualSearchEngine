@@ -82,7 +82,7 @@ public class Prompt {
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
-            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate TUBs for dynamic pruning \n - insert 10 to exit");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate upper bounds for dynamic pruning \n - insert 10 to exit");
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // try to read an integer from the console
@@ -117,6 +117,7 @@ public class Prompt {
 //                evaluator.execute();
             } else if (userInput == 3) {
                 // third option: calculate TUBs for dynamic pruning
+                //TODO passare i giusti parametri, nel caso fare un file di configurazione
                 DynamicPruning dynamicPruning = new DynamicPruning(lexicon, documents,"data/collection/collection.tar.gz",true,true);
                 dynamicPruning.execute();
                 lexicon = new Lexicon();
@@ -126,7 +127,7 @@ public class Prompt {
                 scanner.close();
                 break;
             } else {
-                System.out.println("Wrong input, please insert 1 or 2");
+                System.out.println("Wrong input");
             }
         }
     }
