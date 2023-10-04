@@ -1,0 +1,3 @@
+data/collection/collection.tar.gz
+true
+true
