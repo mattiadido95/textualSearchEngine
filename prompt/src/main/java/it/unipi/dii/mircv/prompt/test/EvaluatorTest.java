@@ -4,16 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Searcher;
-import it.unipi.dii.mircv.prompt.trec_eval.Evaluator;
-import it.unipi.dii.mircv.prompt.trec_eval.EvaluatorMultiThread;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class evaluatorTest {
+public class EvaluatorTest {
     private static final String DOCUMENTS_PATH = "data/index/documents.bin";
     private static final String LEXICON_PATH = "data/index/lexicon.bin";
 

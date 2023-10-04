@@ -26,7 +26,7 @@ public class Spimi {
     private boolean compressed_reading;
     private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final int MAX_DOC_PER_FILE = 4000000;
+    private static final int MAX_DOC_PER_FILE = 250000;
     private static final String PARTIAL_INDEX_PATH = "data/index/index_";
     private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
 
@@ -188,7 +188,6 @@ public class Spimi {
      * @param indexCounter  The index counter used to distinguish different index segments.
      */
     public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter) {
-
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
             PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index

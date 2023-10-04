@@ -46,12 +46,12 @@ public class Prompt {
         int[] options = processOptions(args); // process parameters from command line
 
         String scoringFunction = options[0] == 1 ? "BM25" : "TFIDF";
-        boolean dynamicPruning = options[1] == 1 ? true : false;
+        boolean dynamicPruningOption = options[1] == 1 ? true : false;
         String mode = options[2] == 1 ? "conjunctive" : "disjunctive";
         boolean porterStemmerOption = options[3] == 1 ? true : false;
         int K = options[4];
 
-        printOptions(scoringFunction, dynamicPruning, mode, porterStemmerOption, K);
+        printOptions(scoringFunction, dynamicPruningOption, mode, porterStemmerOption, K);
 
         Logs log = new Logs();
         long start, end;
@@ -82,7 +82,7 @@ public class Prompt {
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
-            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate TUBs for dynamic pruning \n - insert 10 to exit");
+            System.out.println("MENU: \n - insert 1 to search \n - insert 2 to evaluate searchEngine \n - insert 3 calculate upper bounds for dynamic pruning \n - insert 10 to exit");
             int userInput = 0;
             try {
                 userInput = scanner.nextInt(); // try to read an integer from the console
@@ -98,7 +98,7 @@ public class Prompt {
                 String queryInput = scanner.nextLine();
                 Query query = new Query(queryInput, porterStemmerOption);
                 ArrayList<String> queryTerms = query.getQueryTerms();
-                if (dynamicPruning) {
+                if (dynamicPruningOption) {
                     start = System.currentTimeMillis();
                     searcher.maxScore(queryTerms, K, mode, scoringFunction);
                     end = System.currentTimeMillis();
@@ -111,15 +111,15 @@ public class Prompt {
                 log.addLog("query", start, end);
             } else if (userInput == 2) {
                 // second option: evaluate search engine with trec_eval
-                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption,dynamicPruning);
+                EvaluatorMultiThread evaluatorMT = new EvaluatorMultiThread(lexicon, documents, K, mode, scoringFunction, porterStemmerOption,dynamicPruningOption);
                 evaluatorMT.execute();
 //                Evaluator evaluator = new Evaluator(searcher, lexicon, documents, K, mode, scoringFunction, porterStemmerOption, dynamicPruning);
 //                evaluator.execute();
             } else if (userInput == 3) {
                 // third option: calculate TUBs for dynamic pruning
-                DynamicPruning dinamicPruning = new DynamicPruning(lexicon, documents);
-                dinamicPruning.TUB_processing("BM25");
-                dinamicPruning.TUB_processing("TFIDF");
+                //TODO passare i giusti parametri, nel caso fare un file di configurazione
+                DynamicPruning dynamicPruning = new DynamicPruning(lexicon, documents,"data/collection/collection.tar.gz",true,true);
+                dynamicPruning.execute();
                 lexicon = new Lexicon();
                 lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
             } else if (userInput == 10) {
@@ -127,7 +127,7 @@ public class Prompt {
                 scanner.close();
                 break;
             } else {
-                System.out.println("Wrong input, please insert 1 or 2");
+                System.out.println("Wrong input");
             }
         }
     }

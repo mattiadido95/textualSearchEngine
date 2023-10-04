@@ -141,7 +141,7 @@ public class Lexicon {
      * @param indexCounter The index counter used to distinguish SPIMI phases.
      * @param filePath     The path where the lexicon will be saved.
      */
-    public void saveLexiconToDiskORIGINAL(int indexCounter, String filePath) {
+    public void saveLexiconToDisk(int indexCounter, String filePath) {
         if (indexCounter != -1)
             filePath += indexCounter + ".bin";
 
@@ -165,33 +165,33 @@ public class Lexicon {
         }
     }
 
-    public void saveLexiconToDisk(int indexCounter, String filePath) {
-        if (indexCounter != -1)
-            filePath += indexCounter + ".bin";
-
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
-             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(randomAccessFile.getFD()))) {
-
-            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
-
-            for (String term : lexicon.keySet()) {
-                LexiconElem lexiconElem = lexicon.get(term);
-                dataOutputStream.writeUTF(term);
-                dataOutputStream.writeInt(lexiconElem.getDf());
-                dataOutputStream.writeLong(lexiconElem.getCf());
-                dataOutputStream.writeLong(lexiconElem.getOffset());
-                if (indexCounter == -1) {
-                    dataOutputStream.writeInt(lexiconElem.getBlocksNumber());
-                    dataOutputStream.writeDouble(lexiconElem.getTUB_bm25());
-                    dataOutputStream.writeDouble(lexiconElem.getTUB_tfidf());
-                }
-            }
-
-            dataOutputStream.flush(); // Assicurati che tutti i dati siano scritti
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void saveLexiconToDiskTEST(int indexCounter, String filePath) {
+//        if (indexCounter != -1)
+//            filePath += indexCounter + ".bin";
+//
+//        try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+//             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(randomAccessFile.getFD()))) {
+//
+//            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+//
+//            for (String term : lexicon.keySet()) {
+//                LexiconElem lexiconElem = lexicon.get(term);
+//                dataOutputStream.writeUTF(term);
+//                dataOutputStream.writeInt(lexiconElem.getDf());
+//                dataOutputStream.writeLong(lexiconElem.getCf());
+//                dataOutputStream.writeLong(lexiconElem.getOffset());
+//                if (indexCounter == -1) {
+//                    dataOutputStream.writeInt(lexiconElem.getBlocksNumber());
+//                    dataOutputStream.writeDouble(lexiconElem.getTUB_bm25());
+//                    dataOutputStream.writeDouble(lexiconElem.getTUB_tfidf());
+//                }
+//            }
+//
+//            dataOutputStream.flush(); // Assicurati che tutti i dati siano scritti
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     /**

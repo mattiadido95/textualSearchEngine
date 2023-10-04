@@ -197,7 +197,7 @@ public class PostingList {
      * @param filePath     The path of the file where the posting list should be saved.
      * @return The start offset of the portion of posting list saved in the file.
      */
-    public long savePostingListToDiskORIGINAL(int indexCounter, String filePath) {
+    public long savePostingListToDisk(int indexCounter, String filePath) {
         if (indexCounter != -1) // if indexCounter is not -1, the posting list is saved in portions
             filePath += indexCounter + ".bin";
 
@@ -233,39 +233,39 @@ public class PostingList {
         return offset;
     }
 
-    public long savePostingListToDisk(int indexCounter, String filePath) {
-        if (indexCounter != -1) // if indexCounter is not -1, the posting list is saved in portions
-            filePath += indexCounter + ".bin";
-
-        long offset = -1;
-
-        try {
-            boolean fileExists = Files.exists(Paths.get(filePath));
-
-            // Create or open the file in read-write mode
-            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            FileChannel fileChannel = file.getChannel();
-
-            // Get the file length before appending
-            offset = file.length();
-
-            // Map the file into memory
-            MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, this.postings.size() * 8L);
-
-            // Write postings to the mapped buffer
-            for (Posting posting : this.postings) {
-                buffer.putInt(posting.getDocID());
-                buffer.putInt(posting.getFreq());
-            }
-
-            // Close the file and release resources
-            fileChannel.close();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return offset;
-    }
+//    public long savePostingListToDiskTEST(int indexCounter, String filePath) {
+//        if (indexCounter != -1) // if indexCounter is not -1, the posting list is saved in portions
+//            filePath += indexCounter + ".bin";
+//
+//        long offset = -1;
+//
+//        try {
+//            boolean fileExists = Files.exists(Paths.get(filePath));
+//
+//            // Create or open the file in read-write mode
+//            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+//            FileChannel fileChannel = file.getChannel();
+//
+//            // Get the file length before appending
+//            offset = file.length();
+//
+//            // Map the file into memory
+//            MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, this.postings.size() * 8L);
+//
+//            // Write postings to the mapped buffer
+//            for (Posting posting : this.postings) {
+//                buffer.putInt(posting.getDocID());
+//                buffer.putInt(posting.getFreq());
+//            }
+//
+//            // Close the file and release resources
+//            fileChannel.close();
+//            file.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return offset;
+//    }
 
 
     /**
