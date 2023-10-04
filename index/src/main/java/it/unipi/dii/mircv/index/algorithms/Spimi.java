@@ -188,6 +188,7 @@ public class Spimi {
      * @param indexCounter  The index counter used to distinguish different index segments.
      */
     public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter) {
+
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
             PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index
