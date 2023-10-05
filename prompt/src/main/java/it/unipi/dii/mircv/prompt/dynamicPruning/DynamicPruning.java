@@ -38,7 +38,7 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                      TODO
+     *                                                                                                       TODO
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;
@@ -88,8 +88,9 @@ public class DynamicPruning {
             ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
 
             String line; // start reading document by document
+            Preprocessing preprocessing = new Preprocessing();
             while ((line = br.readLine()) != null) {
-                Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
+                preprocessing.documentPreprocess(line, documentCounter, porterStemmer);
                 Document currentDoc = documents.get(documentCounter);
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 

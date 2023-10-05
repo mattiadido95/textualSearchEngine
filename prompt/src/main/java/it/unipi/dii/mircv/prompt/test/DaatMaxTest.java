@@ -31,16 +31,17 @@ public class DaatMaxTest {
     public static void queryTest() {
 
         ArrayList<Query> queries = new ArrayList<>();
-        queries.add(new Query("what is the difference between a 2d and 3d shape", true));
-        queries.add(new Query("how long is a cubit?", true));
-        queries.add(new Query("what is paranoid sc", true));
-        queries.add(new Query("what is parallel structure? why is it so important in the sermon on the mount?", true));
-        queries.add(new Query("what is paper with a watermark called", true));
-        queries.add(new Query("what is parapsychology?", true));
-        queries.add(new Query("what is pressure vessel testing and repair", true));
-        queries.add(new Query("what is the gram molecular weight of maltose", true));
-        queries.add(new Query("treasure island game for ps3 worth", true));
-        queries.add(new Query("where are protists most abundant in humans", true));
+
+//        queries.add(new Query("what is the difference between a 2d and 3d shape", true));
+//        queries.add(new Query("how long is a cubit?", true));
+//        queries.add(new Query("what is paranoid sc", true));
+//        queries.add(new Query("what is parallel structure? why is it so important in the sermon on the mount?", true));
+//        queries.add(new Query("what is paper with a watermark called", true));
+//        queries.add(new Query("what is parapsychology?", true));
+//        queries.add(new Query("what is pressure vessel testing and repair", true));
+//        queries.add(new Query("what is the gram molecular weight of maltose", true));
+//        queries.add(new Query("treasure island game for ps3 worth", true));
+//        queries.add(new Query("where are protists most abundant in humans", true));
         /*
         queries.add(new Query("most frequent number in powerball", true));
         queries.add(new Query("tv advertising, what is vcr, stats", true));

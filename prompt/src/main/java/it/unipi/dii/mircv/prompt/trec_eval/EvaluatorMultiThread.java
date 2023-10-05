@@ -1,5 +1,6 @@
 package it.unipi.dii.mircv.prompt.trec_eval;
 
+import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
@@ -149,6 +150,8 @@ public class EvaluatorMultiThread {
             Logs log = new Logs();
             long start, end;
             start = System.currentTimeMillis();
+            Preprocessing preprocessing = new Preprocessing();
+            Query queryObj = new Query(thread_porterStemmerOption, preprocessing); // new query object
             for (String query : thread_queries) {
                 long start_q, end_q;
                 // parse query and get query terms
@@ -157,7 +160,7 @@ public class EvaluatorMultiThread {
                 String queryText = split[1];
 
                 this.thread_queryIDs.add(queryId);
-                Query queryObj = new Query(queryText, thread_porterStemmerOption); // new query object
+                queryObj.setQuery(queryText);
                 ArrayList<String> queryTerms = queryObj.getQueryTerms(); // get query terms preprocessed
 
                 // synchronized block to avoid concurrent access to log and obtain a correct duration of query processing
