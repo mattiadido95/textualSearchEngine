@@ -90,7 +90,6 @@ public class DynamicPruning {
             String line; // start reading document by document
             while ((line = br.readLine()) != null) {
                 Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
-                Document currentDoc = documents.get(documentCounter);
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 double dub_bm25 = 0;
@@ -101,8 +100,8 @@ public class DynamicPruning {
                         dub_tfidf += lexicon.getLexiconElem(token).getTUB_tfidf();
                     }
                 }
-                currentDoc.setDUB_bm25(dub_bm25);
-                currentDoc.setDUB_tfidf(dub_tfidf);
+                documents.get(documentCounter).setDUB_bm25(dub_bm25);
+                documents.get(documentCounter).setDUB_tfidf(dub_tfidf);
                 documentCounter++;
             }
             // save the updated documents to disk

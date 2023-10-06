@@ -41,7 +41,6 @@ public class DaatMaxTest {
         queries.add(new Query("what is the gram molecular weight of maltose", true));
         queries.add(new Query("treasure island game for ps3 worth", true));
         queries.add(new Query("where are protists most abundant in humans", true));
-        /*
         queries.add(new Query("most frequent number in powerball", true));
         queries.add(new Query("tv advertising, what is vcr, stats", true));
         queries.add(new Query("what is pseudoarthrosis thoracic spine", true));
@@ -56,7 +55,6 @@ public class DaatMaxTest {
         queries.add(new Query("what is natural gas solutions", true));
         queries.add(new Query("cost of an average patio slab per sq ft", true));
         queries.add(new Query("what is natural gas solutions", true));
-
         queries.add(new Query("what training should be done annually for employees", true));
         queries.add(new Query("what is archway publishing", true));
         queries.add(new Query("what trait does collagen control", true));
@@ -71,7 +69,6 @@ public class DaatMaxTest {
         queries.add(new Query("what transponder for direct tv", true));
         queries.add(new Query("how to use a posey pillow backdrop stand", true));
         queries.add(new Query("what transport molecule transports oxygen", true));
-
         queries.add(new Query("travel guide to puerto rico visa requirements", true));
         queries.add(new Query("how long is a cats gestational period", true));
         queries.add(new Query("what is prenuptial", true));
@@ -92,7 +89,7 @@ public class DaatMaxTest {
         queries.add(new Query("price of copper by ounce, pound", true));
         queries.add(new Query("trazodone for dogs side effects", true));
         queries.add(new Query("treadmill incline meaning", true));
-        */
+
 
         for (Query query : queries) {
             System.out.println(query.getQueryTerms());
