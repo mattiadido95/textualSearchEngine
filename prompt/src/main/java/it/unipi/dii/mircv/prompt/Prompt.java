@@ -142,6 +142,8 @@ public class Prompt {
                 dynamicPruning.execute();
                 lexicon = new Lexicon();
                 lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
+                documents.clear();
+                documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();

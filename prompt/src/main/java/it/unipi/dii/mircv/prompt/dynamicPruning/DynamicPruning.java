@@ -38,7 +38,7 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                      TODO
+     *                                                                                                       TODO
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;
@@ -104,15 +104,15 @@ public class DynamicPruning {
                 documents.get(documentCounter).setDUB_bm25(dub_bm25);
                 documents.get(documentCounter).setDUB_tfidf(dub_tfidf);
                 documentCounter++;
-                if(documentCounter % 100000 == 0)
+                if (documentCounter % 100000 == 0)
                     System.out.println("DUB scores computed for document " + documentCounter);
             }
             // save the updated documents to disk
-            Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
             br.close();
             if (compressed_reading) {
                 tarArchiveInputStream.close();
             }
+            Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }
