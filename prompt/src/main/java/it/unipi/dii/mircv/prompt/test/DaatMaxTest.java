@@ -1,5 +1,6 @@
 package it.unipi.dii.mircv.prompt.test;
 
+import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.prompt.query.Query;
@@ -29,67 +30,66 @@ public class DaatMaxTest {
     }
 
     public static void queryTest() {
-
+        Preprocessing preprocessing = new Preprocessing();
         ArrayList<Query> queries = new ArrayList<>();
-        queries.add(new Query("what is the difference between a 2d and 3d shape", true));
-        queries.add(new Query("how long is a cubit?", true));
-        queries.add(new Query("what is paranoid sc", true));
-        queries.add(new Query("what is parallel structure? why is it so important in the sermon on the mount?", true));
-        queries.add(new Query("what is paper with a watermark called", true));
-        queries.add(new Query("what is parapsychology?", true));
-        queries.add(new Query("what is pressure vessel testing and repair", true));
-        queries.add(new Query("what is the gram molecular weight of maltose", true));
-        queries.add(new Query("treasure island game for ps3 worth", true));
-        queries.add(new Query("where are protists most abundant in humans", true));
-        queries.add(new Query("most frequent number in powerball", true));
-        queries.add(new Query("tv advertising, what is vcr, stats", true));
-        queries.add(new Query("what is pseudoarthrosis thoracic spine", true));
-        queries.add(new Query("what is pseudocode", true));
-        queries.add(new Query("who sang louie louie louie louie", true));
-        queries.add(new Query("how much does it cost for a breast augmentation and brazilian butt lift", true));
-        queries.add(new Query("tv schedule archive disney channel", true));
-        queries.add(new Query("tv series benson cast", true));
-        queries.add(new Query("tv series coach cast", true));
-        queries.add(new Query("cost of an average wedding cake", true));
-        queries.add(new Query("what is natural history", true));
-        queries.add(new Query("what is natural gas solutions", true));
-        queries.add(new Query("cost of an average patio slab per sq ft", true));
-        queries.add(new Query("what is natural gas solutions", true));
-        queries.add(new Query("what training should be done annually for employees", true));
-        queries.add(new Query("what is archway publishing", true));
-        queries.add(new Query("what trait does collagen control", true));
-        queries.add(new Query("define incidence matrix", true));
-        queries.add(new Query("define incision and drainage", true));
-        queries.add(new Query("define inclusive environment", true));
-        queries.add(new Query("how to use a king size headboard on a california king", true));
-        queries.add(new Query("when did congress pass the wherry bill", true));
-        queries.add(new Query("what does rescind mean on insurance policy", true));
-        queries.add(new Query("what county is gatlinburg in", true));
-        queries.add(new Query("what does research say about a child that is constantly disappointed by the parent", true));
-        queries.add(new Query("what transponder for direct tv", true));
-        queries.add(new Query("how to use a posey pillow backdrop stand", true));
-        queries.add(new Query("what transport molecule transports oxygen", true));
-        queries.add(new Query("travel guide to puerto rico visa requirements", true));
-        queries.add(new Query("how long is a cats gestational period", true));
-        queries.add(new Query("what is prenuptial", true));
-        queries.add(new Query("what is preoperative clearance", true));
-        queries.add(new Query("travel trailer fall off block damage", true));
-        queries.add(new Query("what is pehlwani", true));
-        queries.add(new Query("what is pegging in trade", true));
-        queries.add(new Query("what are the causes of the pinky and ring finger to lock in a curl", true));
-        queries.add(new Query("what is the origin of the flexor carpi radialis", true));
-        queries.add(new Query("what is prepared mustard vs ground mustard", true));
-        queries.add(new Query("what is edta lab test", true));
-        queries.add(new Query("who plays sam in lmn", true));
-        queries.add(new Query("what is peg ratio example", true));
-        queries.add(new Query("liter chemistry definition", true));
-        queries.add(new Query("what is preppy k", true));
-        queries.add(new Query("what is peer review testing", true));
-        queries.add(new Query("what is peekaboo", true));
-        queries.add(new Query("price of copper by ounce, pound", true));
-        queries.add(new Query("trazodone for dogs side effects", true));
-        queries.add(new Query("treadmill incline meaning", true));
-
+        queries.add(new Query(true, preprocessing).setQuery("what is the difference between a 2d and 3d shape"));
+        queries.add(new Query(true, preprocessing).setQuery("how long is a cubit?"));
+        queries.add(new Query(true, preprocessing).setQuery("what is paranoid sc"));
+        queries.add(new Query(true, preprocessing).setQuery("what is parallel structure? why is it so important in the sermon on the mount?"));
+        queries.add(new Query(true, preprocessing).setQuery("what is paper with a watermark called"));
+        queries.add(new Query(true, preprocessing).setQuery("what is parapsychology?"));
+        queries.add(new Query(true, preprocessing).setQuery("what is pressure vessel testing and repair"));
+        queries.add(new Query(true, preprocessing).setQuery("what is the gram molecular weight of maltose"));
+        queries.add(new Query(true, preprocessing).setQuery("treasure island game for ps3 worth"));
+        queries.add(new Query(true, preprocessing).setQuery("where are protists most abundant in humans"));
+        queries.add(new Query(true, preprocessing).setQuery("most frequent number in powerball"));
+        queries.add(new Query(true, preprocessing).setQuery("tv advertising, what is vcr, stats"));
+        queries.add(new Query(true, preprocessing).setQuery("what is pseudoarthrosis thoracic spine"));
+        queries.add(new Query(true, preprocessing).setQuery("what is pseudocode"));
+        queries.add(new Query(true, preprocessing).setQuery("who sang louie louie louie louie"));
+        queries.add(new Query(true, preprocessing).setQuery("how much does it cost for a breast augmentation and brazilian butt lift"));
+        queries.add(new Query(true, preprocessing).setQuery("tv schedule archive disney channel"));
+        queries.add(new Query(true, preprocessing).setQuery("tv series benson cast"));
+        queries.add(new Query(true, preprocessing).setQuery("tv series coach cast"));
+        queries.add(new Query(true, preprocessing).setQuery("cost of an average wedding cake"));
+        queries.add(new Query(true, preprocessing).setQuery("what is natural history"));
+        queries.add(new Query(true, preprocessing).setQuery("what is natural gas solutions"));
+        queries.add(new Query(true, preprocessing).setQuery("cost of an average patio slab per sq ft"));
+        queries.add(new Query(true, preprocessing).setQuery("what is natural gas solutions"));
+        queries.add(new Query(true, preprocessing).setQuery("what training should be done annually for employees"));
+        queries.add(new Query(true, preprocessing).setQuery("what is archway publishing"));
+        queries.add(new Query(true, preprocessing).setQuery("what trait does collagen control"));
+        queries.add(new Query(true, preprocessing).setQuery("define incidence matrix"));
+        queries.add(new Query(true, preprocessing).setQuery("define incision and drainage"));
+        queries.add(new Query(true, preprocessing).setQuery("define inclusive environment"));
+        queries.add(new Query(true, preprocessing).setQuery("how to use a king size headboard on a california king"));
+        queries.add(new Query(true, preprocessing).setQuery("when did congress pass the wherry bill"));
+        queries.add(new Query(true, preprocessing).setQuery("what does rescind mean on insurance policy"));
+        queries.add(new Query(true, preprocessing).setQuery("what county is gatlinburg in"));
+        queries.add(new Query(true, preprocessing).setQuery("what does research say about a child that is constantly disappointed by the parent"));
+        queries.add(new Query(true, preprocessing).setQuery("what transponder for direct tv"));
+        queries.add(new Query(true, preprocessing).setQuery("how to use a posey pillow backdrop stand"));
+        queries.add(new Query(true, preprocessing).setQuery("what transport molecule transports oxygen"));
+        queries.add(new Query(true, preprocessing).setQuery("travel guide to puerto rico visa requirements"));
+        queries.add(new Query(true, preprocessing).setQuery("how long is a cat's gestational period"));
+        queries.add(new Query(true, preprocessing).setQuery("what is prenuptial"));
+        queries.add(new Query(true, preprocessing).setQuery("what is preoperative clearance"));
+        queries.add(new Query(true, preprocessing).setQuery("travel trailer fall off block damage"));
+        queries.add(new Query(true, preprocessing).setQuery("what is pehlwani"));
+        queries.add(new Query(true, preprocessing).setQuery("what is pegging in trade"));
+        queries.add(new Query(true, preprocessing).setQuery("what are the causes of the pinky and ring finger to lock in a curl"));
+        queries.add(new Query(true, preprocessing).setQuery("what is the origin of the flexor carpi radialis"));
+        queries.add(new Query(true, preprocessing).setQuery("what is prepared mustard vs ground mustard"));
+        queries.add(new Query(true, preprocessing).setQuery("what is edta lab test"));
+        queries.add(new Query(true, preprocessing).setQuery("who plays sam in lmn"));
+        queries.add(new Query(true, preprocessing).setQuery("what is peg ratio example"));
+        queries.add(new Query(true, preprocessing).setQuery("liter chemistry definition"));
+        queries.add(new Query(true, preprocessing).setQuery("what is preppy k"));
+        queries.add(new Query(true, preprocessing).setQuery("what is peer review testing"));
+        queries.add(new Query(true, preprocessing).setQuery("what is peekaboo"));
+        queries.add(new Query(true, preprocessing).setQuery("price of copper by ounce, pound"));
+        queries.add(new Query(true, preprocessing).setQuery("trazodone for dogs side effects"));
+        queries.add(new Query(true, preprocessing).setQuery("treadmill incline meaning"));
 
         for (Query query : queries) {
             System.out.println(query.getQueryTerms());
@@ -119,5 +119,4 @@ public class DaatMaxTest {
             }
         }
     }
-
 }

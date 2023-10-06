@@ -5,6 +5,7 @@ import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,8 +83,9 @@ public class Spimi {
 
             String line; // start reading document by document
             totDocLength = 0;
+            Preprocessing preprocessing = new Preprocessing();
             while ((line = br.readLine()) != null) {
-                Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
+                preprocessing.documentPreprocess(line, documentCounter, porterStemmer);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents
@@ -188,7 +190,6 @@ public class Spimi {
      * @param indexCounter  The index counter used to distinguish different index segments.
      */
     public void saveInvertedIndexToDisk(Lexicon lexicon, HashMap<String, PostingList> invertedIndex, int indexCounter) {
-
         for (String term : lexicon.getLexicon().keySet()) {
             // for each term in lexicon
             PostingList postingList = invertedIndex.get(term); // get corresponding posting list from inverted index

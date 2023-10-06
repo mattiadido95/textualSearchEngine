@@ -1,5 +1,6 @@
 package it.unipi.dii.mircv.prompt;
 
+import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
@@ -95,6 +96,9 @@ public class Prompt {
         Scanner scanner = new Scanner(System.in);
         Searcher searcher = new Searcher(lexicon, documents);
 
+        Preprocessing preprocessing = new Preprocessing();
+        Query query = new Query(porterStemmerOption, preprocessing);
+
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Welcome to the search engine!");
@@ -112,7 +116,8 @@ public class Prompt {
                 // first option: search
                 System.out.println("Insert your query ...");
                 String queryInput = scanner.nextLine();
-                Query query = new Query(queryInput, porterStemmerOption);
+                query.setQuery(queryInput);
+                //Query query = new Query(queryInput, porterStemmerOption, preprocessing);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 if (dynamicPruningOption) {
                     start = System.currentTimeMillis();
