@@ -162,9 +162,11 @@ public class Document {
                 System.arraycopy(docNoBytes, 0, paddedDocNoBytes, 0, docNoBytes.length);
                 buffer.put(paddedDocNoBytes);
                 buffer.putInt(doc.getLength());
+                buffer.putDouble(doc.getDUB_tfidf());
+                buffer.putDouble(doc.getDUB_bm25());
                 // Se il buffer è pieno, scrivi il suo contenuto sul file
                 //if (!buffer.hasRemaining()) {
-                if (buffer.remaining() < (paddedDocNoBytes.length + 4 + 4)) {
+                if (buffer.remaining() < (paddedDocNoBytes.length + 4 + 4 + 8 + 8)) {
                     buffer.flip();
                     fileChannel.write(buffer);
                     buffer.clear();
@@ -203,13 +205,15 @@ public class Document {
 
             while (fileChannel.read(buffer) > 0) {
                 buffer.flip();
-                while (buffer.remaining() >= (DOCNO_LENGTH + 4 + 4)) {
+                while (buffer.remaining() >= (DOCNO_LENGTH + 4 + 4 + 8 + 8)) {
                     Document doc = new Document();
                     doc.docID = buffer.getInt();
                     byte[] docNoBytes = new byte[DOCNO_LENGTH];
                     buffer.get(docNoBytes);
                     doc.docNo = new String(docNoBytes, StandardCharsets.UTF_8).trim();
                     doc.length = buffer.getInt();
+                    doc.DUB_tfidf = buffer.getDouble();
+                    doc.DUB_bm25 = buffer.getDouble();
                     documents.add(doc);
                 }
                 buffer.compact();
