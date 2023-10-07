@@ -639,6 +639,8 @@ public class Searcher {
         }
         System.out.println("\nThese " + queryResults.size() + " documents may are of your interest");
         for (QueryResult qr : queryResults) {
+//            System.out.println(documents.get(Integer.parseInt(qr.getDocNo())).getDUB_tfidf());
+//            System.out.println(documents.get(Integer.parseInt(qr.getDocNo())).getDUB_bm25());
             System.out.println(qr);
         }
         System.out.println("\nSearch time: " + time + " ms");

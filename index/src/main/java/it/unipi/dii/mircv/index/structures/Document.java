@@ -66,9 +66,10 @@ public class Document {
     @Override
     public String toString() {
         return "Document{" +
-                "docID=" + docID +
-                ", docNo='" + docNo + '\'' +
+                "docNo='" + docNo + '\'' +
                 ", length=" + length +
+                ", DUB_tfidf=" + DUB_tfidf +
+                ", DUB_bm25=" + DUB_bm25 +
                 '}';
     }
 

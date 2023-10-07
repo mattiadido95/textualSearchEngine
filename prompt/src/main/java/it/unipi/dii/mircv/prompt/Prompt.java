@@ -140,10 +140,7 @@ public class Prompt {
                 // third option: calculate TUBs and DUBs for dynamic pruning
                 DynamicPruning dynamicPruning = new DynamicPruning(lexicon, documents, COLLECTION_PATH, compressed_reading, porterStemmerOption);
                 dynamicPruning.execute();
-                lexicon = new Lexicon();
-                lexicon.readLexiconFromDisk(-1, LEXICON_PATH);
-                documents.clear();
-                documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
+                searcher = new Searcher(lexicon, documents);
             } else if (userInput == 10) {
                 System.out.println("Bye!");
                 scanner.close();

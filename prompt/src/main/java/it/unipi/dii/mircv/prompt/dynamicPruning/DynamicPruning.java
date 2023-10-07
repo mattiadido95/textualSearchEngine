@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class DynamicPruning {
     private Lexicon lexicon;
+
+    private ArrayList<Document> documents;
     private Searcher searcher;
     private ArrayList<String> queryTerms;
     private String LEXICON_PATH = "data/index/lexicon.bin";
@@ -38,10 +40,11 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                                       TODO
+     *                                                                                                                        TODO
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;
+        this.documents = documents;
         this.searcher = new Searcher(lexicon, documents);
         this.queryTerms = new ArrayList<>(this.lexicon.getLexiconKeys());
         this.COLLECTION_PATH = COLLECTION_PATH;
@@ -85,8 +88,6 @@ public class DynamicPruning {
                 br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
             }
 
-            ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
-
             String line; // start reading document by document
             Preprocessing preprocessing = new Preprocessing();
             while ((line = br.readLine()) != null) {
@@ -112,6 +113,9 @@ public class DynamicPruning {
             if (compressed_reading) {
                 tarArchiveInputStream.close();
             }
+            // delete lexicon.bin file
+            File file = new File("data/index/documents.bin");
+            file.delete();
             Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
         } catch (Exception e) {
             e.printStackTrace();
