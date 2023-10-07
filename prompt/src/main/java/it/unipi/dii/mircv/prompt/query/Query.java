@@ -31,10 +31,11 @@ public class Query {
         return this.queryTerms;
     }
 
-    public void setQuery(String queryInput) {
+    public Query setQuery(String queryInput) {
         this.queryTerms.clear();
         this.query = queryInput;
         parseQuery();
+        return this;
     }
 
     public void clearQuery() {

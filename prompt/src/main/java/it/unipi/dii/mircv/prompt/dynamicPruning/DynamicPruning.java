@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class DynamicPruning {
     private Lexicon lexicon;
+
+    private ArrayList<Document> documents;
     private Searcher searcher;
     private ArrayList<String> queryTerms;
     private String LEXICON_PATH = "data/index/lexicon.bin";
@@ -38,10 +40,11 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                                       TODO
+     *                                                                                                                        TODO
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;
+        this.documents = documents;
         this.searcher = new Searcher(lexicon, documents);
         this.queryTerms = new ArrayList<>(this.lexicon.getLexiconKeys());
         this.COLLECTION_PATH = COLLECTION_PATH;
@@ -85,13 +88,10 @@ public class DynamicPruning {
                 br = new BufferedReader(new InputStreamReader(new FileInputStream(COLLECTION_PATH), "UTF-8"));
             }
 
-            ArrayList<Document> documents = Document.readDocumentsFromDisk(-1, DOCUMENTS_PATH);
-
             String line; // start reading document by document
             Preprocessing preprocessing = new Preprocessing();
             while ((line = br.readLine()) != null) {
                 preprocessing.documentPreprocess(line, documentCounter, porterStemmer);
-                Document currentDoc = documents.get(documentCounter);
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
 
                 double dub_bm25 = 0;
@@ -102,18 +102,21 @@ public class DynamicPruning {
                         dub_tfidf += lexicon.getLexiconElem(token).getTUB_tfidf();
                     }
                 }
-                currentDoc.setDUB_bm25(dub_bm25);
-                currentDoc.setDUB_tfidf(dub_tfidf);
+                documents.get(documentCounter).setDUB_bm25(dub_bm25);
+                documents.get(documentCounter).setDUB_tfidf(dub_tfidf);
                 documentCounter++;
-//                if(documentCounter % 100000 == 0)
-//                    System.out.println("DUB scores computed for document " + documentCounter);
+                if (documentCounter % 100000 == 0)
+                    System.out.println("DUB scores computed for document " + documentCounter);
             }
             // save the updated documents to disk
-            Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
             br.close();
             if (compressed_reading) {
                 tarArchiveInputStream.close();
             }
+            // delete lexicon.bin file
+            File file = new File("data/index/documents.bin");
+            file.delete();
+            Document.saveDocumentsToDisk(documents, -1, DOCUMENTS_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }
