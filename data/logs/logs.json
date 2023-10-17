@@ -1492,5 +1492,173 @@
         "start_time": 1696685407259,
         "end_time": 1696685407654,
         "type": "query"
+    },
+    {
+        "duration": 3448,
+        "start_time": 1697545384220,
+        "end_time": 1697545387668,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2590,
+        "start_time": 1697545387692,
+        "end_time": 1697545390282,
+        "type": "load_documents"
+    },
+    {
+        "duration": 11,
+        "start_time": 1697545399302,
+        "end_time": 1697545399313,
+        "type": "query"
+    },
+    {
+        "duration": 3364,
+        "start_time": 1697549976154,
+        "end_time": 1697549979518,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2565,
+        "start_time": 1697549979541,
+        "end_time": 1697549982106,
+        "type": "load_documents"
+    },
+    {
+        "duration": 9,
+        "start_time": 1697549988775,
+        "end_time": 1697549988784,
+        "type": "query"
+    },
+    {
+        "duration": 3327,
+        "start_time": 1697550042321,
+        "end_time": 1697550045648,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2608,
+        "start_time": 1697550045672,
+        "end_time": 1697550048280,
+        "type": "load_documents"
+    },
+    {
+        "duration": 10,
+        "start_time": 1697550056020,
+        "end_time": 1697550056030,
+        "type": "query"
+    },
+    {
+        "duration": 3359,
+        "start_time": 1697550078137,
+        "end_time": 1697550081496,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2466,
+        "start_time": 1697550081521,
+        "end_time": 1697550083987,
+        "type": "load_documents"
+    },
+    {
+        "duration": 9,
+        "start_time": 1697550086334,
+        "end_time": 1697550086343,
+        "type": "query"
+    },
+    {
+        "duration": 3350,
+        "start_time": 1697550115250,
+        "end_time": 1697550118600,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2628,
+        "start_time": 1697550118624,
+        "end_time": 1697550121252,
+        "type": "load_documents"
+    },
+    {
+        "duration": 3322,
+        "start_time": 1697550143103,
+        "end_time": 1697550146425,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2593,
+        "start_time": 1697550146449,
+        "end_time": 1697550149042,
+        "type": "load_documents"
+    },
+    {
+        "duration": 10,
+        "start_time": 1697550170268,
+        "end_time": 1697550170278,
+        "type": "query"
+    },
+    {
+        "duration": 3445,
+        "start_time": 1697550398733,
+        "end_time": 1697550402178,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2515,
+        "start_time": 1697550402202,
+        "end_time": 1697550404717,
+        "type": "load_documents"
+    },
+    {
+        "duration": 3054,
+        "start_time": 1697551551005,
+        "end_time": 1697551554059,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2547,
+        "start_time": 1697551554085,
+        "end_time": 1697551556632,
+        "type": "load_documents"
+    },
+    {
+        "duration": 14,
+        "start_time": 1697551566838,
+        "end_time": 1697551566852,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1697551605585,
+        "end_time": 1697551605585,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1697551609559,
+        "end_time": 1697551609559,
+        "type": "query"
+    },
+    {
+        "duration": 3,
+        "start_time": 1697551613751,
+        "end_time": 1697551613754,
+        "type": "query"
+    },
+    {
+        "duration": 3336,
+        "start_time": 1697551751274,
+        "end_time": 1697551754610,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2482,
+        "start_time": 1697551754634,
+        "end_time": 1697551757116,
+        "type": "load_documents"
+    },
+    {
+        "duration": 13,
+        "start_time": 1697551768324,
+        "end_time": 1697551768337,
+        "type": "query"
     }
 ]
