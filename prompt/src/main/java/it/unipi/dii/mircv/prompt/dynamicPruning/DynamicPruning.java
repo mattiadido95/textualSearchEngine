@@ -4,6 +4,7 @@ import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.structures.PostingList;
+import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -123,9 +124,17 @@ public class DynamicPruning {
     }
 
     public void execute() {
+        Logs logs = new Logs();
+        long startTime, stopTime;
         System.out.println("Computing TUB scores...");
+        startTime = System.currentTimeMillis();
         this.TUB_processing();
+        stopTime = System.currentTimeMillis();
+        logs.addLog("TUB processing",startTime,stopTime);
         System.out.println("Computing DUB scores...");
+        startTime = System.currentTimeMillis();
         this.DUB_processing();
+        stopTime = System.currentTimeMillis();
+        logs.addLog("DUB processing",startTime,stopTime);
     }
 }
