@@ -190,5 +190,59 @@
         "start_time": 1697642850780,
         "end_time": 1697642851024,
         "type": "query"
+    },
+    {
+        "duration": 3521,
+        "start_time": 1697643136101,
+        "end_time": 1697643139622,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3565,
+        "start_time": 1697643139644,
+        "end_time": 1697643143209,
+        "type": "load_documents"
+    },
+    {
+        "duration": 346,
+        "start_time": 1697643149092,
+        "end_time": 1697643149438,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1697643158748,
+        "end_time": 1697643158748,
+        "type": "query"
+    },
+    {
+        "duration": 3673,
+        "start_time": 1697643176045,
+        "end_time": 1697643179718,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3453,
+        "start_time": 1697643179774,
+        "end_time": 1697643183227,
+        "type": "load_documents"
+    },
+    {
+        "duration": 193,
+        "start_time": 1697643188567,
+        "end_time": 1697643188760,
+        "type": "query"
+    },
+    {
+        "duration": 0,
+        "start_time": 1697643194267,
+        "end_time": 1697643194267,
+        "type": "query"
+    },
+    {
+        "duration": 176,
+        "start_time": 1697643264297,
+        "end_time": 1697643264473,
+        "type": "query"
     }
 ]
