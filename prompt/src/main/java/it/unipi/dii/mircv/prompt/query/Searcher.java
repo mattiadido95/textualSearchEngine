@@ -505,28 +505,54 @@ public class Searcher {
      * @return index of the first posting list that contains essential postings
      */
     private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
-        if (current_threshold == 0)
+
+        if (current_threshold == 0) {
             return 0;
+        }
+
         int essential_index = 0;
         double TUBsum = 0;
-        boolean essential_postings_found = false;
-        for (String term : queryTermsMap.keySet()) {
-            if (scoringFunction.equals("BM25"))
-                TUBsum += queryTermsMap.get(term).getTUB_bm25();
-            else if (scoringFunction.equals("TFIDF"))
-                TUBsum += queryTermsMap.get(term).getTUB_tfidf();
-            if (TUBsum < current_threshold) {
-                essential_index++;
-            } else {
-                //essential postings found
-                essential_postings_found = true;
-                break;
+
+        for (Map.Entry<String, LexiconElem> entry : queryTermsMap.entrySet()) {
+            LexiconElem lexiconElem = entry.getValue();
+
+            if (scoringFunction.equals("BM25")) {
+                TUBsum += lexiconElem.getTUB_bm25();
+            } else if (scoringFunction.equals("TFIDF")) {
+                TUBsum += lexiconElem.getTUB_tfidf();
             }
+
+            if (TUBsum >= current_threshold) {
+                return essential_index;
+            }
+
+            essential_index++;
         }
-        if (essential_postings_found)
-            return essential_index;
-        else
-            return -1;
+
+        return -1; // Nessuna posting essenziale trovata
+
+        //        if (current_threshold == 0)
+//            return 0;
+//        int essential_index = 0;
+//        double TUBsum = 0;
+//        boolean essential_postings_found = false;
+//        for (String term : queryTermsMap.keySet()) {
+//            if (scoringFunction.equals("BM25"))
+//                TUBsum += queryTermsMap.get(term).getTUB_bm25();
+//            else if (scoringFunction.equals("TFIDF"))
+//                TUBsum += queryTermsMap.get(term).getTUB_tfidf();
+//            if (TUBsum < current_threshold) {
+//                essential_index++;
+//            } else {
+//                //essential postings found
+//                essential_postings_found = true;
+//                break;
+//            }
+//        }
+//        if (essential_postings_found)
+//            return essential_index;
+//        else
+//            return -1;
 
         /*
             if (current_threshold == 0) {
@@ -639,8 +665,6 @@ public class Searcher {
         }
         System.out.println("\nThese " + queryResults.size() + " documents may are of your interest");
         for (QueryResult qr : queryResults) {
-//            System.out.println(documents.get(Integer.parseInt(qr.getDocNo())).getDUB_tfidf());
-//            System.out.println(documents.get(Integer.parseInt(qr.getDocNo())).getDUB_bm25());
             System.out.println(qr);
         }
         System.out.println("\nSearch time: " + time + " ms");
