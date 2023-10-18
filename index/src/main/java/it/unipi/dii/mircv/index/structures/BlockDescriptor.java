@@ -109,7 +109,7 @@ public class BlockDescriptor {
             // Memorizza la posizione di inizio nel file
             offset = fileChannel.position();
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(16);
 
             buffer.putInt(maxDocID);
             buffer.putInt(numPosting);
@@ -152,7 +152,7 @@ public class BlockDescriptor {
             // Memorizza la posizione di inizio nel file
             fileChannel.position(offset);
             // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(16);
 
             buffer.clear();
             fileChannel.read(buffer);

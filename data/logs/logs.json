@@ -106,5 +106,41 @@
         "start_time": 1697551227018,
         "end_time": 1697551227589,
         "type": "query"
+    },
+    {
+        "duration": 4391,
+        "start_time": 1697641295037,
+        "end_time": 1697641299428,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4617,
+        "start_time": 1697641299464,
+        "end_time": 1697641304081,
+        "type": "load_documents"
+    },
+    {
+        "duration": 104,
+        "start_time": 1697641342998,
+        "end_time": 1697641343102,
+        "type": "query"
+    },
+    {
+        "duration": 12,
+        "start_time": 1697641358232,
+        "end_time": 1697641358244,
+        "type": "query"
+    },
+    {
+        "duration": 16,
+        "start_time": 1697641370247,
+        "end_time": 1697641370263,
+        "type": "query"
+    },
+    {
+        "duration": 9,
+        "start_time": 1697641383142,
+        "end_time": 1697641383151,
+        "type": "query"
     }
 ]

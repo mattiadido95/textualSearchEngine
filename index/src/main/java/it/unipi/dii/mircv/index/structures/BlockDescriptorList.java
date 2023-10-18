@@ -1,8 +1,10 @@
 package it.unipi.dii.mircv.index.structures;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -94,29 +96,55 @@ public class BlockDescriptorList {
      * @return An ArrayList of BlockDescriptors read from the file.
      */
     public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, String filePath) {
-        ArrayList<BlockDescriptor> result = new ArrayList<>();
-        try {
-            FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
-            // Memorizza la posizione di inizio nel file
-            fileChannel.position(startOffset);
-            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(16);
+    ArrayList<BlockDescriptor> result = new ArrayList<>();
+    int bufferSize = 16 * numBlocks;
 
-            for (int i = 0; i < numBlocks; i++) {
-                buffer.clear();
-                fileChannel.read(buffer);
-                buffer.flip();
-                BlockDescriptor blockDescriptor = new BlockDescriptor();
-                blockDescriptor.setMaxDocID(buffer.getInt());
-                blockDescriptor.setNumPosting(buffer.getInt());
-                blockDescriptor.setPostingListOffset(buffer.getLong());
-                result.add(blockDescriptor);
-            }
-            // Chiudi le risorse
-            fileChannel.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (FileChannel fileChannel = FileChannel.open(Paths.get(filePath))) {
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+        buffer.clear();
+        fileChannel.position(startOffset);
+        fileChannel.read(buffer);
+        buffer.flip();
+
+        for (int i = 0; i < numBlocks; i++) {
+            BlockDescriptor blockDescriptor = new BlockDescriptor();
+            blockDescriptor.setMaxDocID(buffer.getInt());
+            blockDescriptor.setNumPosting(buffer.getInt());
+            blockDescriptor.setPostingListOffset(buffer.getLong());
+            result.add(blockDescriptor);
         }
-        return result;
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    return result;
+}
+
+
+//    public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, String filePath) {
+//        ArrayList<BlockDescriptor> result = new ArrayList<>();
+//        try {
+//            FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
+//            // Memorizza la posizione di inizio nel file
+//            fileChannel.position(startOffset);
+//            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
+//            ByteBuffer buffer = ByteBuffer.allocate(16);
+//
+//            for (int i = 0; i < numBlocks; i++) {
+//                buffer.clear();
+//                fileChannel.read(buffer);
+//                buffer.flip();
+//                BlockDescriptor blockDescriptor = new BlockDescriptor();
+//                blockDescriptor.setMaxDocID(buffer.getInt());
+//                blockDescriptor.setNumPosting(buffer.getInt());
+//                blockDescriptor.setPostingListOffset(buffer.getLong());
+//                result.add(blockDescriptor);
+//            }
+//            // Chiudi le risorse
+//            fileChannel.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 }
