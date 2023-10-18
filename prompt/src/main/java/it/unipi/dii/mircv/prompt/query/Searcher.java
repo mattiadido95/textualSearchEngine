@@ -75,9 +75,9 @@ public class Searcher {
         this.queryResults.clear();
 
         int minDocId;
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Double> scores = new ArrayList<>();
-        ArrayList<Integer> blocksNumber = new ArrayList<>();
+        LinkedList<Integer> indexes = new LinkedList<>();
+        LinkedList<Double> scores = new LinkedList<>();
+        LinkedList<Integer> blocksNumber = new LinkedList<>();
         ArrayList<String> queryTermsPresentInLexicon = new ArrayList<>();
 
         LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
@@ -168,7 +168,7 @@ public class Searcher {
         this.previousScoringFunction = scoringFunction;
         this.queryResults.clear();
 
-        ArrayList<Integer> blocksNumber = new ArrayList<>();
+        LinkedList<Integer> blocksNumber = new LinkedList<>();
         int essential_index = 0;
         double current_threshold = 0, partial_score, DUB;
 
@@ -265,7 +265,7 @@ public class Searcher {
      * @param mode              mode of the query
      * @return partial score of the document
      */
-    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
+    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, LinkedList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
         /*
         for (int j = essential_index - 1; j >= 0; j--) {
@@ -452,7 +452,7 @@ public class Searcher {
      * @param queryTermsMap map of query terms and their lexicon elements
      * @param blocksNumber  list of number of blocks for each query term
      */
-    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, LinkedList<Integer> blocksNumber) {
         blockDescriptorList.clear();
         postingLists.clear();
 
@@ -596,7 +596,7 @@ public class Searcher {
      * @param indexes list of indexes of posting lists iterators with min docID
      * @return the minimum docID among the posting lists iterators
      */
-    private int getNextDocIdDAAT(ArrayList<Integer> indexes) {
+    private int getNextDocIdDAAT(LinkedList<Integer> indexes) {
         int min = Integer.MAX_VALUE;
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);
