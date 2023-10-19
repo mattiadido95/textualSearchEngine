@@ -388,5 +388,143 @@
         "start_time": 1697623306719,
         "end_time": 1697623307687,
         "type": "query"
+    },
+    {
+        "duration": 3280,
+        "start_time": 1697658547489,
+        "end_time": 1697658550769,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4027,
+        "start_time": 1697658550784,
+        "end_time": 1697658554811,
+        "type": "load_documents"
+    },
+    {
+        "duration": 356,
+        "start_time": 1697658559989,
+        "end_time": 1697658560345,
+        "type": "query"
+    },
+    {
+        "duration": 3111,
+        "start_time": 1697659233234,
+        "end_time": 1697659236345,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 3965,
+        "start_time": 1697659236359,
+        "end_time": 1697659240324,
+        "type": "load_documents"
+    },
+    {
+        "duration": 205110,
+        "start_time": 1697659244691,
+        "end_time": 1697659449801,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 206110,
+        "start_time": 1697659244691,
+        "end_time": 1697659450801,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 211691,
+        "start_time": 1697659244690,
+        "end_time": 1697659456381,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 217941,
+        "start_time": 1697659244691,
+        "end_time": 1697659462632,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 3328,
+        "start_time": 1697660097636,
+        "end_time": 1697660100964,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2446,
+        "start_time": 1697660100980,
+        "end_time": 1697660103426,
+        "type": "load_documents"
+    },
+    {
+        "duration": 3381,
+        "start_time": 1697660128132,
+        "end_time": 1697660131513,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 2479,
+        "start_time": 1697660131527,
+        "end_time": 1697660134006,
+        "type": "load_documents"
+    },
+    {
+        "duration": 135140,
+        "start_time": 1697660135529,
+        "end_time": 1697660270669,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 139343,
+        "start_time": 1697660135528,
+        "end_time": 1697660274871,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 143112,
+        "start_time": 1697660135528,
+        "end_time": 1697660278640,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 149612,
+        "start_time": 1697660135529,
+        "end_time": 1697660285141,
+        "type": "Thread_3"
+    },
+    {
+        "duration": 4257,
+        "start_time": 1697700279686,
+        "end_time": 1697700283943,
+        "type": "load_lexicon"
+    },
+    {
+        "duration": 4308,
+        "start_time": 1697700283958,
+        "end_time": 1697700288266,
+        "type": "load_documents"
+    },
+    {
+        "duration": 161922,
+        "start_time": 1697700297578,
+        "end_time": 1697700459500,
+        "type": "Thread_2"
+    },
+    {
+        "duration": 165210,
+        "start_time": 1697700297578,
+        "end_time": 1697700462788,
+        "type": "Thread_1"
+    },
+    {
+        "duration": 168183,
+        "start_time": 1697700297576,
+        "end_time": 1697700465759,
+        "type": "Thread_0"
+    },
+    {
+        "duration": 175999,
+        "start_time": 1697700297578,
+        "end_time": 1697700473577,
+        "type": "Thread_3"
     }
 ]

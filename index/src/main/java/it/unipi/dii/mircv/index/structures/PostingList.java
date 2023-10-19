@@ -277,33 +277,61 @@ public class PostingList {
      * @param filePath     The path of the file where the posting list should be read.
      */
     public void readPostingList(int indexCounter, int df, long offset, String filePath) {
-        // if indexCounter is not -1, the posting list is saved in portions
-        if (indexCounter != -1)
-            filePath += indexCounter + ".bin";
+    // If indexCounter is not -1, the posting list is saved in portions
+    if (indexCounter != -1)
+        filePath += indexCounter + ".bin";
 
-        ArrayList<Posting> result = new ArrayList<>(); // array of postings initialized to contain the posting list read from disk
+    ArrayList<Posting> result = new ArrayList<>(df); // Initialize with the expected size
 
-        try {
-            FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
-            ByteBuffer buffer = ByteBuffer.allocate(8); // Buffer per leggere due interi
-            // put the file pointer at the start offset of the portion of posting list
-            fileChannel.position(offset);
-            for (int i = 0; i < df; i++) {
-                buffer.clear();
-                int bytesRead = fileChannel.read(buffer);
-                if (bytesRead == -1) // not enough bytes in the file to read
-                    break;
+    try (FileChannel fileChannel = FileChannel.open(Paths.get(filePath))) {
+        int bufferSize = 8 * df;
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+        buffer.clear();
+        fileChannel.position(offset);
 
-                buffer.flip();
-                int docID = buffer.getInt();
-                int freq = buffer.getInt();
-                result.add(new Posting(docID, freq));
-            }
-            fileChannel.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        int bytesRead = fileChannel.read(buffer);
+        buffer.flip();
+
+        for (int i = 0; i < df; i++) {
+            int docID = buffer.getInt();
+            int freq = buffer.getInt();
+            result.add(new Posting(docID, freq));
         }
-        this.postings = result;
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    this.postings = result;
+}
+
+//    public void readPostingList(int indexCounter, int df, long offset, String filePath) {
+//        // if indexCounter is not -1, the posting list is saved in portions
+//        if (indexCounter != -1)
+//            filePath += indexCounter + ".bin";
+//
+//        ArrayList<Posting> result = new ArrayList<>(); // array of postings initialized to contain the posting list read from disk
+//
+//        try {
+//            FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
+//            ByteBuffer buffer = ByteBuffer.allocate(8); // Buffer per leggere due interi
+//            // put the file pointer at the start offset of the portion of posting list
+//            fileChannel.position(offset);
+//            for (int i = 0; i < df; i++) {
+//                buffer.clear();
+//                int bytesRead = fileChannel.read(buffer);
+//                if (bytesRead == -1) // not enough bytes in the file to read
+//                    break;
+//
+//                buffer.flip();
+//                int docID = buffer.getInt();
+//                int freq = buffer.getInt();
+//                result.add(new Posting(docID, freq));
+//            }
+//            fileChannel.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        this.postings = result;
+//    }
 
 }
