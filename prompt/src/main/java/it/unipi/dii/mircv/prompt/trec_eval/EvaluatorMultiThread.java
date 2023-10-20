@@ -77,8 +77,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 10000)
-                    break;
+//                if (queryCounter == 10000)
+//                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -290,7 +290,6 @@ public class EvaluatorMultiThread {
                     "../trec_eval/trec_eval",
                     "-q",
                     "-c",
-                    "-M1000",
                     Q_REL_PATH,
                     RESULTS_PATH
             );
