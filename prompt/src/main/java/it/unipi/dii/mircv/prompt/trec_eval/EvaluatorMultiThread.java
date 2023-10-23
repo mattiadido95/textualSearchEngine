@@ -19,14 +19,10 @@ import java.util.concurrent.Executors;
  * Class that implements the evaluation of the system using trec_eval.
  */
 public class EvaluatorMultiThread {
-    //private Searcher searcher;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private int n_results;
     private String mode;
-    //    private Query query;
-//    private ArrayList<String> queryIDs;
-//    private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private Query query;
     private ArrayList<String> queryIDs;
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
@@ -37,7 +33,7 @@ public class EvaluatorMultiThread {
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/trec_eval/results.test";
     private static final String EVALUATION_PATH = "data/trec_eval/evaluation.txt";
-    private static final int NUM_THREADS = 4; // Numero di thread o job paralleli
+    private static final int NUM_THREADS = 4;
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
     /**
@@ -60,8 +56,6 @@ public class EvaluatorMultiThread {
         this.scoringFunction = scoringFunction;
         this.porterStemmerOption = porterStemmerOption;
         this.dynamic = dynamic;
-//        arrayQueryResults = new ArrayList<>();
-//        queryIDs = new ArrayList<>();
     }
 
     /**
@@ -77,8 +71,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 10000)
-                    break;
+//                if (queryCounter == 10000)
+//                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -117,8 +111,6 @@ public class EvaluatorMultiThread {
         private final List<String> thread_queries;
         private ArrayList<String> thread_queryIDs;
         private Searcher thread_searcher;
-        //        private Lexicon thread_lexicon;
-//        private ArrayList<Document> thread_documents;
         private int thread_n_results;
         private String thread_mode;
         private ArrayList<ArrayList<QueryResult>> thread_arrayQueryResults;
@@ -131,8 +123,6 @@ public class EvaluatorMultiThread {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
-//            this.thread_lexicon = lexicon;
-//            this.thread_documents = documents;
             this.thread_n_results = n_results;
             this.thread_mode = mode;
             this.thread_arrayQueryResults = new ArrayList<>();
@@ -169,7 +159,7 @@ public class EvaluatorMultiThread {
                     if (this.thread_dynamic)
                         this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction);
                     else
-                        this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                        this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction);
                     end_q = System.currentTimeMillis();
                     log.addLogCSV(start_q, end_q);
                 }
@@ -236,7 +226,7 @@ public class EvaluatorMultiThread {
             }
         }
         concatenateFileResults(RESULTS_PATH, fileNames);
-//        trecEvalLauncher(); //TODO da implementare
+//        trecEvalLauncher();
     }
 
     /**
@@ -300,7 +290,7 @@ public class EvaluatorMultiThread {
             // Attendere che il processo termini
             int exitCode = process.waitFor();
 
-            // Utilizza un BufferedReader per leggere l'output del processo
+            //
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  BufferedWriter bw = new BufferedWriter(new FileWriter(EVALUATION_PATH))) {
 
@@ -310,13 +300,13 @@ public class EvaluatorMultiThread {
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
                 }
-                // Scrivi l'output nel file
+
                 bw.write(output.toString());
             }
             if (exitCode == 0) {
-                System.out.println("Il comando è stato eseguito con successo.");
+                System.out.println("command executed successfully");
             } else {
-                System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
+                System.err.println("command failed");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

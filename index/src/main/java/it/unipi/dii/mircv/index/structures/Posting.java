@@ -5,7 +5,7 @@ package it.unipi.dii.mircv.index.structures;
  * The Posting class implements a posting in the posting list for a term in the inverted index.
  * It stores the document ID and the frequency of the term in the document.
  */
-public class Posting{
+public class Posting {
     private int docID;
     private int freq;
 
