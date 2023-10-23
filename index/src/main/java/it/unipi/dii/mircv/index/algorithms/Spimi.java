@@ -5,6 +5,7 @@ import it.unipi.dii.mircv.index.structures.*;
 import it.unipi.dii.mircv.index.utility.Logs;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class Spimi {
     private boolean compressed_reading;
     private boolean porterStemmer;
     private static final String PARTIAL_DOCUMENTS_PATH = "data/index/documents/documents_";
-    private static final int MAX_DOC_PER_FILE = 100000;
+    private static final int MAX_DOC_PER_FILE = 250000;
     private static final String PARTIAL_INDEX_PATH = "data/index/index_";
     private static final String PARTIAL_LEXICON_PATH = "data/index/lexicon/lexicon_";
 
@@ -82,8 +83,9 @@ public class Spimi {
 
             String line; // start reading document by document
             totDocLength = 0;
+            Preprocessing preprocessing = new Preprocessing();
             while ((line = br.readLine()) != null) {
-                Preprocessing preprocessing = new Preprocessing(line, documentCounter, porterStemmer);
+                preprocessing.documentPreprocess(line, documentCounter, porterStemmer);
                 Document document = preprocessing.getDoc(); // for each document, start preprocessing
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
                 documents.add(document); // add document to the array of documents

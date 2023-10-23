@@ -1,7 +1,9 @@
 package it.unipi.dii.mircv.prompt.trec_eval;
 
+import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
+import it.unipi.dii.mircv.index.utility.Logs;
 import it.unipi.dii.mircv.prompt.query.Query;
 import it.unipi.dii.mircv.prompt.query.Searcher;
 import it.unipi.dii.mircv.prompt.structure.QueryResult;
@@ -22,12 +24,13 @@ public class Evaluator {
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private String scoringFunction;
     private boolean porterStemmerOption;
+    private boolean dynamic;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/collection/results.test";
     private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
 
-    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
+    public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
         this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
@@ -35,6 +38,7 @@ public class Evaluator {
         this.mode = mode;
         this.scoringFunction = scoringFunction;
         this.porterStemmerOption = porterStemmerOption;
+        this.dynamic = dynamic;
         arrayQueryResults = new ArrayList<>();
         queryIDs = new ArrayList<>();
     }
@@ -45,6 +49,11 @@ public class Evaluator {
             String line; // start reading query by query
 
             int queryCounter = 0;
+            Logs log = new Logs();
+            long start_q, end_q;
+
+            Preprocessing preprocessing = new Preprocessing();
+            query = new Query(porterStemmerOption, preprocessing);
 
             while ((line = br.readLine()) != null) {
                 String[] input = line.split("\t");
@@ -52,15 +61,26 @@ public class Evaluator {
                 String queryText = input[1];
 
                 queryIDs.add(queryId);
-                query = new Query(queryText, porterStemmerOption);
+                query.setQuery(queryText);
                 ArrayList<String> queryTerms = query.getQueryTerms();
                 // esegui la query
-                searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
-                arrayQueryResults.add(new ArrayList<>(searcher.getQueryResults()));
+                if (dynamic) {
+                    start_q = System.currentTimeMillis();
+                    searcher.maxScore(queryTerms, n_results, mode, scoringFunction);
+
+                }
+                else {
+                    start_q = System.currentTimeMillis();
+                    searcher.DAAT(queryTerms, n_results, mode, scoringFunction);
+
+                }
+                end_q = System.currentTimeMillis();
+//                log.addLogCSV(start_q, end_q);
+
                 queryCounter++;
 
                 if (queryCounter % 36 == 0) {
-                    System.out.println("Evalueator single process ends");
+                    System.out.println("Evaluate single process ends");
                     break;
                 }
             }

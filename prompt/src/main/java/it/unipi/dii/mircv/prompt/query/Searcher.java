@@ -75,29 +75,32 @@ public class Searcher {
         this.queryResults.clear();
 
         int minDocId;
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Double> scores = new ArrayList<>();
-        ArrayList<Integer> blocksNumber = new ArrayList<>();
+        // initialize data structures
+        LinkedList<Integer> indexes = new LinkedList<>(); // list of indexes related to posting list iterators with the min docid
+        LinkedList<Double> scores = new LinkedList<>(); // list of scores about processed documents
+        LinkedList<Integer> blocksNumber = new LinkedList<>(); // list of number of blocks for each posting list
         ArrayList<String> queryTermsPresentInLexicon = new ArrayList<>();
-
         LinkedHashMap<String, LexiconElem> queryTermsMap = new LinkedHashMap<>();
+
+        // for each query term, check if it is in the lexicon and add it to the queryTermsMap with its lexicon entry
         for (String term : queryTerms) {
             if (lexicon.getLexicon().containsKey(term)) {
                 queryTermsMap.put(term, lexicon.getLexiconElem(term));
             } else if (!lexicon.getLexicon().containsKey(term) && mode.equals("conjunctive")) {
+                // if the term is not in the lexicon and the mode is conjunctive, return
                 return;
             }
         }
 
         if (queryTermsMap.size() == 0)
-            return;
+            return; // no terms in query are in lexicon so there are no results
 
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
         queryTermsPresentInLexicon.addAll(queryTermsMap.keySet());
 
         if (postingLists.size() == 0)
-            return; // if no terms in query are in lexicon means that there are no results
+            return; // no posting lists are initialized
 
         do {
             scores.clear();
@@ -154,10 +157,10 @@ public class Searcher {
     /**
      * This method is used to perform the MaxScore algorithm.
      *
-     * @param queryTerms       list of query terms
-     * @param K                number of results to be returned
-     * @param mode             mode of the query
-     * @param scoringFunction  scoring function used
+     * @param queryTerms      list of query terms
+     * @param K               number of results to be returned
+     * @param mode            mode of the query
+     * @param scoringFunction scoring function used
      */
     public void maxScore(ArrayList<String> queryTerms, int K, String mode, String scoringFunction) {
         if ((this.previousQueryTerms.equals(queryTerms) && this.previousScoringFunction.equals(scoringFunction) && (this.previousMode.equals(mode) || queryTerms.size() == 1))) // same query as before
@@ -168,7 +171,7 @@ public class Searcher {
         this.previousScoringFunction = scoringFunction;
         this.queryResults.clear();
 
-        ArrayList<Integer> blocksNumber = new ArrayList<>();
+        LinkedList<Integer> blocksNumber = new LinkedList<>();
         int essential_index = 0;
         double current_threshold = 0, partial_score, DUB;
 
@@ -183,7 +186,7 @@ public class Searcher {
         }
         if (queryTermsMap.size() == 0)
             return;
-        queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction);
+        queryTermsMap = Lexicon.sortLexicon(queryTermsMap, scoringFunction); // sort query terms by TUB
 
         //initialize posting list for query terms
         initializePostingListForQueryTerms(queryTermsMap, blocksNumber);
@@ -196,6 +199,24 @@ public class Searcher {
 
             if (docid == Integer.MAX_VALUE)
                 break;
+
+            // get DUB of the document
+            if (scoringFunction.equals("TFIDF"))
+                DUB = documents.get(docid).getDUB_tfidf();
+            else
+                DUB = documents.get(docid).getDUB_bm25();
+
+            // process next docid if DUB < current_threshold
+            if (DUB < current_threshold) {
+                //update posting lists
+                for (int j = essential_index; j < postingLists.size(); j++) {
+                    PostingList pl = postingLists.get(j);
+                    if (pl.getPostingIterator() != null && pl.getDocId() == docid) {
+                        updatePosting(pl, j);
+                    }
+                }
+                continue;
+            }
 
             partial_score = computeEssentialPS(essential_index, scoringFunction, docid, queryTermsMap, mode); // compute partial score for docID into essential posting list
 
@@ -228,7 +249,8 @@ public class Searcher {
             }
             if (new_essential_index != -2)
                 essential_index = new_essential_index;
-        } while (essential_index != -1);
+        }
+        while (essential_index != -1);
         Collections.sort(queryResults);
     }
 
@@ -236,19 +258,20 @@ public class Searcher {
      * This method is used to compute the partial score of a document. It computes the score of the document indicated by docid
      * counting the score of the non-essential posting lists that contain the document.
      *
-     * @param essential_index index of the first posting list that contains essential postings
-     * @param docid           docID of the document
-     * @param scoringFunction scoring function used
-     * @param partial_score   partial score of the document
-     * @param DUB             DUB of the document
+     * @param essential_index   index of the first posting list that contains essential postings
+     * @param docid             docID of the document
+     * @param scoringFunction   scoring function used
+     * @param partial_score     partial score of the document
+     * @param DUB               DUB of the document
      * @param current_threshold current threshold
-     * @param blocksNumber    list of number of blocks for each query term
-     * @param queryTermsMap   map of query terms and their lexicon elements
-     * @param mode            mode of the query
+     * @param blocksNumber      list of number of blocks for each query term
+     * @param queryTermsMap     map of query terms and their lexicon elements
+     * @param mode              mode of the query
      * @return partial score of the document
      */
-    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, ArrayList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
+    private double computeDUB(int essential_index, int docid, String scoringFunction, double partial_score, double DUB, double current_threshold, LinkedList<Integer> blocksNumber, HashMap<String, LexiconElem> queryTermsMap, String mode) {
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
+
         for (int j = essential_index - 1; j >= 0; j--) {
             Posting p = postingLists.get(j).nextGEQ(docid, blockDescriptorList.get(j), blocksNumber.get(j), INDEX_PATH);
 
@@ -298,7 +321,7 @@ public class Searcher {
      * @return sum of the TUBs of the non-essential posting lists
      */
     private double sumNonEssentialTUBs(int essential_index, double partial_score, String scoringFunction, HashMap<String, LexiconElem> queryTermsMap) {
-        // calcolo DUB
+        // compute DUB
         double DUB = partial_score;
         ArrayList<String> termList = new ArrayList<>(queryTermsMap.keySet());
 
@@ -372,9 +395,10 @@ public class Searcher {
      * @param queryTermsMap map of query terms and their lexicon elements
      * @param blocksNumber  list of number of blocks for each query term
      */
-    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, ArrayList<Integer> blocksNumber) {
+    private void initializePostingListForQueryTerms(HashMap<String, LexiconElem> queryTermsMap, LinkedList<Integer> blocksNumber) {
         blockDescriptorList.clear();
         postingLists.clear();
+
         int i = 0;
         long firstBlockOffset;
         for (String term : queryTermsMap.keySet()) {
@@ -403,28 +427,32 @@ public class Searcher {
      * @return index of the first posting list that contains essential postings
      */
     private int compute_essential_index(HashMap<String, LexiconElem> queryTermsMap, String scoringFunction, double current_threshold) {
-        if (current_threshold == 0)
+        if (current_threshold == 0) {
+            // if current_threshold is 0, all posting lists are essential
             return 0;
+        }
+
         int essential_index = 0;
         double TUBsum = 0;
-        boolean essential_postings_found = false;
-        for (String term : queryTermsMap.keySet()) {
-            if (scoringFunction.equals("BM25"))
-                TUBsum += queryTermsMap.get(term).getTUB_bm25();
-            else if (scoringFunction.equals("TFIDF"))
-                TUBsum += queryTermsMap.get(term).getTUB_tfidf();
-            if (TUBsum < current_threshold) {
-                essential_index++;
-            } else {
-                //essential postings found
-                essential_postings_found = true;
-                break;
+
+        for (Map.Entry<String, LexiconElem> entry : queryTermsMap.entrySet()) {
+            // for each query term in the query compute the TUBsum to find the essential posting list index
+            LexiconElem lexiconElem = entry.getValue();
+
+            if (scoringFunction.equals("BM25")) {
+                TUBsum += lexiconElem.getTUB_bm25();
+            } else if (scoringFunction.equals("TFIDF")) {
+                TUBsum += lexiconElem.getTUB_tfidf();
             }
+
+            if (TUBsum >= current_threshold) {
+                return essential_index;
+            }
+
+            essential_index++;
         }
-        if (essential_postings_found)
-            return essential_index;
-        else
-            return -1;
+
+        return -1; // no essential posting list
     }
 
     /**
@@ -467,7 +495,7 @@ public class Searcher {
      * @param indexes list of indexes of posting lists iterators with min docID
      * @return the minimum docID among the posting lists iterators
      */
-    private int getNextDocIdDAAT(ArrayList<Integer> indexes) {
+    private int getNextDocIdDAAT(LinkedList<Integer> indexes) {
         int min = Integer.MAX_VALUE;
         for (int i = 0; i < postingLists.size(); i++) {
             PostingList postList = postingLists.get(i);

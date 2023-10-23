@@ -1,15 +1,21 @@
 package it.unipi.dii.mircv.index.structures;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * The BlockDescriptorList class represents a list of BlockDescriptors.
+ * It is used to read BlockDescriptors from the index file.
+ */
 public class BlockDescriptorList {
     private ArrayList<BlockDescriptor> blockDescriptors;
-    private Iterator<BlockDescriptor> blockDescriptorIterator;
-    private BlockDescriptor actualBlockDescriptor;
+    private Iterator<BlockDescriptor> blockDescriptorIterator; // iterator for block descriptors list
+    private BlockDescriptor actualBlockDescriptor; // current block descriptor during iteration
 
     /**
      * Constructor to initialize a BlockDescriptorList.
@@ -49,7 +55,7 @@ public class BlockDescriptorList {
         return actualBlockDescriptor;
     }
 
-     /**
+    /**
      * Check if there are more BlockDescriptors in the list.
      *
      * @return True if there are more BlockDescriptors, otherwise false.
@@ -95,28 +101,28 @@ public class BlockDescriptorList {
      */
     public ArrayList<BlockDescriptor> readBlockDescriptorList(long startOffset, int numBlocks, String filePath) {
         ArrayList<BlockDescriptor> result = new ArrayList<>();
-        try {
-            FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
-            // Memorizza la posizione di inizio nel file
-            fileChannel.position(startOffset);
-            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(16);
+        int bufferSize = 16 * numBlocks; // size is 16 bytes for block structure multiplied by the number of block descriptors in the list
 
+        try (FileChannel fileChannel = FileChannel.open(Paths.get(filePath))) {
+            ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+            buffer.clear();
+            fileChannel.position(startOffset);
+            fileChannel.read(buffer);
+            buffer.flip();
+
+            // read each block descriptor from the buffer
             for (int i = 0; i < numBlocks; i++) {
-                buffer.clear();
-                fileChannel.read(buffer);
-                buffer.flip();
                 BlockDescriptor blockDescriptor = new BlockDescriptor();
                 blockDescriptor.setMaxDocID(buffer.getInt());
                 blockDescriptor.setNumPosting(buffer.getInt());
                 blockDescriptor.setPostingListOffset(buffer.getLong());
                 result.add(blockDescriptor);
             }
-            // Chiudi le risorse
-            fileChannel.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
     }
+
 }

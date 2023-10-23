@@ -31,8 +31,6 @@ start_prompt() {
   echo ""
   echo "-conjunctive: Enable conjunctive mode. Default: disjunctive."
   echo ""
-  echo "-stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled."
-  echo ""
   read -p "Parameters: " params
   java -jar out/artifacts/prompt_jar/prompt.jar $params
   read -p "Press ENTER to continue..."

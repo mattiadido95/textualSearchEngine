@@ -4,8 +4,6 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,15 +28,11 @@ public class BlockDescriptor {
         this.postingListOffset = postingOffsetStart;
     }
 
-     /**
+    /**
      * Constructs an empty BlockDescriptor.
      */
     public BlockDescriptor() {
     }
-
-    /**
-     GETTER AND SETTER
-     */
 
     /**
      * Retrieves the maximum document ID in the block.
@@ -76,7 +70,7 @@ public class BlockDescriptor {
         this.postingListOffset = postingListOffset;
     }
 
-     /**
+    /**
      * Sets the number of postings in the block.
      *
      * @param numPosting The number of postings to set.
@@ -106,34 +100,32 @@ public class BlockDescriptor {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
             FileChannel fileChannel = fileOutputStream.getChannel();
-            // Memorizza la posizione di inizio nel file
+            // get the current position of the file pointer
             offset = fileChannel.position();
-            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-
+            // create a ByteBuffer buffer to improve write performance
+            ByteBuffer buffer = ByteBuffer.allocate(16);
             buffer.putInt(maxDocID);
             buffer.putInt(numPosting);
             buffer.putLong(postingListOffset);
 
-            // Se il buffer è pieno, scrivi il suo contenuto sul file
+            // check if the buffer is full, if so, write it to the file
             if (!buffer.hasRemaining()) {
                 buffer.flip();
                 fileChannel.write(buffer);
                 buffer.clear();
             }
-            // Scrivi eventuali dati rimanenti nel buffer sul file
+            // write the remaining bytes to the file
             if (buffer.position() > 0) {
                 buffer.flip();
                 fileChannel.write(buffer);
             }
-            // Chiudi le risorse
+            // close file channel
             fileChannel.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return offset;
-
     }
 
     /**
@@ -143,17 +135,15 @@ public class BlockDescriptor {
      * @param filePath The path to the index file.
      * @return The BlockDescriptor object read from the index file.
      */
-
     public static BlockDescriptor readFirstBlock(long offset, String filePath) {
         BlockDescriptor result = new BlockDescriptor();
 
         try {
             FileChannel fileChannel = FileChannel.open(Path.of((filePath)));
-            // Memorizza la posizione di inizio nel file
+            // get the current position of the file pointer
             fileChannel.position(offset);
-            // Creare un buffer ByteBuffer per migliorare le prestazioni di scrittura
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-
+            // create a ByteBuffer buffer to improve read performance
+            ByteBuffer buffer = ByteBuffer.allocate(16);
             buffer.clear();
             fileChannel.read(buffer);
             buffer.flip();
@@ -162,7 +152,7 @@ public class BlockDescriptor {
             result.setNumPosting(buffer.getInt());
             result.setPostingListOffset(buffer.getLong());
 
-            // Chiudi le risorse
+            // close file channel
             fileChannel.close();
 
         } catch (Exception e) {

@@ -46,7 +46,7 @@ public class Index {
      * Executes the main program for building an inverted index from a collection of documents.
      *
      * @param args The command-line arguments.
-     * The list of accepted arguments is:
+     *             The list of accepted arguments is:
      *             -compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.
      *             -stemmer: Enable PorterStemming in document preprocessing. Default: disabled.
      *             -help: Show the help message.
@@ -74,6 +74,15 @@ public class Index {
             COLLECTION_PATH = "data/collection/collection.tar.gz";
         else
             COLLECTION_PATH = "data/collection/collection.tsv";
+
+        //write parameter in configuration file
+        try (FileWriter fw = new FileWriter("data/configuration.txt")) {
+            fw.write(COLLECTION_PATH + "\n");
+            fw.write(compressed_reading + "\n");
+            fw.write(porterStemmer + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // spimi algorithm
         Spimi spimi = new Spimi(COLLECTION_PATH, porterStemmer, compressed_reading);

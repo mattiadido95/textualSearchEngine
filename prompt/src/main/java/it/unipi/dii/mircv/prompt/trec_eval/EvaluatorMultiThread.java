@@ -1,5 +1,6 @@
 package it.unipi.dii.mircv.prompt.trec_eval;
 
+import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
 import it.unipi.dii.mircv.index.structures.Document;
 import it.unipi.dii.mircv.index.structures.Lexicon;
 import it.unipi.dii.mircv.index.utility.Logs;
@@ -18,37 +19,35 @@ import java.util.concurrent.Executors;
  * Class that implements the evaluation of the system using trec_eval.
  */
 public class EvaluatorMultiThread {
-    //private Searcher searcher;
     private Lexicon lexicon;
     private ArrayList<Document> documents;
     private int n_results;
     private String mode;
-    //    private Query query;
-//    private ArrayList<String> queryIDs;
-//    private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private Query query;
     private ArrayList<String> queryIDs;
     private ArrayList<ArrayList<QueryResult>> arrayQueryResults;
     private String scoringFunction;
     private boolean porterStemmerOption;
+    private boolean dynamic;
     private static final String QUERY_PATH = "data/collection/queries.dev.tsv";
     private static final String Q_REL_PATH = "data/collection/qrels.dev.tsv";
     private static final String RESULTS_PATH = "data/trec_eval/results.test";
     private static final String EVALUATION_PATH = "data/trec_eval/evaluation.txt";
-    private static final int NUM_THREADS = 6; // Numero di thread o job paralleli
+    private static final int NUM_THREADS = 4;
     public static boolean[] t_main = new boolean[NUM_THREADS];
 
     /**
      * Constructor of the class.
      *
-     * @param lexicon              lexicon of the index
-     * @param documents            list of all the documents
-     * @param n_results            number of results to return
-     * @param mode                 mode of the query processing
-     * @param scoringFunction      scoring function to use
-     * @param porterStemmerOption  true if the porter stemmer is used, false otherwise
+     * @param lexicon             lexicon of the index
+     * @param documents           list of all the documents
+     * @param n_results           number of results to return
+     * @param mode                mode of the query processing
+     * @param scoringFunction     scoring function to use
+     * @param porterStemmerOption true if the porter stemmer is used, false otherwise
+     * @param dynamic             true if dynamic pruning is used, false otherwise
      */
-    public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption) {
+    public EvaluatorMultiThread(Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
         //this.searcher = searcher;
         this.lexicon = lexicon;
         this.documents = documents;
@@ -56,8 +55,7 @@ public class EvaluatorMultiThread {
         this.mode = mode;
         this.scoringFunction = scoringFunction;
         this.porterStemmerOption = porterStemmerOption;
-//        arrayQueryResults = new ArrayList<>();
-//        queryIDs = new ArrayList<>();
+        this.dynamic = dynamic;
     }
 
     /**
@@ -73,8 +71,8 @@ public class EvaluatorMultiThread {
             while ((line = br.readLine()) != null) {
                 queries.add(line);
                 queryCounter++;
-                if (queryCounter == 36)
-                    break;
+//                if (queryCounter == 10000)
+//                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -113,27 +111,25 @@ public class EvaluatorMultiThread {
         private final List<String> thread_queries;
         private ArrayList<String> thread_queryIDs;
         private Searcher thread_searcher;
-        //        private Lexicon thread_lexicon;
-//        private ArrayList<Document> thread_documents;
         private int thread_n_results;
         private String thread_mode;
         private ArrayList<ArrayList<QueryResult>> thread_arrayQueryResults;
         private boolean[] t;
         private String thread_scoringFunction;
         private boolean thread_porterStemmerOption;
+        private boolean thread_dynamic;
 
-        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t, String scoringFunction, boolean porterStemmerOption) {
+        public QueryProcessor(int threadId, List<String> queries, Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, boolean[] t, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
             this.threadId = threadId;
             this.thread_queries = queries;
             this.thread_searcher = searcher;
-//            this.thread_lexicon = lexicon;
-//            this.thread_documents = documents;
             this.thread_n_results = n_results;
             this.thread_mode = mode;
             this.thread_arrayQueryResults = new ArrayList<>();
             this.thread_queryIDs = new ArrayList<>();
             this.thread_scoringFunction = scoringFunction;
             this.thread_porterStemmerOption = porterStemmerOption;
+            this.thread_dynamic = dynamic;
             this.t = t;
         }
 
@@ -141,19 +137,32 @@ public class EvaluatorMultiThread {
          * Method that executes the query processing.
          */
         public void run() {
+            Logs log = new Logs();
             long start, end;
             start = System.currentTimeMillis();
+            Preprocessing preprocessing = new Preprocessing();
+            Query queryObj = new Query(thread_porterStemmerOption, preprocessing); // new query object
             for (String query : thread_queries) {
+                long start_q, end_q;
                 // parse query and get query terms
                 String[] split = query.split("\t");
                 String queryId = split[0];
                 String queryText = split[1];
 
                 this.thread_queryIDs.add(queryId);
-                Query queryObj = new Query(queryText, thread_porterStemmerOption); // new query object
+                queryObj.setQuery(queryText);
                 ArrayList<String> queryTerms = queryObj.getQueryTerms(); // get query terms preprocessed
 
-                this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction); // TODO parametrizzare la scoring function e tutti gli altri parametri
+                // synchronized block to avoid concurrent access to log and obtain a correct duration of query processing
+                synchronized (this.thread_searcher) {
+                    start_q = System.currentTimeMillis();
+                    if (this.thread_dynamic)
+                        this.thread_searcher.maxScore(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction);
+                    else
+                        this.thread_searcher.DAAT(queryTerms, this.thread_n_results, this.thread_mode, thread_scoringFunction);
+                    end_q = System.currentTimeMillis();
+                    log.addLogCSV(start_q, end_q);
+                }
                 this.thread_arrayQueryResults.add(new ArrayList<>(this.thread_searcher.getQueryResults()));
             }
             // write results in file for trec_eval evaluation in the format: query_id Q0 doc_id rank score STANDARD
@@ -173,7 +182,6 @@ public class EvaluatorMultiThread {
                 for (String line : output)
                     writer.write(line);
                 writer.close();
-                Logs log = new Logs();
                 log.getLog("Thread " + threadId + " has completed processing.");
                 end = System.currentTimeMillis();
                 log.addLog("Thread_" + threadId, start, end);
@@ -194,11 +202,15 @@ public class EvaluatorMultiThread {
         List<String> allQueries = loadAllQueries();
         // Divide le query in sottoinsiemi per i thread
         List<List<String>> querySubsets = splitQueries(allQueries, NUM_THREADS);
+        // delete log.csv file if exists
+        File logFile = new File("data/logs/logs.csv");
+        if (logFile.exists())
+            logFile.delete();
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
         for (int i = 0; i < NUM_THREADS; i++) {
             List<String> subset = querySubsets.get(i);
             Searcher thread_searcher = new Searcher(this.lexicon, this.documents);
-            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main, this.scoringFunction, this.porterStemmerOption));
+            executorService.submit(new QueryProcessor(i, subset, thread_searcher, this.lexicon, this.documents, this.n_results, this.mode, this.t_main, this.scoringFunction, this.porterStemmerOption, this.dynamic));
         }
         executorService.shutdown();
         while (!allThreadEnds(t_main)) {
@@ -214,7 +226,7 @@ public class EvaluatorMultiThread {
             }
         }
         concatenateFileResults(RESULTS_PATH, fileNames);
-//        trecEvalLauncher(); //TODO da implementare
+//        trecEvalLauncher();
     }
 
     /**
@@ -278,7 +290,7 @@ public class EvaluatorMultiThread {
             // Attendere che il processo termini
             int exitCode = process.waitFor();
 
-            // Utilizza un BufferedReader per leggere l'output del processo
+            //
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  BufferedWriter bw = new BufferedWriter(new FileWriter(EVALUATION_PATH))) {
 
@@ -288,13 +300,13 @@ public class EvaluatorMultiThread {
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator()); // Aggiungi una nuova riga
                 }
-                // Scrivi l'output nel file
+
                 bw.write(output.toString());
             }
             if (exitCode == 0) {
-                System.out.println("Il comando è stato eseguito con successo.");
+                System.out.println("command executed successfully");
             } else {
-                System.err.println("Il comando ha restituito un codice di uscita diverso da zero.");
+                System.err.println("command failed");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

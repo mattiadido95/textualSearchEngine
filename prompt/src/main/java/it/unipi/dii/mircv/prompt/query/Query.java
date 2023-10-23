@@ -1,6 +1,7 @@
 package it.unipi.dii.mircv.prompt.query;
 
 import it.unipi.dii.mircv.index.preprocessing.Preprocessing;
+
 import java.util.ArrayList;
 
 /**
@@ -11,18 +12,32 @@ public class Query {
     private String query; // query string
     private boolean porterStemmerOption; // porter stemmer option
     private ArrayList<String> queryTerms = new ArrayList<>(); // list of query terms
+    private Preprocessing preprocessing;
 
-    public Query(String query, boolean porterStemmerOption) {
-        this.query = query;
+    public Query( boolean porterStemmerOption, Preprocessing preprocessing) {
         this.porterStemmerOption = porterStemmerOption;
-        parseQuery();
+        this.preprocessing = preprocessing;
     }
+
     private void parseQuery() {
         queryTerms.clear();
-        Preprocessing preprocessing = new Preprocessing(query, porterStemmerOption);
+        this.preprocessing.queryPreprocess(query, porterStemmerOption);
         queryTerms = (ArrayList<String>) preprocessing.tokens;
     }
+
     public ArrayList<String> getQueryTerms() {
         return this.queryTerms;
+    }
+
+    public Query setQuery(String queryInput) {
+        this.queryTerms.clear();
+        this.query = queryInput;
+        parseQuery();
+        return this;
+    }
+
+    public void clearQuery() {
+        this.queryTerms.clear();
+        this.query = "";
     }
 }

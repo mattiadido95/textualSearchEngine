@@ -1,5 +1,7 @@
 package it.unipi.dii.mircv.index.structures;
 
+import it.unipi.dii.mircv.index.utility.Logs;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ public class Lexicon {
         return new ArrayList<>(this.lexicon.keySet());
     }
 
-   /**
+    /**
      * Add a term to the lexicon. If the term is already present, increment its cf; otherwise, create a new entry.
      *
      * @param term The term to add.
@@ -54,7 +56,7 @@ public class Lexicon {
         }
     }
 
-     /**
+    /**
      * Print the status of the lexicon.
      *
      * @param timestamp A timestamp to include in the printout.
@@ -87,11 +89,11 @@ public class Lexicon {
         return this.lexicon.get(term);
     }
 
-     /**
+    /**
      * Sort the lexicon by LexiconElem.TUB_bm25 or LexiconElem.TUB_tfidf in descending order.
      *
-     * @param lexicon          The lexicon to be sorted.
-     * @param scoringFunction  The scoring function ("TFIDF" or "BM25") to use for sorting.
+     * @param lexicon         The lexicon to be sorted.
+     * @param scoringFunction The scoring function ("TFIDF" or "BM25") to use for sorting.
      * @return The sorted lexicon as a LinkedHashMap.
      */
     public static LinkedHashMap<String, LexiconElem> sortLexicon(LinkedHashMap<String, LexiconElem> lexicon, String scoringFunction) {
@@ -126,8 +128,8 @@ public class Lexicon {
     /**
      * Set the document frequency (df) for a term in the lexicon.
      *
-     * @param term   The term to set the df for.
-     * @param newDf  The new document frequency to set.
+     * @param term  The term to set the df for.
+     * @param newDf The new document frequency to set.
      */
     public void setDf(String term, int newDf) {
         this.lexicon.get(term).setDf(newDf);
@@ -136,8 +138,8 @@ public class Lexicon {
     /**
      * Save the lexicon to disk.
      *
-     * @param indexCounter  The index counter used to distinguish SPIMI phases.
-     * @param filePath      The path where the lexicon will be saved.
+     * @param indexCounter The index counter used to distinguish SPIMI phases.
+     * @param filePath     The path where the lexicon will be saved.
      */
     public void saveLexiconToDisk(int indexCounter, String filePath) {
         if (indexCounter != -1)
@@ -157,10 +159,40 @@ public class Lexicon {
                     randomAccessFile.writeDouble(lexiconElem.getTUB_tfidf());
                 }
             }
+            randomAccessFile.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+//    public void saveLexiconToDiskTEST(int indexCounter, String filePath) {
+//        if (indexCounter != -1)
+//            filePath += indexCounter + ".bin";
+//
+//        try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw");
+//             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(randomAccessFile.getFD()))) {
+//
+//            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+//
+//            for (String term : lexicon.keySet()) {
+//                LexiconElem lexiconElem = lexicon.get(term);
+//                dataOutputStream.writeUTF(term);
+//                dataOutputStream.writeInt(lexiconElem.getDf());
+//                dataOutputStream.writeLong(lexiconElem.getCf());
+//                dataOutputStream.writeLong(lexiconElem.getOffset());
+//                if (indexCounter == -1) {
+//                    dataOutputStream.writeInt(lexiconElem.getBlocksNumber());
+//                    dataOutputStream.writeDouble(lexiconElem.getTUB_bm25());
+//                    dataOutputStream.writeDouble(lexiconElem.getTUB_tfidf());
+//                }
+//            }
+//
+//            dataOutputStream.flush(); // Assicurati che tutti i dati siano scritti
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
 
     /**
      * Read the lexicon from disk.
