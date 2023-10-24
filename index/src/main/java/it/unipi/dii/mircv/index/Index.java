@@ -122,18 +122,17 @@ public class Index {
                 compressed_reading = true;
             } else if (args[i].equals("-stemmer")) {
                 porterStemmer = true;
-            } else if (args[i].equals("-help")) {
-                System.out.println("Program usage:");
-                System.out.println("-compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.");
-                System.out.println("-stemmer: Enable PorterStemming in document preprocessing. Default: disabled.");
-                System.out.println("-help: Show this help message."); // TODO forse non serve se lo si mette nel bash script
-                System.exit(0);
+//            } else if (args[i].equals("-help")) {
+//                System.out.println("Program usage:");
+//                System.out.println("-compressed: Enable compressed reading of the collection in the tar.gz format. Default: uncompressed reading.");
+//                System.out.println("-stemmer: Enable PorterStemming in document preprocessing. Default: disabled.");
+//                System.out.println("-help: Show this help message.");
+//                System.exit(0);
             } else {
                 System.err.println("Unrecognized option: " + args[i]);
                 System.exit(1);
             }
         }
-        // Restituisci le opzioni aggiornate come array di booleani
         return new boolean[]{compressed_reading, porterStemmer};
     }
 

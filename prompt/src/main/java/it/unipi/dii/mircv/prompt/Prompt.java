@@ -205,15 +205,15 @@ public class Prompt {
                 dynamicPruning = 1;
             } else if (args[i].equals("-conjunctive")) { // Conjunctive mode
                 conjunctive = 1;
-            } else if (args[i].equals("-help")) {
-                // If the -help option is specified, display a help message
-                System.out.println("Program usage:");
-                System.out.println("-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.");
-                System.out.println("-topK <value>: Specify the number of documents to return. Default: 10.");
-                System.out.println("-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.");
-                System.out.println("-conjunctive: Enable conjunctive mode. Default: disjunctive.");
-                System.out.println("-help: Show this help message.");
-                System.exit(0);
+//            } else if (args[i].equals("-help")) {
+//                // If the -help option is specified, display a help message
+//                System.out.println("Program usage:");
+//                System.out.println("-scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF.");
+//                System.out.println("-topK <value>: Specify the number of documents to return. Default: 10.");
+//                System.out.println("-dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.");
+//                System.out.println("-conjunctive: Enable conjunctive mode. Default: disjunctive.");
+//                System.out.println("-help: Show this help message.");
+//                System.exit(0);
             } else {
                 System.err.println("Unrecognized option: " + args[i]);
                 System.exit(1);
