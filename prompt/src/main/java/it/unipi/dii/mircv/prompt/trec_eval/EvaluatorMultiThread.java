@@ -280,7 +280,6 @@ public class EvaluatorMultiThread {
                     "../trec_eval/trec_eval",
                     "-q",
                     "-c",
-                    "-M1000",
                     Q_REL_PATH,
                     RESULTS_PATH
             );

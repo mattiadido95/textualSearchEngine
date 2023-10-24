@@ -78,11 +78,6 @@ public class Evaluator {
 //                log.addLogCSV(start_q, end_q);
 
                 queryCounter++;
-
-                if (queryCounter % 36 == 0) {
-                    System.out.println("Evaluate single process ends");
-                    break;
-                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -117,7 +112,6 @@ public class Evaluator {
                     "../trec_eval/trec_eval",
                     "-q",
                     "-c",
-                    "-M15",
                     Q_REL_PATH,
                     RESULTS_PATH
             );
