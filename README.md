@@ -32,6 +32,18 @@ the page until you come to a section titled “Passage ranking dataset”, and d
 You must use the queries available on this page: https://msmarco.blob.core.windows.net/msmarcoranking/queries.tar.gz. Put the queries in the folder textualSearchEngine/data/collection/ and unzip them.
 ### Download the qrels
 You must use the qrels available on this page: https://msmarco.blob.core.windows.net/msmarcoranking/qrels.dev.tsv. Put the qrels in the folder textualSearchEngine/data/collection/ and unzip them.
+
+At the end of this procedure you should have the following folder structure:
+```shell
+textualSearchEngine
+├── data
+│   ├── collection
+│   │   ├── collection.tar.gz
+│   │   ├── collection.tsv
+│   │   ├── queries.dev.tsv
+│   │   └── qrels.dev.tsv
+```
+
 ## Run the program
 ```shell
 cd textualSearchEngine
@@ -64,7 +76,6 @@ List of params:
 -scoring <value>: Specify the scoring function [BM25, TFIDF]. Default: TFIDF-topK: Specify the number of documents to return. Default: 10
 -dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled
 -conjunctive: Enable conjunctive mode. Default: disjunctive
--stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled
 ```
 Once the parameters have been entered, you will be able to choose from the following menu:
 ```shell
@@ -72,12 +83,12 @@ Welcome to the search engine!
 MENU:
 - insert 1 to search 
 - insert 2 to evaluate searchEngine 
-- insert 3 calculate TUBs for dynamic pruning 
+- insert 3 calculate upper bounds for dynamic pruning 
 - insert 10 to exit
 ```
 - Option 1 to start the search engine: with this option you will be asked to enter a query and the search result will be returned.
 - Option 2 to start the evaluation of the search engine: with this option the search engine evaluation program will be started. this program will process pre-established queries and will evaluate the results obtained with trec_eval.
-- Option 3 to calculate the TUBs for dynamic pruning: with this option the program will be started that calculates the TUB values for each term present in the lexicon.
+- Option 3 to calculate the TUBs and the DUBs for dynamic pruning: with this option the program will be started that calculates the TUB values for each term present in the lexicon and the DUB values for each document present in the index.
 
 ## Requirements
 - Java 17

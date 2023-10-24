@@ -83,7 +83,7 @@ class PostingListTest {
         HashMap<String, LexiconElem> queryTermsMap = new HashMap<>();
         queryTermsMap.put("cane", le);
         ArrayList<Integer> blocksNumber = new ArrayList<>();
-        blocksNumber.add(le.getBlocksNumber()); //TODO FACENDO DEBUG ho visto che è a size 2 e non 1
+        blocksNumber.add(le.getBlocksNumber());
         assertEquals(24, le.getBlocksNumber());
         ArrayList<BlockDescriptorList> blockDescriptorList = new ArrayList<>();
         ArrayList<PostingList> postingLists = new ArrayList<>();

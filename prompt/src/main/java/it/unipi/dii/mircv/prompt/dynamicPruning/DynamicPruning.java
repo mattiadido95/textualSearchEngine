@@ -41,7 +41,7 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                                                        TODO
+     *
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;

@@ -43,10 +43,8 @@ public class Logs {
                 logPostingList((PostingList) element, timestamp);
                 break;
             case "Document":
-                // TODO implement log function for Document
                 break;
             case "Posting":
-                // TODO implement log function for Posting
                 break;
             case "HashMap":
                 logHashMap((HashMap) element, timestamp);
@@ -61,7 +59,6 @@ public class Logs {
                 logLexicon((Lexicon) element, timestamp);
                 break;
             default:
-                // TODO implement log function for default and show log error
                 break;
         }
     }
