@@ -41,7 +41,7 @@ public class DynamicPruning {
      *
      * @param lexicon   is the lexicon to be updated
      * @param documents are the documents used to compute the TUB scores
-     *                                                                                                                        TODO
+     *
      */
     public DynamicPruning(Lexicon lexicon, ArrayList<Document> documents, String COLLECTION_PATH, boolean compressed_reading, boolean porterStemmer) {
         this.lexicon = lexicon;
@@ -55,7 +55,6 @@ public class DynamicPruning {
 
     /**
      * This method computes the TUB scores for each term in the lexicon.
-     * The score function used is the one specified in the input.
      * The lexicon is updated with the new TUB scores.
      */
     private void TUB_processing() {
@@ -74,6 +73,10 @@ public class DynamicPruning {
         this.lexicon.saveLexiconToDisk(-1, LEXICON_PATH);
     }
 
+    /**
+     * This method computes the DUB scores for each document in the collection.
+     * The documents are updated with the new DUB scores.
+     */
     private void DUB_processing() {
         int documentCounter = 0;
         TarArchiveInputStream tarArchiveInputStream = null;
@@ -94,7 +97,6 @@ public class DynamicPruning {
             while ((line = br.readLine()) != null) {
                 preprocessing.documentPreprocess(line, documentCounter, porterStemmer);
                 List<String> tokens = preprocessing.tokens; // and return a list of tokens
-
                 double dub_bm25 = 0;
                 double dub_tfidf = 0;
                 for (String token : tokens) {
@@ -106,8 +108,8 @@ public class DynamicPruning {
                 documents.get(documentCounter).setDUB_bm25(dub_bm25);
                 documents.get(documentCounter).setDUB_tfidf(dub_tfidf);
                 documentCounter++;
-                if (documentCounter % 100000 == 0)
-                    System.out.println("DUB scores computed for document " + documentCounter);
+//                if (documentCounter % 100000 == 0)
+//                    System.out.println("DUB scores computed for document " + documentCounter);
             }
             // save the updated documents to disk
             br.close();

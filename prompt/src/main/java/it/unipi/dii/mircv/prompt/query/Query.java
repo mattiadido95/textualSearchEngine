@@ -15,10 +15,8 @@ public class Query {
     private Preprocessing preprocessing;
 
     public Query( boolean porterStemmerOption, Preprocessing preprocessing) {
-//        this.query = query;
         this.porterStemmerOption = porterStemmerOption;
         this.preprocessing = preprocessing;
-//        parseQuery();
     }
 
     private void parseQuery() {

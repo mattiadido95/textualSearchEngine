@@ -39,12 +39,7 @@ public class Preprocessing {
         words = removeWordstop(words); // Remove stopwords
         if (porterStemmerOption) {
             PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
-//            List<String> stemWords = new ArrayList<>();
-//            for (String word : words) {
-//                String stem = porterStemmer.stemWord(word);
-//                stemWords.add(stem);
-//            }
-//            this.tokens = stemWords;
+
             this.tokens = words.stream()
                     .map(porterStemmer::stemWord) // Apply stemming to each word
                     .collect(Collectors.toList());
@@ -68,11 +63,6 @@ public class Preprocessing {
         words = removeWordstop(words); // Remove stopwords
         if (porterStemmerOption) {
             PorterStemmer porterStemmer = new PorterStemmer(); // Stemming
-//            List<String> stemWords = new ArrayList<>();
-//            for (String word : words) {
-//                String stem = porterStemmer.stemWord(word);
-//                stemWords.add(stem);
-//            }
             List<String> stemWords = words.stream()
                     .map(porterStemmer::stemWord) // Apply stemming to each word
                     .collect(Collectors.toList());
@@ -98,21 +88,6 @@ public class Preprocessing {
         return filteredWords;
     }
 
-//    public List<String> removeNumbers(List<String> words) {
-//        List<Integer> indexList = new ArrayList<>();
-//        for (int i = 0; i < words.size(); i++) {
-//            String word = words.get(i);
-//            if (word.matches(".*\\d.*")) {
-//                indexList.add(i);
-//            }
-//        }
-//        Collections.reverse(indexList);
-//        for (int index : indexList) {
-//            words.remove(index);
-//        }
-//        return words;
-//    }
-
     /**
      * Tokenizes the input document into a list of words.
      *
@@ -132,29 +107,6 @@ public class Preprocessing {
 
         return words;
     }
-//    public List<String> tokenization(String doc) {
-//        List<String> words = new ArrayList<>();
-//        doc = doc.toLowerCase();
-//        String regex = "\\s+|\\!|\"|\\#|\\$|\\%|\\&|\\'|\\(|\\)|\\*|\\+|"
-//                + "\\,|\\-|\\.|\\/|\\:|\\;|\\<|\\=|\\>|\\|\\?|\\@|\\[|"
-//                + "\\]|\\^|\\`|\\{|\\||\\}|\\~|\\\\|\\_|[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
-//        //String regex2 = "[\\s!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^`{|}~]+";
-//        Pattern pattern = Pattern.compile(regex);
-//        //Pattern pattern2 = Pattern.compile(regex2);
-//
-//        String[] tokens = pattern.split(doc);
-//        // add tokens to words list
-//        words.addAll(Arrays.asList(tokens));
-////        for (String token : tokens) {
-////            String[] subTokens = pattern2.split(token);
-////            for (String subToken : subTokens) {
-////                if (!subToken.isEmpty()) {
-////                    words.add(subToken);
-////                }
-////            }
-////        }
-//        return words;
-//    }
 
     /**
      * Retrieves the list of stopwords from a predefined file.
@@ -175,20 +127,6 @@ public class Preprocessing {
 
         return stopwords;
     }
-//    private List<String> getStopwords() {
-//        List<String> stopwords = new ArrayList<>();
-//        try {
-//            BufferedReader file = new BufferedReader(new FileReader(STOPWORDS_PATH));
-//            String line;
-//            while ((line = file.readLine()) != null) {
-//                stopwords.add(line);
-//            }
-//            file.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return stopwords;
-//    }
 
     /**
      * Removes stopwords from a list of words.
@@ -203,14 +141,7 @@ public class Preprocessing {
                 .collect(Collectors.toList());
         return filteredWords;
     }
-//    private List<String> removeWordstop(List<String> words) {
-//        List<String> stopwords = getStopwords();
-//        List<Integer> indexList = new ArrayList<>();
-//        Collections.sort(words);
-//        // remove stopwords from words list
-//        words.removeAll(stopwords);
-//        return words;
-//    }
+
 
     /**
      * Retrieves the preprocessed document.
