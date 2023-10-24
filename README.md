@@ -23,6 +23,9 @@ The Prompt module implements the main program for querying the index built by th
 git clone https://github.com/mattiadido95/textualSearchEngine.git
 cd textualSearchEngine
 ```
+If you want manually download the dataset and put it in the correct folder, follow the instructions in the next section. Otherwise, you can skip the download section and run the program with the run.sh script.
+
+
 ### Download the dataset
 You must use the document collection available on this page:
 https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020. Scroll down
