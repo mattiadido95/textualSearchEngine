@@ -10,9 +10,12 @@ print_menu() {
 
 compile_index() {
   echo "Enter parameters for indexing:"
-  echo "params: "
+  echo "List of params: "
+  echo ""
   echo "-compressed: Enable compressed reading of the collection in tar.gz format. Default: uncompressed reading."
+  echo ""
   echo "-stemmer: Enable Porter Stemming in document preprocessing. Default: disabled."
+  echo ""
   read -p "Parameters: " params
   java -jar out/artifacts/index_jar/index.jar $params
   read -p "Press ENTER to continue..."

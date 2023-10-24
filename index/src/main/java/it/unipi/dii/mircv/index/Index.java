@@ -8,6 +8,8 @@ import it.unipi.dii.mircv.index.utility.Logs;
 import java.io.*;
 import java.util.ArrayList;
 
+import static java.lang.System.exit;
+
 
 /**
  * The Index class implements the main program for building an inverted index from a collection of documents.
@@ -75,6 +77,11 @@ public class Index {
         else
             COLLECTION_PATH = "data/collection/collection.tsv";
 
+        // delete if exist configuration file
+        File configuration = new File("data/configuration.txt");
+        if (configuration.exists())
+            configuration.delete();
+
         //write parameter in configuration file
         try (FileWriter fw = new FileWriter("data/configuration.txt")) {
             fw.write(COLLECTION_PATH + "\n");
@@ -130,7 +137,7 @@ public class Index {
 //                System.exit(0);
             } else {
                 System.err.println("Unrecognized option: " + args[i]);
-                System.exit(1);
+                exit(1);
             }
         }
         return new boolean[]{compressed_reading, porterStemmer};
