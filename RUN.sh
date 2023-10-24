@@ -1,5 +1,45 @@
 #!/bin/bash
 
+# Definisci il percorso della cartella
+cartella="data/collection"
+
+# Controlla se la cartella esiste
+if [ ! -d "$cartella" ]; then
+    echo "La cartella $cartella non esiste. Creazione della cartella."
+    echo "Scarico i seguenti file: queries.tar.gz, qrels.dev.tsv, collection.tar.gz"
+    mkdir -p "$cartella"
+
+    wget https://msmarco.blob.core.windows.net/msmarcoranking/queries.tar.gz -P "$cartella"
+    wget https://msmarco.blob.core.windows.net/msmarcoranking/qrels.dev.tsv -P "$cartella"
+    wget https://msmarco.blob.core.windows.net/msmarcoranking/collection.tar.gz -P "$cartella"
+
+    # Decomprimi il file scaricato
+    echo "Decomprimo il queries.tar.gz."
+    tar -xzvf "$cartella/queries.tar.gz" -C "$cartella"
+
+    # Rimuovi i file decompressi se esistono
+    if [ -f "$cartella/queries.eval.tsv" ]; then
+        echo "Rimuovo queries.eval.tsv"
+        rm "$cartella/queries.eval.tsv"
+    fi
+
+    if [ -f "$cartella/queries.train.tsv" ]; then
+        echo "Rimuovo queries.train.tsv"
+        rm "$cartella/queries.train.tsv"
+    fi
+
+    if [ -f "$cartella/queries.tar.gz" ]; then
+        echo "Rimuovo queries.tar.gz"
+        rm "$cartella/queries.tar.gz"
+    fi
+
+    echo "Operazione completata. Premi INVIO per continuare..."
+    read -n 1 -s
+else
+    echo "La cartella $cartella esiste già. Premi INVIO per continuare..."
+    read -n 1 -s
+fi
+
 print_menu() {
   clear
   echo "Select an option:"
