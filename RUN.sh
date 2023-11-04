@@ -13,9 +13,11 @@ if [ ! -d "$cartella" ]; then
     wget https://msmarco.blob.core.windows.net/msmarcoranking/qrels.dev.tsv -P "$cartella"
     wget https://msmarco.blob.core.windows.net/msmarcoranking/collection.tar.gz -P "$cartella"
 
-    # Decomprimi il file scaricato
+    # Decomprimi i file scaricati
     echo "Decomprimo il queries.tar.gz."
     tar -xzvf "$cartella/queries.tar.gz" -C "$cartella"
+    echo "Decomprimo il collection.tar.gz."
+    tar -xzvf "$cartella/collection.tar.gz" -C "$cartella"
 
     # Rimuovi i file decompressi se esistono
     if [ -f "$cartella/queries.eval.tsv" ]; then

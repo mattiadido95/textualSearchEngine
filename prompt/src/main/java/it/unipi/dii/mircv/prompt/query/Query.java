@@ -14,21 +14,41 @@ public class Query {
     private ArrayList<String> queryTerms = new ArrayList<>(); // list of query terms
     private Preprocessing preprocessing;
 
+    /**
+     * Constructor for Query class.
+     *
+     * @param porterStemmerOption True if Porter stemming should be applied, false otherwise.
+     * @param preprocessing Preprocessing instance for query processing.
+     */
     public Query( boolean porterStemmerOption, Preprocessing preprocessing) {
         this.porterStemmerOption = porterStemmerOption;
         this.preprocessing = preprocessing;
     }
 
+    /**
+     * Parse the query string and store the query terms in the queryTerms list.
+     */
     private void parseQuery() {
         queryTerms.clear();
         this.preprocessing.queryPreprocess(query, porterStemmerOption);
         queryTerms = (ArrayList<String>) preprocessing.tokens;
     }
 
+    /**
+     * Get the list of query terms.
+     *
+     * @return ArrayList of query terms.
+     */
     public ArrayList<String> getQueryTerms() {
         return this.queryTerms;
     }
 
+    /**
+     * Set the query string and parse it to update the query terms.
+     *
+     * @param queryInput The query string to be set.
+     * @return This Query instance.
+     */
     public Query setQuery(String queryInput) {
         this.queryTerms.clear();
         this.query = queryInput;
@@ -36,6 +56,9 @@ public class Query {
         return this;
     }
 
+    /**
+     * Clear the query and query terms.
+     */
     public void clearQuery() {
         this.queryTerms.clear();
         this.query = "";

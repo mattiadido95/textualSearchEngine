@@ -35,7 +35,6 @@ public class Prompt {
      *             -topK <value>: Specify the number of documents to return. Default: 10.
      *             -dynamic: Enable dynamic pruning using MAXSCORE. Default: disabled.
      *             -conjunctive: Enable conjunctive mode. Default: disjunctive.
-     *             -stemmer: Enable Porter Stemming in query preprocessing NOTE: MUST MATCH THE OPTION USED IN index.java. Default: disabled.
      */
     public static void main(String[] args) throws InterruptedException {
         // create folder logs if not exists

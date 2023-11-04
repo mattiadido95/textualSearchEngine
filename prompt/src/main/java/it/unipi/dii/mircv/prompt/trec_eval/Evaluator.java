@@ -13,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+/**
+ * A class responsible for evaluating the performance of a search engine using TREC evaluation tools.
+ */
 public class Evaluator {
     private Searcher searcher;
     private Lexicon lexicon;
@@ -30,6 +33,18 @@ public class Evaluator {
     private static final String RESULTS_PATH = "data/collection/results.test";
     private static final String EVALUATION_PATH = "data/collection/evaluation.txt";
 
+    /**
+     * Constructs an Evaluator object.
+     *
+     * @param searcher             The Searcher instance to execute queries.
+     * @param lexicon              The Lexicon containing index information.
+     * @param documents            The list of indexed documents.
+     * @param n_results            The number of results to retrieve per query.
+     * @param mode                 The retrieval mode ("boolean" or "vector").
+     * @param scoringFunction      The scoring function to use.
+     * @param porterStemmerOption  True if Porter stemming should be applied to query terms, false otherwise.
+     * @param dynamic              True to use dynamic query expansion, false for standard query execution.
+     */
     public Evaluator(Searcher searcher, Lexicon lexicon, ArrayList<Document> documents, int n_results, String mode, String scoringFunction, boolean porterStemmerOption, boolean dynamic) {
         this.searcher = searcher;
         this.lexicon = lexicon;
@@ -43,6 +58,9 @@ public class Evaluator {
         queryIDs = new ArrayList<>();
     }
 
+    /**
+     * Execute the evaluation process.
+     */
     public void execute() {
         // leggi una query e sottomettila al motore di ricerca
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(QUERY_PATH)))) {
@@ -90,6 +108,10 @@ public class Evaluator {
 //        trecEvalLaucher();
     }
 
+
+    /**
+     * Save the results of the queries to a file.
+     */
     //topicid   Q0  docno   rank    score   STANDARD
     private void saveResults() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(RESULTS_PATH))) {
@@ -105,6 +127,9 @@ public class Evaluator {
     }
 
 
+    /**
+     * Launch the TREC evaluation process.
+     */
     private void trecEvalLauncher() {
         try {
             // Costruisci il comando come una lista di stringhe

@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
+/**
  * This class represents the lexicon of the index.
  * It is implemented as a TreeMap<String, LexiconElem> where the key is the term and the value is a LexiconElem object.
  * */
