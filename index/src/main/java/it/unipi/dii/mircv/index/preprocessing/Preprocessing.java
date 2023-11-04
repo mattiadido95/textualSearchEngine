@@ -14,7 +14,6 @@ import it.unipi.dii.mircv.index.structures.Document;
  */
 public class Preprocessing {
     private static final String STOPWORDS_PATH = "data/stop_words_english.txt";
-    private Map<String, Map<String, Integer>> index;
     private Document doc;
     public List<String> tokens = new ArrayList<>();
     private List<String> stopwords = new ArrayList<>();

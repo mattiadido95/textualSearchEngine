@@ -118,7 +118,7 @@ public class Spimi {
                 indexCounter += 1;
             }
 
-            //save into disk documentCounter
+            //save into disk document information
             FileOutputStream fileOut = new FileOutputStream("data/index/documentInfo.bin");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(documentCounter);
